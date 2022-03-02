@@ -1,0 +1,16 @@
+name: emboa-dev-requirements
+
+channels:
+  - anaconda
+  - conda-forge
+dependencies:
+  - make
+  - python >=3.6
+  - pytest
+  - coverage
+  - pip
+  - sphinx 
+  - sphinx_rtd_theme
+  - sphinxcontrib-apidoc 
+  - sphinx-gallery 
+  - flake8

@@ -1,0 +1,126 @@
+version: 2
+variables:
+
+
+
+  install_conda_build_and_cookiecutter: &install_conda_build_and_cookiecutter
+    run:
+      name: Config and Update Conda
+      command: |
+        conda install cookiecutter -c conda-forge 
+        conda install conda-build
+  run_test_conda_build: &run_test_conda_build
+    run:
+      name: Run tests
+      command: |
+        conda build recipe -c conda-forge
+
+  update_conda: &update_conda
+    run:
+      name: update conda
+      command: |
+        conda config --set always_yes yes --set changeps1 no
+        conda update -q conda 
+        conda init bash
+
+  run_test_script: &run_test_script
+    run:
+      name: Run test scripts
+      command: |
+        conda init bash
+        chmod +x .ci/test_project.sh 
+        ./.ci/test_project.sh 
+
+
+
+  install_upload_deps: &install_upload_deps
+    run:
+      name: setup pypirc
+      command: |
+        conda install twine make -c conda
+
+  setup_pypi_rc: &setup_pypi_rc
+    run:
+      name: setup pypirc
+      command: |
+        echo -e "[pypi]" >> ~/.pypirc
+        echo -e "username = DerThorsten" >> ~/.pypirc
+        echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc 
+
+
+  create_package: &create_package
+    run:
+      name: create package
+      command: |
+        make dist
+
+  upload_package: &upload_package
+    run:
+      name: upload package
+      command: |
+        make release
+
+
+jobs:
+  test_job:
+    docker:
+     - image: continuumio/miniconda3:4.5.12
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - *update_conda
+      - *run_test_script
+
+  test_conda_build_job:
+    docker:
+     - image: continuumio/miniconda3:4.5.12
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - *update_conda
+      - *install_conda_build_and_cookiecutter
+      - *run_test_conda_build
+
+
+  deploy_pypi_job:
+    docker:
+     - image: continuumio/miniconda3:4.5.12
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - *update_conda
+      - *install_upload_deps
+      - *setup_pypi_rc
+      - *create_package
+      - *upload_package
+
+
+
+workflows:
+  version: 2
+
+  my_test:
+    jobs:
+      - test_job
+      - test_conda_build_job
+      - deploy_pypi_job:
+          requires:
+            - test_job
+          filters:
+            tags:
+               only: /^v[0-9]+(\.[0-9]+)*$/
+            branches:
+              ignore: /.*/
+
+  nightly-test:
+    triggers:
+       - schedule:
+            cron: "0 0 * * *"
+            filters:
+              branches:
+                only:
+                  - master
+    jobs:
+       - test_job
+       - test_conda_build_job
+

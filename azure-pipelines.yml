@@ -1,0 +1,75 @@
+jobs:
+  - job: Linux
+    pool:
+      vmImage: 'ubuntu-16.04'
+    strategy:
+      maxParallel: 2
+    variables:
+      repoDir: '$(Build.Repository.LocalPath)'
+
+    steps:
+      - task: CondaEnvironment@1
+        inputs:
+          updateConda: false
+      - script: |
+          chmod +x .ci/test_project.sh || exit 1
+          ./.ci/test_project.sh || exit 1
+
+  - job: macOS
+    pool:
+      vmImage: 'xcode9-macos10.13'
+    strategy:
+      maxParallel: 2
+    variables:
+      repoDir: '$(Build.Repository.LocalPath)'
+    steps:
+      - bash: echo "##vso[task.prependpath]$CONDA/bin"
+        displayName: Add conda to PATH
+
+      - script: |
+          chmod +x .ci/test_project.sh || exit 1
+          ./.ci/test_project.sh || exit 1
+
+  - job:
+    displayName: Windows
+    pool:
+      vmImage: 'vs2017-win2016'
+    strategy:
+      maxParallel: 2
+      # matrix:
+      #   py36:
+      #     PY_VERSION: 3.6
+      #     VS_VERSION: 2015
+      #   # py27:
+      #   #   PY_VERSION: 2.7
+    variables:
+      repoDir: '$(Build.Repository.LocalPath)'
+    steps:
+    - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+      displayName: Add conda to PATH
+
+    - script: conda create --yes --quiet --name myroot || exit 1
+      displayName: Create Anaconda environment
+
+    - script: |
+        echo "create" || exit 1
+        conda env create  -f emboa-dev-requirements.yml || exit 1
+        echo "done" || exit 1
+      displayName: create emboa-dev-requirements environment
+
+    - script: |
+        echo "activate" || exit 1
+        call activate emboa-dev-requirements || exit 1
+        python -m pytest || exit 1
+      displayName: run python tests || exit 1
+
+
+
+schedules:
+  - cron: "0 0 * * *"
+    displayName: Daily midnight build
+    branches:
+      include:
+      - master
+    always: true
+
