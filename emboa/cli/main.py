@@ -75,6 +75,48 @@ def pure_so(env_prefix: Path, library:Path, outname: str , version: str = "3.11"
             os.getcwd()
         )
 
+
+@pack_python_app.command()
+def package(env_prefix: Path, package_name, version: str = "3.11"):
+    outname = package_name
+    ensure_python(env_prefix=env_prefix, version=version)
+ 
+    lib_dir = env_prefix / "lib" 
+    pkg_dir = lib_dir / f"python{version}" / "site-packages"/ package_name
+  
+
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_str = str(temp_dir)
+
+        ignore = shutil.ignore_patterns('*.pyc','*.o','Makefile','*cpython-311.data','*.a')
+        # ignore=None
+        pkg_tmp_dir = os.path.join(temp_dir_str,package_name)
+        shutil.copytree(pkg_dir, pkg_tmp_dir, ignore=ignore)
+
+
+
+
+        mount_path = os.path.join(env_prefix, f'lib/python{version}/site-packages/{package_name}')
+
+        cmd = [sys.executable, get_file_packager_path()]
+        cmd += [f'{outname}.data',f'--preload', f'{package_name}@{mount_path}', f'--js-output={outname}.js']
+        cmd += ['--export-name=globalThis.Module']
+        cmd += ['--use-preload-plugins']
+        # cmd += ['--lz4']
+        pprint.pprint(cmd)
+        subprocess.run(cmd, shell=False, check=True, cwd=temp_dir_str)
+
+        shutil.rmtree(pkg_tmp_dir)
+        shutil.copy(os.path.join(temp_dir_str, f'{outname}.data'),
+            os.getcwd()
+        )
+        shutil.copy(os.path.join(temp_dir_str, f'{outname}.js'),
+            os.getcwd()
+        )
+
+
+
 @pack_python_app.command()
 def core(env_prefix: Path, outname: str = 'python_data', version: str = "3.11"):
     ensure_python(env_prefix=env_prefix, version=version)
@@ -87,7 +129,7 @@ def core(env_prefix: Path, outname: str = 'python_data', version: str = "3.11"):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir_str = str(temp_dir)
 
-        ignore = shutil.ignore_patterns('*.pyc','*.o','*.so','Makefile','*.wasm','*cpython-311.data','*.a')
+        ignore = shutil.ignore_patterns('*.pyc','*.o','*.saa','Makefile','*.wasm','*cpython-311.data','*.a')
         # ignore=None
         py_temp_dir = os.path.join(temp_dir_str,f"python{version}")
         shutil.copytree(python_lib_dir, py_temp_dir, ignore=ignore)
