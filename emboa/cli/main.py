@@ -48,7 +48,7 @@ def get_file_packager_path():
     return file_packager_path
 
 @pack_python_app.command()
-def pure_so(env_prefix: Path, library:Path, outname: str , version: str = "3.11"):
+def pure_so(env_prefix: Path, library:Path, outname: str , version: str = "3.11", export_name='globalThis.Module'):
     print("pack pure_so", library)
     ensure_python(env_prefix=env_prefix, version=version)
 
@@ -62,7 +62,7 @@ def pure_so(env_prefix: Path, library:Path, outname: str , version: str = "3.11"
         mount_path = os.path.join(env_prefix, f'lib/python{version}/site-packages')
         cmd = [sys.executable,get_file_packager_path()]
         cmd += [f'{outname}.data',f'--preload', f'assets/@{mount_path}', f'--js-output={outname}.js']
-        cmd += ['--export-name=globalThis.Module']
+        cmd += [f'--export-name={export_name}']
         cmd += ['--use-preload-plugins']
         # cmd += ['--lz4']
         pprint.pprint(cmd)
@@ -77,7 +77,7 @@ def pure_so(env_prefix: Path, library:Path, outname: str , version: str = "3.11"
 
 
 @pack_python_app.command()
-def package(env_prefix: Path, package_name, version: str = "3.11"):
+def package(env_prefix: Path, package_name, version: str = "3.11", export_name='globalThis.Module'):
     outname = package_name
     ensure_python(env_prefix=env_prefix, version=version)
  
@@ -101,7 +101,7 @@ def package(env_prefix: Path, package_name, version: str = "3.11"):
 
         cmd = [sys.executable, get_file_packager_path()]
         cmd += [f'{outname}.data',f'--preload', f'{package_name}@{mount_path}', f'--js-output={outname}.js']
-        cmd += ['--export-name=globalThis.Module']
+        cmd += [f'--export-name={export_name}']
         cmd += ['--use-preload-plugins']
         # cmd += ['--lz4']
         pprint.pprint(cmd)
@@ -118,7 +118,7 @@ def package(env_prefix: Path, package_name, version: str = "3.11"):
 
 
 @pack_python_app.command()
-def core(env_prefix: Path, outname: str = 'python_data', version: str = "3.11"):
+def core(env_prefix: Path, outname: str = 'python_data', version: str = "3.11", export_name='globalThis.Module'):
     ensure_python(env_prefix=env_prefix, version=version)
  
     lib_dir = env_prefix / "lib" 
@@ -141,13 +141,39 @@ def core(env_prefix: Path, outname: str = 'python_data', version: str = "3.11"):
 
         cmd = [sys.executable, get_file_packager_path()]
         cmd += [f'{outname}.data',f'--preload', f'python{version}@{mount_path}', f'--js-output={outname}.js']
-        cmd += ['--export-name=globalThis.Module']
+        cmd += [f'--export-name={export_name}']
         cmd += ['--use-preload-plugins']
         # cmd += ['--lz4']
         pprint.pprint(cmd)
         subprocess.run(cmd, shell=False, check=True, cwd=temp_dir_str)
 
         shutil.rmtree(py_temp_dir)
+        shutil.copy(os.path.join(temp_dir_str, f'{outname}.data'),
+            os.getcwd()
+        )
+        shutil.copy(os.path.join(temp_dir_str, f'{outname}.js'),
+            os.getcwd()
+        )
+
+@pack_app.command()
+def file(file:Path, mount_path, outname: str , export_name='globalThis.Module'):
+
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_str = str(temp_dir)
+
+        os.makedirs(os.path.join(temp_dir_str,'assets'), exist_ok=False)
+        shutil.copy2(str(file), os.path.join(temp_dir_str,'assets'))
+
+
+        cmd = [sys.executable,get_file_packager_path()]
+        cmd += [f'{outname}.data',f'--preload', f'assets/@{mount_path}', f'--js-output={outname}.js']
+        cmd += [f'--export-name={export_name}']
+        cmd += ['--use-preload-plugins']
+        # cmd += ['--lz4']
+        pprint.pprint(cmd)
+        subprocess.run(cmd, shell=False, check=True, cwd=temp_dir_str)
+
         shutil.copy(os.path.join(temp_dir_str, f'{outname}.data'),
             os.getcwd()
         )
