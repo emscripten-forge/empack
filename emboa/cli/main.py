@@ -64,6 +64,9 @@ def pure_so(env_prefix: Path, library:Path, outname: str , version: str = "3.11"
         cmd += [f'{outname}.data',f'--preload', f'assets/@{mount_path}', f'--js-output={outname}.js']
         cmd += [f'--export-name={export_name}']
         cmd += ['--use-preload-plugins']
+        cmd += ['--lz4']
+        if export_name.startswith('globalThis'):
+            cmd += ['--no-node']
         # cmd += ['--lz4']
         pprint.pprint(cmd)
         subprocess.run(cmd, shell=False, check=True, cwd=temp_dir_str)
@@ -103,6 +106,8 @@ def package(env_prefix: Path, package_name, version: str = "3.11", export_name='
         cmd += [f'{outname}.data',f'--preload', f'{package_name}@{mount_path}', f'--js-output={outname}.js']
         cmd += [f'--export-name={export_name}']
         cmd += ['--use-preload-plugins']
+        if export_name.startswith('globalThis'):
+            cmd += ['--no-node']
         # cmd += ['--lz4']
         pprint.pprint(cmd)
         subprocess.run(cmd, shell=False, check=True, cwd=temp_dir_str)
@@ -143,7 +148,9 @@ def core(env_prefix: Path, outname: str = 'python_data', version: str = "3.11", 
         cmd += [f'{outname}.data',f'--preload', f'python{version}@{mount_path}', f'--js-output={outname}.js']
         cmd += [f'--export-name={export_name}']
         cmd += ['--use-preload-plugins']
-        # cmd += ['--lz4']
+        cmd += ['--lz4']
+        if export_name.startswith('globalThis'):
+            cmd += ['--no-node']
         pprint.pprint(cmd)
         subprocess.run(cmd, shell=False, check=True, cwd=temp_dir_str)
 
@@ -158,7 +165,7 @@ def core(env_prefix: Path, outname: str = 'python_data', version: str = "3.11", 
 @pack_app.command()
 def file(file:Path, mount_path, outname: str , export_name='globalThis.Module'):
 
-
+    print("pack file")
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir_str = str(temp_dir)
 
@@ -170,6 +177,8 @@ def file(file:Path, mount_path, outname: str , export_name='globalThis.Module'):
         cmd += [f'{outname}.data',f'--preload', f'assets/@{mount_path}', f'--js-output={outname}.js']
         cmd += [f'--export-name={export_name}']
         cmd += ['--use-preload-plugins']
+        if export_name.startswith('globalThis'):
+            cmd += ['--no-node']
         # cmd += ['--lz4']
         pprint.pprint(cmd)
         subprocess.run(cmd, shell=False, check=True, cwd=temp_dir_str)
