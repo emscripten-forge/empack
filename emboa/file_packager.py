@@ -1,10 +1,6 @@
 import subprocess
 import os
 import sys
-import subprocess
-import os
-import sys
-import pprint
 from pathlib import Path
 import shutil
 import tempfile
@@ -13,7 +9,7 @@ import typer
 
 def ensure_python(env_prefix: Path, version: str):
     if not env_prefix.is_dir():
-        echo(f"{env_prefix} is not a dir")
+        print(f"{env_prefix} is not a dir")
         raise typer.Exit()
     lib_dir = env_prefix / "lib"
     python_lib_dir = lib_dir / f"python{version}"
@@ -21,7 +17,7 @@ def ensure_python(env_prefix: Path, version: str):
 
         raise RuntimeError(
             f""" {python_lib_dir} is not a dir"
-                python{version} could be missing 
+                python{version} could be missing
                  or verion {version} might be wrong"""
         )
 
@@ -29,7 +25,7 @@ def ensure_python(env_prefix: Path, version: str):
 def get_file_packager_path():
     file_packager_path = os.environ.get("FILE_PACKAGER")
     if file_packager_path is None:
-        echo(
+        print(
             f"FILE_PACKAGER needs to be an env variable pointing to emscpriptens file_packager.py"
         )
         raise typer.Exit()
