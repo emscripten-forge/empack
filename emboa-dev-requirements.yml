@@ -1,4 +1,4 @@
-name: emboa-dev-requirements
+name: emperator-dev-requirements
 
 channels:
   - anaconda
@@ -9,8 +9,8 @@ dependencies:
   - pytest
   - coverage
   - pip
-  - sphinx 
+  - sphinx
   - sphinx_rtd_theme
-  - sphinxcontrib-apidoc 
-  - sphinx-gallery 
+  - sphinxcontrib-apidoc
+  - sphinx-gallery
   - flake8
