@@ -1,4 +1,4 @@
-* emboa version:
+* emperator version:
 * Operating System:
 * Compiler:
 

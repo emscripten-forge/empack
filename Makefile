@@ -51,25 +51,25 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 lint: ## check style with flake8
-	flake8 emboa tests
+	flake8 emperator tests
 
 test: ## run tests quickly with the default Python
 	python -m pytest
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source emboa -m pytest
+	coverage run --source emperator -m pytest
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 coverage-no-html: ## check code coverage quickly with the default Python
-	coverage run --source emboa -m pytest
+	coverage run --source emperator -m pytest
 	coverage report -m
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/emboa.rst
+	rm -f docs/emperator.rst
 	#rm -f docs/modules.rst
-	#sphinx-apidoc -o docs/ emboa
+	#sphinx-apidoc -o docs/ emperator
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
