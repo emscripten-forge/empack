@@ -23,6 +23,17 @@ def ensure_python(env_prefix: Path, version: str):
 
 
 def get_file_packager_path():
+    # First check for the conda prefix
+    current_conda_env = os.environ.get("CONDA_PREFIX")
+    if current_conda_env is not None:
+        conda_file_packager = (
+            Path(current_conda_env) / "opt" / "emsdk" / "upstream" /
+            "emscripten" / "tools" / "file_packager.py"
+        )
+        if os.path.isfile(conda_file_packager):
+            return conda_file_packager
+
+    # Then check for the environment variable
     file_packager_path = os.environ.get("FILE_PACKAGER")
     if file_packager_path is None:
         print(
