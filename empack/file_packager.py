@@ -196,6 +196,8 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
             "*.a",
             "*.zip",
             "*.tar.gz",
+            os.path.join(pack_prefix, "lib", "pkgconfig", "**"),
+            os.path.join(pack_prefix, "bin", "**"),
         )
         # ignore=None
         print(f"copy tree from  {pack_prefix} to {temp_dir_str}")
