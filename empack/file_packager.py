@@ -168,10 +168,15 @@ def make_pkg_name(recipe):
     return f"{name}_v_{version}__bn_{build_number}"
 
 
-def pack_conda_pkg(recipe, pack_prefix, pack_outdir, filter=None):
+def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
+    """pack a conda pkg with emscriptens filepackager
+
+    Args:
+        recipe (dict): the rendered recipe as dict
+        pack_prefix (str): path where the packed env will be created (WARNING this will override the envs content)
+        pack_outdir (str): destination folder for the created pkgs
+    """
     pkg_name = recipe["package"]["name"]
-    # create the env which only contains the pkg but not
-    # the dependencies
     create_env(pkg_name, pack_prefix, platform="emscripten-32")
 
     pkg_full_name = make_pkg_name(recipe)
