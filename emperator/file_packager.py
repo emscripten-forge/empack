@@ -177,6 +177,7 @@ def get_pkg_info(pkg_name, prefix):
 
 
 def pack_conda_pkg(
+    recipe,
     pkg_name,
     channels,
     prefix,

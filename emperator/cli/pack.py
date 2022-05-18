@@ -18,25 +18,25 @@ def file(file: Path, mount_path, outname: str, export_name="globalThis.Module"):
     )
 
 
-@pack_app.command()
-def conda_pkg(
-    pkg_name,
-    prefix,
-    env_name,
-    channels: Optional[List[str]] = typer.Option(
-        ["https://repo.mamba.pm/emscripten-forge", "conda-forge"]
-    ),
-    target_platform: Optional[str] = typer.Option("emscripten-32"),
-    override: Optional[bool] = typer.Option(False),
-):
-    print(f"{override=}")
-    pack_conda_pkg(
-        pkg_name=pkg_name,
-        channels=channels,
-        prefix=prefix,
-        override=override,
-        target_platform=target_platform,
-    )
+# @pack_app.command()
+# def conda_pkg(
+#     pkg_name,
+#     prefix,
+#     env_name,
+#     channels: Optional[List[str]] = typer.Option(
+#         ["https://repo.mamba.pm/emscripten-forge", "conda-forge"]
+#     ),
+#     target_platform: Optional[str] = typer.Option("emscripten-32"),
+#     override: Optional[bool] = typer.Option(False),
+# ):
+#     print(f"{override=}")
+#     pack_conda_pkg(
+#         pkg_name=pkg_name,
+#         channels=channels,
+#         prefix=prefix,
+#         override=override,
+#         target_platform=target_platform,
+#     )
 
 
 # emscripten
