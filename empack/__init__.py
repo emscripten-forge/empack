@@ -1,8 +1,2 @@
-from . version import __version__  # noqa: F401
-
-
-def pure_python():
-    """
-    hello
-    """
-    pass
+from .version import __version__  # noqa: F401
+from . import file_packager
