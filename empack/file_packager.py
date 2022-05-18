@@ -152,46 +152,29 @@ def pack_file(
 def create_env(pkg_name, prefix, platform):
     # cmd = ['$MAMBA_EXE' ,'create','--prefix', prefix,'--platform=emscripten-32'] + [pkg_name] #+ ['--dryrun']
     cmd = [
-        f"$MAMBA_EXE install --yes --prefix {prefix} --platform={platform} --no-deps {pkg_name}"
+        f"$MAMBA_EXE create --yes --prefix {prefix} --platform={platform} --no-deps {pkg_name}"
     ]
     ret = subprocess.run(cmd, shell=True)
     returncode = ret.returncode
     assert returncode == 0
 
 
-def get_pkg_info(pkg_name, prefix):
+def make_pkg_name(recipe):
 
-    # load *.json from prefix/conda-meta
-    meta_path = os.path.join(prefix, "conda-meta", "*.json")
-    pkg_jsons = glob.glob(meta_path)
-    print(pkg_jsons)
-    assert len(pkg_jsons) == 1
-    pkg_json = pkg_jsons[0]
+    name = recipe["package"]["name"]
+    version = recipe["package"]["version"].replace(".", "_")
+    build_number = recipe["build"].get("build_number", 0)
 
-    with open(pkg_json) as json_file:
-        data = json.load(json_file)
-        # print(data)
-    path = data["package_tarball_full_path"]
-    head, tail = os.path.split(path)
-    return tail[: -len(".tar.bz2")]
+    return f"{name}_v_{version}__bn_{build_number}"
 
 
-def pack_conda_pkg(
-    recipe,
-    pkg_name,
-    channels,
-    prefix,
-    target_platform,
-    override=False,
-    filter=None,
-):
-
+def pack_conda_pkg(recipe, pack_prefix, pack_outdir, override=False, filter=None):
+    pkg_name = recipe["package"]["name"]
     # create the env which only contains the pkg but not
     # the dependencies
-    create_env(pkg_name, prefix, platform=target_platform)
+    create_env(pkg_name, pack_prefix, platform="emscripten-32")
 
-    pkg_full_name = get_pkg_info(pkg_name, prefix)
-    print(pkg_full_name)
+    pkg_full_name = make_pkg_name(recipe)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir_str = str(temp_dir)
@@ -208,23 +191,24 @@ def pack_conda_pkg(
             "*.tar.gz",
         )
         # ignore=None
-        print(f"copy tree from  {prefix} to {temp_dir_str}")
+        print(f"copy tree from  {pack_prefix} to {temp_dir_str}")
         d = os.path.join(temp_dir_str, "the_env")
-        copytree(prefix, temp_dir_str, ignore=ignore)
+        copytree(pack_prefix, temp_dir_str, ignore=ignore)
 
-        mount_path = prefix
+        mount_path = pack_prefix
         export_name = "globalThis.Module"
         outname = pkg_full_name
         emscripten_file_packager(
             outname=outname,
-            to_mount=prefix,
-            mount_path=prefix,
+            to_mount=pack_prefix,
+            mount_path=pack_prefix,
             export_name=export_name,
             use_preload_plugins=True,
             no_node=export_name.startswith("globalThis"),
             lz4=True,
             cwd=temp_dir_str,
         )
-
-        shutil.copy(os.path.join(temp_dir_str, f"{outname}.data"), os.getcwd())
-        shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), os.getcwd())
+        if not os.path.isdir(pack_outdir):
+            os.path.mkdir(pack_outdir)
+        shutil.copy(os.path.join(temp_dir_str, f"{outname}.data"), pack_outdir)
+        shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), pack_outdir)
