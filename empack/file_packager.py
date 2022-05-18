@@ -186,6 +186,12 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir_str = str(temp_dir)
 
+        if os.path.isdir(os.path.join(pack_prefix, "bin"))
+            shutil.rmtree(os.path.join(pack_prefix, "bin"), ignore_errors=True)
+
+        if os.path.isdir(os.path.join(pack_prefix, "lib", "pkgconfig"))
+            shutil.rmtree(os.path.join(pack_prefix, "lib","pkgconfig"), ignore_errors=True)
+
         ignore = shutil.ignore_patterns(
             "*.pyc",
             "*.o",
