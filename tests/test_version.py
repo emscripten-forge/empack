@@ -1,8 +1,8 @@
-import emperator
+import empack
 
 
 class TestVersion(object):
 
     def test_version(self):
-        v = emperator.__version__
+        v = empack.__version__
         assert v == '0.1.0'

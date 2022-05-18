@@ -2,7 +2,7 @@ from .app import app
 import typer
 from pathlib import Path
 
-from emperator.file_packager import (
+from empack.file_packager import (
     pack_file,
     pack_python_core,
 )
