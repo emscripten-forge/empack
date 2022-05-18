@@ -154,7 +154,9 @@ def create_env(pkg_name, prefix, platform):
     cmd = [
         f"$MAMBA_EXE create --yes --prefix {prefix} --platform={platform} --no-deps {pkg_name}"
     ]
-    ret = subprocess.run(cmd, shell=True, check=True)
+    ret = subprocess.run(cmd, shell=True, check=False, capture_output=True)
+    if ret.returncode != 0:
+        print(ret)
     returncode = ret.returncode
     assert returncode == 0
 
