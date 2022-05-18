@@ -26,9 +26,6 @@ test_requirements = [
     'flake8'
 ]
 
-
-
-
 setup(
     author="Thorsten Beier",
     author_email='derthorstenbeier@gmail.com',
@@ -40,22 +37,22 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="emperator emscripten+boa",
+    description="empack emscripten+boa",
     entry_points={
         'console_scripts': [
-            'emperator=emperator.cli.main:app',
+            'empack=empack.cli.main:app',
         ],
     },
     install_requires=requirements,
     long_description=readme,
     include_package_data=True,
-    keywords='emperator',
-    name='emperator',
+    keywords='empack',
+    name='empack',
     packages=find_packages(),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/emscripten-forge/emperator',
-    version='0.1.0',
+    url='https://github.com/emscripten-forge/empack',
+    version='0.2.0',
     zip_safe=False,
 )
