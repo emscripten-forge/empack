@@ -168,7 +168,7 @@ def make_pkg_name(recipe):
     return f"{name}_v_{version}__bn_{build_number}"
 
 
-def pack_conda_pkg(recipe, pack_prefix, pack_outdir, override=False, filter=None):
+def pack_conda_pkg(recipe, pack_prefix, pack_outdir, filter=None):
     pkg_name = recipe["package"]["name"]
     # create the env which only contains the pkg but not
     # the dependencies
