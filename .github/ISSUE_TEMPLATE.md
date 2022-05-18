@@ -1,4 +1,4 @@
-* emperator version:
+* empack version:
 * Operating System:
 * Compiler:
 
