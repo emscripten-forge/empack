@@ -145,6 +145,9 @@ def emscripten_file_packager(
 
     if no_node:
         cmd += ["--no-node"]
+
+    if lz4:
+        cmd += ["--lz4"]
     print(cmd)
     subprocess.run(cmd, shell=False, check=True, cwd=cwd)
 
