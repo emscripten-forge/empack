@@ -10,9 +10,24 @@ import json
 
 
 
+def shrink_conda_meta(prefix):
+    conda_meta = os.path.join(prefix,'conda-meta')
 
-def default_ignore_patterns(prefix):
+    for filename in os.listdir(conda_meta):
+        f = os.path.join(conda_meta, filename)
+        if os.path.isfile(f) and f.endswith(".json"):
+            with open(f, "r") as file:
+                data = json.load(file)
+
+                data.pop('paths_data',None)
+                data.pop('files',None)
+
+            with open(f, 'w') as outfile:
+                json.dump(data, outfile)
+
+def make_ignore_patterns(prefix):
     return shutil.ignore_patterns(
+        "*.pyx",
         "*.pyc",
         "*.pck",
         "*.o",
@@ -26,6 +41,16 @@ def default_ignore_patterns(prefix):
         "*.tar.gz",
         "*.tar",
         "__pycache__/**",
+        "test_*.py",
+        ".js",
+        ".ts",
+        ".c",
+        ".h",
+        ".cpp",
+        ".hpp"
+        ".cxx",
+        ".hxx",
+        "RECORD",
         os.path.join(prefix, "bin", "*"),
         os.path.join(prefix, "bin"),
         os.path.join(prefix, "include", "*"),
@@ -35,7 +60,10 @@ def default_ignore_patterns(prefix):
         os.path.join(prefix, "lib", "python3.10","test/**"),
         os.path.join(prefix, "lib", "python3.10","tkinter"),
         os.path.join(prefix, "lib", "python3.10","pydoc_data"),
-        os.path.join(prefix, "lib", "python3.10","pydoc.py")
+        os.path.join(prefix, "lib", "python3.10","pydoc.py"),
+        os.path.join(prefix, "lib/python3.10/site-packages/bokeh/server/static"),
+        os.path.join(prefix, "lib/python3.10/site-packages/pandas/_libs/"),
+        os.path.join(prefix, "lib/python3.10/site-packages/astropy/extern/jquery/")
     )
 
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -130,7 +158,7 @@ def pack_python_core(env_prefix: Path, outname, version, export_name):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir_str = str(temp_dir)
 
-        ignore = default_ignore_patterns(env_prefix)
+        ignore = make_ignore_patterns(env_prefix)
         # ignore=None
         py_temp_dir = os.path.join(temp_dir_str, f"python{version}")
         shutil.copytree(python_lib_dir, py_temp_dir, ignore=ignore)
@@ -210,6 +238,7 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
     pkg_name = recipe["package"]["name"]
     print("pack_prefix",pack_prefix)
     create_env(pkg_name, pack_prefix, platform="emscripten-32")
+    shrink_conda_meta(pack_prefix)
 
     pkg_full_name = make_pkg_name(recipe)
 
@@ -224,7 +253,7 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
                 os.path.join(pack_prefix, "lib", "pkgconfig"), ignore_errors=True
             )
 
-        ignore = default_ignore_patterns(pack_prefix)
+        ignore = make_ignore_patterns(pack_prefix)
         # ignore=None
         print(f"copy tree from  {pack_prefix} to {temp_dir_str}")
         d = os.path.join(temp_dir_str, "the_env")
