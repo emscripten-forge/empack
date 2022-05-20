@@ -61,9 +61,9 @@ def make_ignore_patterns(prefix):
         os.path.join(prefix, "lib", "python3.10","tkinter"),
         os.path.join(prefix, "lib", "python3.10","pydoc_data"),
         os.path.join(prefix, "lib", "python3.10","pydoc.py"),
-        os.path.join(prefix, "lib", "python3.10","site-packages","bokeh","server","static"),
-        os.path.join(prefix,"lib","site-packages/pandas/_libs/"),
-        os.path.join(prefix,"lib/python3.10/site-packages/astropy/extern/jquery/")
+        os.path.join(prefix, "lib/python3.10/site-packages/bokeh/server/static"),
+        os.path.join(prefix, "lib/python3.10/site-packages/pandas/_libs/"),
+        os.path.join(prefix, "lib/python3.10/site-packages/astropy/extern/jquery/")
     )
 
 def copytree(src, dst, symlinks=False, ignore=None):
