@@ -24,12 +24,12 @@ def default_ignore_patterns(prefix):
         "*.tar.gz",
         "*.tar",
         "__pycache__/**",
-        os.path.join(pack_prefix, "lib", "pkgconfig", "*"),
-        os.path.join(pack_prefix, "bin", "*"),
-        os.path.join(pack_prefix, "lib", "pkgconfig"),
-        os.path.join(pack_prefix, "bin"),
-        os.path.join(pack_prefix, "lib", "python3.10","test/**"),
-        os.path.join(pack_prefix, "lib", "python3.10","tkinter")
+        os.path.join(prefix, "lib", "pkgconfig", "*"),
+        os.path.join(prefix, "bin", "*"),
+        os.path.join(prefix, "lib", "pkgconfig"),
+        os.path.join(prefix, "bin"),
+        os.path.join(prefix, "lib", "python3.10","test/**"),
+        os.path.join(prefix, "lib", "python3.10","tkinter")
     )
 
 def copytree(src, dst, symlinks=False, ignore=None):
