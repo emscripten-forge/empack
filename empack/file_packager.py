@@ -9,12 +9,43 @@ import glob
 import json
 
 
+
+
+def default_ignore_patterns(prefix):
+    return shutil.ignore_patterns(
+        "*.pyc",
+        "*.pck",
+        "*.o",
+        "*.saa",
+        "Makefile",
+        "*.wasm",
+        "*cpython-310.data",
+        "*cpython-311.data",
+        "*.a",
+        "*.zip",
+        "*.tar.gz",
+        "*.tar",
+        "__pycache__/**",
+        os.path.join(prefix, "bin", "*"),
+        os.path.join(prefix, "bin"),
+        os.path.join(prefix, "include", "*"),
+        os.path.join(prefix, "include"),
+        os.path.join(prefix, "lib", "pkgconfig", "*"),
+        os.path.join(prefix, "lib", "pkgconfig"),
+        os.path.join(prefix, "lib", "python3.10","test/**"),
+        os.path.join(prefix, "lib", "python3.10","tkinter"),
+        os.path.join(prefix, "lib", "python3.10","pydoc_data"),
+        os.path.join(prefix, "lib", "python3.10","pydoc.py")
+    )
+
 def copytree(src, dst, symlinks=False, ignore=None):
     for item in os.listdir(src):
         s = os.path.join(src, item)
         d = os.path.join(dst, item)
         if os.path.isdir(s):
-            shutil.copytree(s, d, symlinks, ignore)
+            shutil.copytree(
+                s, d, symlinks, ignore=ignore, ignore_dangling_symlinks=True
+            )
         else:
             shutil.copy2(s, d)
 
@@ -99,9 +130,7 @@ def pack_python_core(env_prefix: Path, outname, version, export_name):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir_str = str(temp_dir)
 
-        ignore = shutil.ignore_patterns(
-            "*.pyc", "*.o", "*.saa", "Makefile", "*.wasm", "*cpython-311.data", "*.a"
-        )
+        ignore = default_ignore_patterns(env_prefix)
         # ignore=None
         py_temp_dir = os.path.join(temp_dir_str, f"python{version}")
         shutil.copytree(python_lib_dir, py_temp_dir, ignore=ignore)
@@ -165,7 +194,7 @@ def make_pkg_name(recipe):
 
     name = recipe["package"]["name"]
     version = recipe["package"]["version"].replace(".", "_")
-    build_number = recipe["build"].get("build_number", 0)
+    build_number = recipe["build"].get("number", 0)
 
     return f"{name}_v_{version}__bn_{build_number}"
 
@@ -179,6 +208,7 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
         pack_outdir (str): destination folder for the created pkgs
     """
     pkg_name = recipe["package"]["name"]
+    print("pack_prefix",pack_prefix)
     create_env(pkg_name, pack_prefix, platform="emscripten-32")
 
     pkg_full_name = make_pkg_name(recipe)
@@ -186,17 +216,15 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir_str = str(temp_dir)
 
-        ignore = shutil.ignore_patterns(
-            "*.pyc",
-            "*.o",
-            "*.saa",
-            "Makefile",
-            "*.wasm",
-            "*cpython-311.data",
-            "*.a",
-            "*.zip",
-            "*.tar.gz",
-        )
+        if os.path.isdir(os.path.join(pack_prefix, "bin")):
+            shutil.rmtree(os.path.join(pack_prefix, "bin"), ignore_errors=True)
+
+        if os.path.isdir(os.path.join(pack_prefix, "lib", "pkgconfig")):
+            shutil.rmtree(
+                os.path.join(pack_prefix, "lib", "pkgconfig"), ignore_errors=True
+            )
+
+        ignore = default_ignore_patterns(pack_prefix)
         # ignore=None
         print(f"copy tree from  {pack_prefix} to {temp_dir_str}")
         d = os.path.join(temp_dir_str, "the_env")
@@ -207,7 +235,7 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
         outname = pkg_full_name
         emscripten_file_packager(
             outname=outname,
-            to_mount=pack_prefix,
+            to_mount=temp_dir_str,
             mount_path=pack_prefix,
             export_name=export_name,
             use_preload_plugins=True,
