@@ -2,20 +2,18 @@
 
 Pack a mamba environment with emsdk
 
-## Requirements
-
-You first need to setup emsdk:
-
-```bash
-mamba install -c conda-forge emsdk
-emsdk install 3.1.2
-emsdk activate 3.1.2
-```
-
 ## Installation
 
 ```bash
-pip install git+https://github.com/emscripten-forge/empack
+mamba install empack -c conda-forge
+```
+
+or with pip (you will need to install and activate emsdk, here with mamba):
+
+```bash
+mamba install -c conda-forge emsdk
+
+pip install empack
 ```
 
 ## Usage
