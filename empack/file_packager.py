@@ -5,9 +5,9 @@ from pathlib import Path
 import shutil
 import tempfile
 import typer
-import glob
 import json
 
+EMSDK_VER = "latest"
 
 
 def shrink_conda_meta(prefix):
@@ -24,6 +24,7 @@ def shrink_conda_meta(prefix):
 
             with open(f, 'w') as outfile:
                 json.dump(data, outfile)
+
 
 def make_ignore_patterns(prefix):
     return shutil.ignore_patterns(
@@ -66,6 +67,7 @@ def make_ignore_patterns(prefix):
         os.path.join(prefix, "lib/python3.10/site-packages/astropy/extern/jquery/")
     )
 
+
 def copytree(src, dst, symlinks=False, ignore=None):
     for item in os.listdir(src):
         s = os.path.join(src, item)
@@ -95,19 +97,35 @@ def ensure_python(env_prefix: Path, version: str):
 
 def get_file_packager_path():
     # First check for the conda prefix
-    current_conda_env = os.environ.get("CONDA_PREFIX")
-    if current_conda_env is not None:
+    emsdk_dir = os.environ.get("CONDA_EMSDK_DIR")
+    if emsdk_dir is not None:
+        # emsdk was installed with conda
         conda_file_packager = (
-            Path(current_conda_env)
-            / "opt"
-            / "emsdk"
+            Path(emsdk_dir)
             / "upstream"
             / "emscripten"
             / "tools"
             / "file_packager.py"
         )
-        if os.path.isfile(conda_file_packager):
-            return conda_file_packager
+
+        # If emsdk is not initialized, we do it
+        if not os.path.isfile(conda_file_packager):
+            subprocess.run(
+                ["emsdk", "install", EMSDK_VER],
+                shell=False,
+                check=True
+            )
+            subprocess.run(
+                ["emsdk", "activate", EMSDK_VER],
+                shell=False,
+                check=True
+            )
+            os.environ["EMSDK"] = emsdk_dir
+            os.environ["EM_CONFIG"] = str(Path(emsdk_dir) / ".emscripten")
+
+        assert os.path.isfile(conda_file_packager)
+
+        return conda_file_packager
 
     # Then check for the environment variable
     file_packager_path = os.environ.get("FILE_PACKAGER")
