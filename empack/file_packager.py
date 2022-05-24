@@ -96,12 +96,18 @@ def ensure_python(env_prefix: Path, version: str):
 
 
 def get_file_packager_path():
-    # First check for the conda prefix
-    emsdk_dir = os.environ.get("CONDA_EMSDK_DIR")
+    # First check for the emsdk conda package
+    emsdk_dir = None
+    try:
+        import emsdk
+        emsdk_dir = Path(emsdk.__file__).parent
+    except ImportError:
+        pass
+
     if emsdk_dir is not None:
         # emsdk was installed with conda
         conda_file_packager = (
-            Path(emsdk_dir)
+            emsdk_dir
             / "upstream"
             / "emscripten"
             / "tools"
@@ -120,7 +126,7 @@ def get_file_packager_path():
                 shell=False,
                 check=True
             )
-            os.environ["EMSDK"] = emsdk_dir
+            os.environ["EMSDK"] = str(emsdk_dir)
             os.environ["EM_CONFIG"] = str(Path(emsdk_dir) / ".emscripten")
 
         assert os.path.isfile(conda_file_packager)
