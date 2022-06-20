@@ -11,7 +11,7 @@ EMSDK_VER = "latest"
 
 
 def shrink_conda_meta(prefix):
-    conda_meta = os.path.join(prefix,'conda-meta')
+    conda_meta = os.path.join(prefix, "conda-meta")
 
     for filename in os.listdir(conda_meta):
         f = os.path.join(conda_meta, filename)
@@ -19,10 +19,10 @@ def shrink_conda_meta(prefix):
             with open(f, "r") as file:
                 data = json.load(file)
 
-                data.pop('paths_data',None)
-                data.pop('files',None)
+                data.pop("paths_data", None)
+                data.pop("files", None)
 
-            with open(f, 'w') as outfile:
+            with open(f, "w") as outfile:
                 json.dump(data, outfile)
 
 
@@ -48,8 +48,7 @@ def make_ignore_patterns(prefix):
         ".c",
         ".h",
         ".cpp",
-        ".hpp"
-        ".cxx",
+        ".hpp" ".cxx",
         ".hxx",
         "RECORD",
         os.path.join(prefix, "bin", "*"),
@@ -58,13 +57,13 @@ def make_ignore_patterns(prefix):
         os.path.join(prefix, "include"),
         os.path.join(prefix, "lib", "pkgconfig", "*"),
         os.path.join(prefix, "lib", "pkgconfig"),
-        os.path.join(prefix, "lib", "python3.10","test/**"),
-        os.path.join(prefix, "lib", "python3.10","tkinter"),
-        os.path.join(prefix, "lib", "python3.10","pydoc_data"),
-        os.path.join(prefix, "lib", "python3.10","pydoc.py"),
+        os.path.join(prefix, "lib", "python3.10", "test/**"),
+        os.path.join(prefix, "lib", "python3.10", "tkinter"),
+        os.path.join(prefix, "lib", "python3.10", "pydoc_data"),
+        os.path.join(prefix, "lib", "python3.10", "pydoc.py"),
         os.path.join(prefix, "lib/python3.10/site-packages/bokeh/server/static"),
         os.path.join(prefix, "lib/python3.10/site-packages/pandas/_libs/"),
-        os.path.join(prefix, "lib/python3.10/site-packages/astropy/extern/jquery/")
+        os.path.join(prefix, "lib/python3.10/site-packages/astropy/extern/jquery/"),
     )
 
 
@@ -100,6 +99,7 @@ def get_file_packager_path():
     emsdk_dir = None
     try:
         import emsdk
+
         emsdk_dir = Path(emsdk.__file__).parent
     except ImportError:
         pass
@@ -107,25 +107,13 @@ def get_file_packager_path():
     if emsdk_dir is not None:
         # emsdk was installed with conda
         conda_file_packager = (
-            emsdk_dir
-            / "upstream"
-            / "emscripten"
-            / "tools"
-            / "file_packager.py"
+            emsdk_dir / "upstream" / "emscripten" / "tools" / "file_packager.py"
         )
 
         # If emsdk is not initialized, we do it
         if not os.path.isfile(conda_file_packager):
-            subprocess.run(
-                ["emsdk", "install", EMSDK_VER],
-                shell=False,
-                check=True
-            )
-            subprocess.run(
-                ["emsdk", "activate", EMSDK_VER],
-                shell=False,
-                check=True
-            )
+            subprocess.run(["emsdk", "install", EMSDK_VER], shell=False, check=True)
+            subprocess.run(["emsdk", "activate", EMSDK_VER], shell=False, check=True)
             os.environ["EMSDK"] = str(emsdk_dir)
             os.environ["EM_CONFIG"] = str(Path(emsdk_dir) / ".emscripten")
 
@@ -153,8 +141,9 @@ def emscripten_file_packager(
     no_node: bool = True,
     lz4: bool = True,
     cwd=None,
+    silent=False,
 ):
-    print("outname", outname)
+    # print("outname", outname)
     cmd = [
         sys.executable,
         get_file_packager_path(),
@@ -172,8 +161,17 @@ def emscripten_file_packager(
 
     if lz4:
         cmd += ["--lz4"]
-    print(cmd)
-    subprocess.run(cmd, shell=False, check=True, cwd=cwd)
+    if not silent:
+        subprocess.run(cmd, shell=False, check=True, cwd=cwd)
+    else:
+        subprocess.run(
+            cmd,
+            shell=False,
+            check=True,
+            cwd=cwd,
+            stderr=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+        )
 
 
 def pack_python_core(env_prefix: Path, outname, version, export_name):
@@ -209,7 +207,12 @@ def pack_python_core(env_prefix: Path, outname, version, export_name):
 
 
 def pack_file(
-    file: Path, mount_path, outname: str, export_name, use_preload_plugins=True
+    file: Path,
+    mount_path,
+    outname: str,
+    export_name,
+    use_preload_plugins=True,
+    silent=False,
 ):
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -227,6 +230,7 @@ def pack_file(
             no_node=export_name.startswith("globalThis"),
             lz4=True,
             cwd=temp_dir_str,
+            silent=silent,
         )
 
         shutil.copy(os.path.join(temp_dir_str, f"{outname}.data"), os.getcwd())
@@ -254,7 +258,7 @@ def make_pkg_name(recipe):
     return f"{name}_v_{version}__bn_{build_number}"
 
 
-def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
+def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname):
     """pack a conda pkg with emscriptens filepackager
 
     Args:
@@ -263,11 +267,9 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
         pack_outdir (str): destination folder for the created pkgs
     """
     pkg_name = recipe["package"]["name"]
-    print("pack_prefix",pack_prefix)
+    print("pack_prefix", pack_prefix)
     create_env(pkg_name, pack_prefix, platform="emscripten-32")
     shrink_conda_meta(pack_prefix)
-
-    pkg_full_name = make_pkg_name(recipe)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir_str = str(temp_dir)
@@ -288,7 +290,6 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir):
 
         mount_path = pack_prefix
         export_name = "globalThis.Module"
-        outname = pkg_full_name
         emscripten_file_packager(
             outname=outname,
             to_mount=temp_dir_str,
