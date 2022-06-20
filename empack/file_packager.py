@@ -305,5 +305,5 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname):
             os.path.mkdir(pack_outdir)
         shutil.copy(os.path.join(temp_dir_str, f"{outname}.data"), pack_outdir)
         shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), pack_outdir)
-        
-        temp_dir.cleanup()
+
+    temp_dir.cleanup()
