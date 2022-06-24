@@ -55,10 +55,12 @@ def core(
     outname: str = "python_data",
     version: str = "3.11",
     export_name="globalThis.Module",
+    download_emsdk: str = ""
 ):
     pack_python_core(
         env_prefix=env_prefix,
         outname=outname,
         version=version,
         export_name=export_name,
+        download_emsdk=download_emsdk,
     )

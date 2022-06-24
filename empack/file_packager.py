@@ -1,13 +1,18 @@
 import subprocess
 import os
 import sys
+import importlib
 from pathlib import Path
+import requests
 import shutil
 import tempfile
 import typer
+from urllib import request
 import json
 
 EMSDK_VER = "latest"
+
+HERE = Path(__file__).parent
 
 
 def shrink_conda_meta(prefix):
@@ -94,6 +99,46 @@ def ensure_python(env_prefix: Path, version: str):
         )
 
 
+def download_and_setup_emsdk(emsdk_version):
+    tag = None
+    if emsdk_version == "latest":
+        tags = requests.get("https://api.github.com/repos/emscripten-core/emsdk/tags")
+        if tags.content:
+            tag = json.loads(tags.content)[0]["name"]
+    else:
+        tag = emsdk_version
+
+    emsdk_dir = f"emsdk-{tag}"
+    file_packager_path = (
+        HERE / emsdk_dir / "upstream" / "emscripten" / "tools" / "file_packager.py"
+    )
+
+    if not os.path.isdir(HERE / emsdk_dir):
+        file = f"{tag}.zip"
+        request.urlretrieve(
+            f"https://github.com/emscripten-core/emsdk/archive/refs/tags/{file}",
+            HERE / file,
+        )
+        shutil.unpack_archive(HERE / file, HERE)
+        os.rename(HERE / f"emsdk-{tag}", HERE / emsdk_dir)
+        os.remove(HERE / file)
+
+        subprocess.run(
+            [sys.executable, str(HERE / emsdk_dir / "emsdk.py"), "install", tag],
+            shell=False,
+            check=True,
+        )
+        subprocess.run(
+            [sys.executable, str(HERE / emsdk_dir / "emsdk.py"), "activate", tag],
+            shell=False,
+            check=True,
+        )
+
+    assert os.path.exists(file_packager_path)
+
+    return file_packager_path
+
+
 def get_file_packager_path():
     # First check for the emsdk conda package
     emsdk_dir = None
@@ -142,11 +187,16 @@ def emscripten_file_packager(
     lz4: bool = True,
     cwd=None,
     silent=False,
+    download_emsdk=None,
 ):
-    # print("outname", outname)
+    if download_emsdk:
+        file_packager_path = download_and_setup_emsdk(download_emsdk)
+    else:
+        file_packager_path = get_file_packager_path()
+
     cmd = [
         sys.executable,
-        get_file_packager_path(),
+        file_packager_path,
         f"{outname}.data",
         f"--preload",
         f"{to_mount}@{mount_path}",
@@ -174,7 +224,7 @@ def emscripten_file_packager(
         )
 
 
-def pack_python_core(env_prefix: Path, outname, version, export_name):
+def pack_python_core(env_prefix: Path, outname, version, export_name, download_emsdk):
     ensure_python(env_prefix=env_prefix, version=version)
 
     lib_dir = env_prefix / "lib"
@@ -199,6 +249,7 @@ def pack_python_core(env_prefix: Path, outname, version, export_name):
             no_node=export_name.startswith("globalThis"),
             lz4=True,
             cwd=temp_dir_str,
+            download_emsdk=download_emsdk,
         )
 
         shutil.rmtree(py_temp_dir)
