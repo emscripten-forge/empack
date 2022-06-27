@@ -8,11 +8,9 @@ Pack a mamba environment with emsdk
 mamba install empack -c conda-forge
 ```
 
-or with pip (you will need to install and activate emsdk, here with mamba):
+or with pip:
 
 ```bash
-mamba install -c conda-forge emsdk
-
 pip install empack
 ```
 
