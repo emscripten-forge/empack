@@ -14,10 +14,7 @@ import re
 from .file_patterns import *
 
 
-# load config
-pack_config_path = os.path.join(os.path.expanduser("~"), "conda_pack_config.yaml")
-
-
+# sensible default
 pack_config = {
     "packages": {
         "python-dateutil": {
@@ -41,13 +38,15 @@ pack_config = {
     },
 }
 
+
+# load config
+pack_config_path = os.path.join(os.path.expanduser("~"), "conda_pack_config.yaml")
 if os.path.isfile(pack_config_path):
     with open(pack_config_path) as pack_config_file:
         pack_config = yaml.safe_load(pack_config_file)
 
 
 def filter_pkg(env_prefix, pkg_meta_file, target_dir):
-    # print(pkg_meta_file)
     with open(pkg_meta_file, "r") as f:
         pkg_meta = json.load(f)
         name = pkg_meta["name"]
@@ -78,13 +77,3 @@ def filter_env(env_prefix, target_dir):
         filter_pkg(
             env_prefix=env_prefix, pkg_meta_file=pkg_meta_file, target_dir=target_dir
         )
-
-
-if __name__ == "__main__":
-
-    env_prefix = "/home/derthorsten/micromamba/envs/pyjs-build-wasm"
-    env_name = PurePath(env_prefix).parts[-1]
-    target_dir = "/home/derthorsten/tmp"
-
-    filter_env(env_prefix, target_dir)
-    # print(target_dir)
