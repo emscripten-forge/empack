@@ -197,9 +197,6 @@ def pack_python_core(env_prefix: Path, outname, version, export_name, download_e
         "pack_python_core is deprecated, use `pack_environment`",
         DeprecationWarning,
     )
-    print(
-        "pack_python_core is deprecated, use `pack_environment`",
-    )
     pack_environment(
         env_prefix=env_prefix,
         outname=outname,
