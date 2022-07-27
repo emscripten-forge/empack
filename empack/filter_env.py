@@ -3,8 +3,8 @@ import glob
 import json
 from pathlib import PurePath
 
+
 # import pathlib
-import fnmatch
 import shutil
 import tempfile
 import tarfile
@@ -20,8 +20,7 @@ pack_config = {
         "python-dateutil": {
             "include_patterns": [
                 {
-                    "type": "regex",
-                    "pattern": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))|(.*dateutil-zoneinfo\.tar\.gz$)",
+                    "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))|(.*dateutil-zoneinfo\.tar\.gz$)",
                 }
             ],
             "exclude_patterns": [],
@@ -30,8 +29,7 @@ pack_config = {
     "default": {
         "include_patterns": [
             {
-                "type": "regex",
-                "pattern": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))",
+                "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))",
             }
         ],
         "exclude_patterns": [],
