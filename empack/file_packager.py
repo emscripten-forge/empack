@@ -6,6 +6,9 @@ import shutil
 import tempfile
 import typer
 import json
+from pathlib import PurePath
+import warnings
+from .filter_env import filter_env
 
 EMSDK_VER = "latest"
 
@@ -51,12 +54,14 @@ def make_ignore_patterns(prefix):
         ".hpp" ".cxx",
         ".hxx",
         "RECORD",
+        "python3-embed.pc",
         os.path.join(prefix, "bin", "*"),
         os.path.join(prefix, "bin"),
         os.path.join(prefix, "include", "*"),
         os.path.join(prefix, "include"),
         os.path.join(prefix, "lib", "pkgconfig", "*"),
         os.path.join(prefix, "lib", "pkgconfig"),
+        os.path.join(prefix, "lib/pkgconfig/python3-embed.pc"),
         os.path.join(prefix, "lib", "python3.10", "test/**"),
         os.path.join(prefix, "lib", "python3.10", "tkinter"),
         os.path.join(prefix, "lib", "python3.10", "pydoc_data"),
@@ -174,36 +179,47 @@ def emscripten_file_packager(
         )
 
 
-def pack_python_core(env_prefix: Path, outname, version, export_name):
-    ensure_python(env_prefix=env_prefix, version=version)
+def pack_environment(env_prefix: Path, outname, export_name, pack_outdir=None):
+    # name of the env
+    print("env_prefix", env_prefix)
+    env_name = PurePath(env_prefix).parts[-1]
+    env_root = os.path.join(*PurePath(env_prefix).parts[:-1])
 
-    lib_dir = env_prefix / "lib"
-    python_lib_dir = lib_dir / f"python{version}"
+    print(f"{env_name=} {env_root=}")
 
+    # create a temp dir and store the filter&copy
+    # the data to the tmp directory
     with tempfile.TemporaryDirectory() as temp_dir:
-        temp_dir_str = str(temp_dir)
+        target_dir = os.path.join(temp_dir, env_name)
+        os.makedirs(target_dir)
 
-        ignore = make_ignore_patterns(env_prefix)
-        # ignore=None
-        py_temp_dir = os.path.join(temp_dir_str, f"python{version}")
-        shutil.copytree(python_lib_dir, py_temp_dir, ignore=ignore)
-
-        mount_path = os.path.join(env_prefix, f"lib/python{version}")
+        filter_env(env_prefix=env_prefix, target_dir=target_dir)
 
         emscripten_file_packager(
             outname=outname,
-            to_mount=f"python{version}",
-            mount_path=mount_path,
+            to_mount=env_name,
+            mount_path=env_prefix,
             export_name=export_name,
             use_preload_plugins=True,
             no_node=export_name.startswith("globalThis"),
             lz4=True,
-            cwd=temp_dir_str,
+            cwd=str(temp_dir),
         )
+        if pack_outdir is None:
+            pack_outdir = os.getcwd()
+        shutil.copy(os.path.join(str(temp_dir), f"{outname}.data"), pack_outdir)
+        shutil.copy(os.path.join(str(temp_dir), f"{outname}.js"), pack_outdir)
 
-        shutil.rmtree(py_temp_dir)
-        shutil.copy(os.path.join(temp_dir_str, f"{outname}.data"), os.getcwd())
-        shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), os.getcwd())
+
+def pack_python_core(env_prefix: Path, outname, version, export_name):
+    warnings.warn(
+        "pack_python_core is deprecated, use `pack_environment`",
+        DeprecationWarning,
+    )
+    print(
+        "pack_python_core is deprecated, use `pack_environment`",
+    )
+    pack_environment(env_prefix=env_prefix, outname=outname, export_name=export_name)
 
 
 def pack_file(
@@ -269,38 +285,59 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname):
     pkg_name = recipe["package"]["name"]
     print("pack_prefix", pack_prefix)
     create_env(pkg_name, pack_prefix, platform="emscripten-32")
-    shrink_conda_meta(pack_prefix)
+    # shrink_conda_meta(pack_prefix)
 
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_dir_str = str(temp_dir)
+    pack_environment(
+        env_prefix=pack_prefix,
+        outname=outname,
+        export_name="globalThis.Module",
+        pack_outdir=pack_outdir,
+    )
 
-        if os.path.isdir(os.path.join(pack_prefix, "bin")):
-            shutil.rmtree(os.path.join(pack_prefix, "bin"), ignore_errors=True)
 
-        if os.path.isdir(os.path.join(pack_prefix, "lib", "pkgconfig")):
-            shutil.rmtree(
-                os.path.join(pack_prefix, "lib", "pkgconfig"), ignore_errors=True
-            )
+# def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname):
+#     """pack a conda pkg with emscriptens filepackager
 
-        ignore = make_ignore_patterns(pack_prefix)
-        # ignore=None
-        print(f"copy tree from  {pack_prefix} to {temp_dir_str}")
-        d = os.path.join(temp_dir_str, "the_env")
-        copytree(pack_prefix, temp_dir_str, ignore=ignore)
+#     Args:
+#         recipe (dict): the rendered recipe as dict
+#         pack_prefix (str): path where the packed env will be created (WARNING this will override the envs content)
+#         pack_outdir (str): destination folder for the created pkgs
+#     """
+#     pkg_name = recipe["package"]["name"]
+#     print("pack_prefix", pack_prefix)
+#     create_env(pkg_name, pack_prefix, platform="emscripten-32")
+#     shrink_conda_meta(pack_prefix)
 
-        mount_path = pack_prefix
-        export_name = "globalThis.Module"
-        emscripten_file_packager(
-            outname=outname,
-            to_mount=temp_dir_str,
-            mount_path=pack_prefix,
-            export_name=export_name,
-            use_preload_plugins=True,
-            no_node=export_name.startswith("globalThis"),
-            lz4=True,
-            cwd=temp_dir_str,
-        )
-        if not os.path.isdir(pack_outdir):
-            os.path.mkdir(pack_outdir)
-        shutil.copy(os.path.join(temp_dir_str, f"{outname}.data"), pack_outdir)
-        shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), pack_outdir)
+#     with tempfile.TemporaryDirectory() as temp_dir:
+#         temp_dir_str = str(temp_dir)
+
+#         if os.path.isdir(os.path.join(pack_prefix, "bin")):
+#             shutil.rmtree(os.path.join(pack_prefix, "bin"), ignore_errors=True)
+
+#         if os.path.isdir(os.path.join(pack_prefix, "lib", "pkgconfig")):
+#             shutil.rmtree(
+#                 os.path.join(pack_prefix, "lib", "pkgconfig"), ignore_errors=True
+#             )
+
+#         ignore = make_ignore_patterns(pack_prefix)
+#         # ignore=None
+#         print(f"copy tree from  {pack_prefix} to {temp_dir_str}")
+#         d = os.path.join(temp_dir_str, "the_env")
+#         copytree(pack_prefix, temp_dir_str, ignore=ignore)
+
+#         mount_path = pack_prefix
+#         export_name = "globalThis.Module"
+#         emscripten_file_packager(
+#             outname=outname,
+#             to_mount=temp_dir_str,
+#             mount_path=pack_prefix,
+#             export_name=export_name,
+#             use_preload_plugins=True,
+#             no_node=export_name.startswith("globalThis"),
+#             lz4=True,
+#             cwd=temp_dir_str,
+#         )
+#         if not os.path.isdir(pack_outdir):
+#             os.path.mkdir(pack_outdir)
+#         shutil.copy(os.path.join(temp_dir_str, f"{outname}.data"), pack_outdir)
+#         shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), pack_outdir)
