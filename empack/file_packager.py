@@ -166,7 +166,6 @@ def pack_environment(
     env_name = PurePath(env_prefix).parts[-1]
     env_root = os.path.join(*PurePath(env_prefix).parts[:-1])
 
-    print(f"{env_name=} {env_root=}")
 
     # create a temp dir and store the filter&copy
     # the data to the tmp directory
