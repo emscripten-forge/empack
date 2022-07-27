@@ -163,7 +163,6 @@ def pack_environment(
     env_prefix: Path, outname, export_name, pack_outdir=None, download_emsdk=None
 ):
     # name of the env
-    print("env_prefix", env_prefix)
     env_name = PurePath(env_prefix).parts[-1]
     env_root = os.path.join(*PurePath(env_prefix).parts[:-1])
 
