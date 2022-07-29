@@ -1,14 +1,10 @@
-from .app import app
-import typer
 from pathlib import Path
-from typing import List, Optional
 
+import typer
 
-from empack.file_packager import (
-    pack_file,
-    pack_python_core,
-)
+from empack.file_packager import pack_file, pack_python_core
 
+from .app import app
 
 # packaging
 pack_app = typer.Typer()
@@ -55,7 +51,7 @@ def core(
     outname: str = "python_data",
     version: str = "3.11",
     export_name="globalThis.Module",
-    download_emsdk: str = ""
+    download_emsdk: str = "",
 ):
     pack_python_core(
         env_prefix=env_prefix,

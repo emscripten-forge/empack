@@ -1,16 +1,16 @@
-import subprocess
-import os
-import sys
-import importlib
-from pathlib import Path
-import requests
-import shutil
-import tempfile
-import typer
-from urllib import request
 import json
-from pathlib import PurePath
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
 import warnings
+from pathlib import Path, PurePath
+from urllib import request
+
+import requests
+import typer
+
 from .filter_env import filter_env
 
 EMSDK_VER = "latest"
@@ -105,7 +105,7 @@ def get_file_packager_path():
     file_packager_path = os.environ.get("FILE_PACKAGER")
     if file_packager_path is None:
         print(
-            f"FILE_PACKAGER needs to be an env variable pointing to emscpriptens file_packager.py"
+            "FILE_PACKAGER needs to be an env variable pointing to emscpriptens file_packager.py"
         )
         raise typer.Exit()
     return file_packager_path
@@ -133,7 +133,7 @@ def emscripten_file_packager(
         sys.executable,
         file_packager_path,
         f"{outname}.data",
-        f"--preload",
+        "--preload",
         f"{to_mount}@{mount_path}",
         f"--js-output={outname}.js",
         f"--export-name={export_name}",
@@ -164,8 +164,6 @@ def pack_environment(
 ):
     # name of the env
     env_name = PurePath(env_prefix).parts[-1]
-    env_root = os.path.join(*PurePath(env_prefix).parts[:-1])
-
 
     # create a temp dir and store the filter&copy
     # the data to the tmp directory
@@ -222,7 +220,7 @@ def pack_file(
 
         emscripten_file_packager(
             outname=outname,
-            to_mount=f"assets/",
+            to_mount="assets/",
             mount_path=mount_path,
             export_name=export_name,
             use_preload_plugins=use_preload_plugins,
@@ -237,7 +235,6 @@ def pack_file(
 
 
 def create_env(pkg_name, prefix, platform):
-    # cmd = ['$MAMBA_EXE' ,'create','--prefix', prefix,'--platform=emscripten-32'] + [pkg_name] #+ ['--dryrun']
     cmd = [
         f"$MAMBA_EXE create --yes --prefix {prefix} --platform={platform} --no-deps {pkg_name}"
     ]
@@ -262,7 +259,8 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname):
 
     Args:
         recipe (dict): the rendered recipe as dict
-        pack_prefix (str): path where the packed env will be created (WARNING this will override the envs content)
+        pack_prefix (str): path where the packed env will be created
+                           (WARNING this will override the envs content)
         pack_outdir (str): destination folder for the created pkgs
     """
     pkg_name = recipe["package"]["name"]
