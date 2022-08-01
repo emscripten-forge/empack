@@ -1,4 +1,4 @@
-from empack.file_patterns import *
+from empack.file_patterns import FileFilter, FilePattern
 
 
 def test_regex_pattern():
@@ -53,8 +53,9 @@ def test_empty_file_filter():
 
 
 if __name__ == "__main__":
-    import pytest
     import sys
+
+    import pytest
 
     retcode = pytest.main()
     sys.exit(retcode)

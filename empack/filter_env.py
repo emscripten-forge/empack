@@ -1,18 +1,11 @@
-import os
 import glob
 import json
-from pathlib import PurePath
-
-
-# import pathlib
+import os
 import shutil
-import tempfile
-import tarfile
+
 import yaml
-import re
 
-from .file_patterns import *
-
+from .file_patterns import FileFilter
 
 # sensible default
 pack_config = {
@@ -20,7 +13,7 @@ pack_config = {
         "python-dateutil": {
             "include_patterns": [
                 {
-                    "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))|(.*dateutil-zoneinfo\.tar\.gz$)",
+                    "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))|(.*dateutil-zoneinfo\.tar\.gz$)",  # noqa: E501
                 }
             ],
             "exclude_patterns": [],

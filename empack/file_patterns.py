@@ -1,11 +1,8 @@
-from enum import Enum
-from pydantic import BaseModel, Field
-from typing import Union, List
-from pydantic import BaseModel, validator, PrivateAttr, Field, Extra
 import fnmatch
-
-import pathlib
 import re
+from typing import List, Union
+
+from pydantic import BaseModel, Extra, Field, PrivateAttr
 
 
 class FilePatternsModelBase(BaseModel, extra=Extra.forbid):
