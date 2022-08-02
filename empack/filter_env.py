@@ -22,11 +22,15 @@ pack_config = {
     },
     "default": {
         "include_patterns": [
-            {
-                "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))",
-            }
+            {"pattern": "*.py"},
+            {"pattern": "lib/*.so*"},
         ],
-        "exclude_patterns": [],
+        "exclude_patterns": [
+            {"pattern": "tests/*"},
+            {"pattern": "docs/*"},
+            {"pattern": "*/tests/*"},
+            {"pattern": "*/docs/*"},
+        ],
     },
 }
 

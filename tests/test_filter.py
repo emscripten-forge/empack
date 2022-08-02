@@ -52,6 +52,34 @@ def test_empty_file_filter():
     assert not fp.match("/hometests/fu/bar.so")
 
 
+def test_default_patterns():
+
+    fp = FileFilter.parse_obj(
+        {
+            "include_patterns": [
+                {"pattern": "*.py"},
+                {"pattern": "lib/*.so*"},
+            ],
+            "exclude_patterns": [
+                {"pattern": "tests/*"},
+                {"pattern": "docs/*"},
+                {"pattern": "*/tests/*"},
+                {"pattern": "*/docs/*"},
+            ],
+        }
+    )
+
+    assert fp.match("mylib/some/file.py")
+    assert fp.match("lib/xyz.so")
+    assert fp.match("lib/xyz.so.32.1")
+    assert fp.match("lib/some/xyz.so.32.1")
+
+    assert not fp.match("tests/myother.py")
+    assert not fp.match("docs/myother.py")
+    assert not fp.match("xyz/docs/myother.py")
+    assert not fp.match("xyz/tests/myother.py")
+
+
 if __name__ == "__main__":
     import sys
 
