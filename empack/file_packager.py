@@ -146,18 +146,22 @@ def emscripten_file_packager(
 
     if lz4:
         cmd += ["--lz4"]
-    if not silent:
-        subprocess.run(cmd, shell=False, check=True, cwd=cwd)
-    else:
-        subprocess.run(
-            cmd,
-            shell=False,
-            check=True,
-            cwd=cwd,
-            stderr=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-        )
-
+    try:
+        if not silent:
+            res = subprocess.check_output(cmd, shell=False, cwd=cwd, stderr=subprocess.STDOUT)
+            print(res.output)
+        else:
+            subprocess.run(
+                cmd,
+                shell=False,
+                check=True,
+                cwd=cwd,
+                stderr=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+            )
+    except subprocess.CalledProcessError as e:
+        print(e.output)
+        raise e
 
 def pack_environment(
     env_prefix: Path, outname, export_name, pack_outdir=None, download_emsdk=None

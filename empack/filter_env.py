@@ -38,6 +38,7 @@ if os.path.isfile(pack_config_path):
 
 
 def filter_pkg(env_prefix, pkg_meta_file, target_dir):
+    env_path = Path(env_prefix)
     with open(pkg_meta_file, "r") as f:
         pkg_meta = json.load(f)
         name = pkg_meta["name"]
@@ -51,6 +52,9 @@ def filter_pkg(env_prefix, pkg_meta_file, target_dir):
         for file in files:
             include = include_patterns.match(file)
             if include:
+                path = env_path / file
+                if path.is_symlink() and not path.exists():
+                    continue
 
                 dest_fpath = os.path.join(target_dir, file)
                 os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
