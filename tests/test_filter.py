@@ -1,4 +1,5 @@
 from empack.file_patterns import FileFilter, FilePattern
+from empack.filter_env import pack_config
 
 
 def test_regex_pattern():
@@ -56,6 +57,13 @@ def test_empty_file_filter():
     assert not fp.match("/home/tests/fu/bar.so")
     assert not fp.match("/hometests/fu/bar.py")
     assert not fp.match("/hometests/fu/bar.so")
+
+
+def test_default():
+
+    p = FileFilter.parse_obj(pack_config["default"])
+    for pkg_name, conf in pack_config["packages"].items():
+        p = FileFilter.parse_obj(conf)
 
 
 if __name__ == "__main__":
