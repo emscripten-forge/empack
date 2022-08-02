@@ -151,7 +151,7 @@ def emscripten_file_packager(
             res = subprocess.check_output(
                 cmd, shell=False, cwd=cwd, stderr=subprocess.STDOUT
             )
-            print(res.output)
+            print(res.decode('utf-8'))
         else:
             subprocess.run(
                 cmd,
@@ -162,7 +162,7 @@ def emscripten_file_packager(
                 stdout=subprocess.DEVNULL,
             )
     except subprocess.CalledProcessError as e:
-        print(e.output)
+        print(e.output.decode('utf-8'))
         raise e
 
 
