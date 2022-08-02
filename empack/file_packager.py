@@ -26,7 +26,7 @@ def shrink_conda_meta(prefix, target_dir=None):
 
     conda_meta = prefix / "conda-meta"
     target_dir = Path(target_dir) / "conda-meta"
-    target_dir.mkdir(parents=True, exists_ok=True)
+    target_dir.mkdir(parents=True, exist_ok=True)
 
     for p in conda_meta.glob("*.json"):
         with open(p, "r") as file:
