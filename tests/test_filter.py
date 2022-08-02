@@ -28,11 +28,17 @@ def test_unix_pattern():
 def test_file_filter():
     fp = FileFilter.parse_obj(
         {
-            "include_patterns": [{"pattern": "*.py"}, {"pattern": "*.so"}],
+            "include_patterns": [
+                {"pattern": "*.py"},
+                {"pattern": "*.so"},
+                {"pattern": "*matplotlibrc"},
+            ],
             "exclude_patterns": [{"pattern": "**/tests/*"}],
         }
     )
-
+    assert fp.match(
+        "/tmp/xeus-python-kernel/envs/xeus-python-kernel/lib/python3.10/site-packages/matplotlib/mpl-data/matplotlibrc"
+    )
     assert fp.match("/home/fu/bar.py")
     assert fp.match("/home/fu/bar.so")
     assert not fp.match("/home/tests/fu/bar.py")
