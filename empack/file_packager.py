@@ -197,8 +197,10 @@ def pack_environment(
             cwd=str(temp_dir),
             download_emsdk=download_emsdk,
         )
+
         if pack_outdir is None:
             pack_outdir = os.getcwd()
+
         shutil.copy(os.path.join(str(temp_dir), f"{outname}.data"), pack_outdir)
         shutil.copy(os.path.join(str(temp_dir), f"{outname}.js"), pack_outdir)
 

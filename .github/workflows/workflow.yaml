@@ -1,4 +1,4 @@
-name: test empack
+name: Run some simple tests on empack
 on:
   push:
     branches:
@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build_recipes:
+  test_empack:
     runs-on: ubuntu-latest
     env:
       TARGET_PLATFORM: emscripten-32
@@ -30,39 +30,48 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: install mamba
+      - name: Install mamba and dependencies
         uses: mamba-org/provision-with-micromamba@main
         with:
           environment-file: ci_env.yml
           environment-name: ci-env
           micromamba-version: '0.25.1'
 
-      - name: install emsdk
+      - name: Install emsdk
         shell: bash -l {0}
         run: |
           micromamba activate ci-env
-          emsdk install ${{matrix.emsdk_ver}}
+          emsdk install ${{ matrix.emsdk_ver }}
+          emsdk activate ${{ matrix.emsdk_evr }}
 
-      - name: "install custom non-master dependencies"
+      - name: Install empack
         shell: bash -l {0}
         run: |
           micromamba activate ci-env
           pip install .
 
-      - name: "Run smoke tests"
+      - name: Run smoke tests
         shell: bash -l {0}
         run: |
           empack --help
           empack pack --help
 
-      - name: "Create env and pack it up"
+      - name: Create Python env and pack it up
         shell: bash -l {0}
         run: |
           micromamba create -n env1 -c https://repo.mamba.pm/emscripten-forge --platform=emscripten-32 python
+
+          emsdk activate ${{ matrix.emsdk_ver }}
+          source $CONDA_EMSDK_DIR/emsdk_env.sh
+
           empack pack python core $MAMBA_ROOT_PREFIX/envs/env1 --version=3.10
 
-      - name: "Create another env and pack it up"
+      - name: Create another lib-only env and pack it up
         shell: bash -l {0}
         run: |
           micromamba create -n env2 -c https://repo.mamba.pm/emscripten-forge --platform=emscripten-32 eigen
+
+          emsdk activate ${{ matrix.emsdk_ver }}
+          source $CONDA_EMSDK_DIR/emsdk_env.sh
+
           empack pack python core $MAMBA_ROOT_PREFIX/envs/env2 --version=3.10
