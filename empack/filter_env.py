@@ -15,11 +15,19 @@ pack_config = {
             "include_patterns": [
                 {
                     "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))|(.*dateutil-zoneinfo\.tar\.gz$)",  # noqa: E501
-                    "pattern": "*matplotlibrc",
                 }
             ],
             "exclude_patterns": [],
-        }
+        },
+        "matplotlib": {
+            "include_patterns": [
+                {
+                    "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))",
+                },
+                {"pattern": "*matplotlibrc"},
+            ],
+            "exclude_patterns": [],
+        },
     },
     "default": {
         "include_patterns": [
