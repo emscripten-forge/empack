@@ -148,7 +148,9 @@ def emscripten_file_packager(
         cmd += ["--lz4"]
     try:
         if not silent:
-            res = subprocess.check_output(cmd, shell=False, cwd=cwd, stderr=subprocess.STDOUT)
+            res = subprocess.check_output(
+                cmd, shell=False, cwd=cwd, stderr=subprocess.STDOUT
+            )
             print(res.output)
         else:
             subprocess.run(
@@ -162,6 +164,7 @@ def emscripten_file_packager(
     except subprocess.CalledProcessError as e:
         print(e.output)
         raise e
+
 
 def pack_environment(
     env_prefix: Path, outname, export_name, pack_outdir=None, download_emsdk=None
