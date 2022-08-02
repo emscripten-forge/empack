@@ -1,0 +1,7 @@
+name: ci-env
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - pip
+  - emsdk

@@ -18,20 +18,25 @@ EMSDK_VER = "latest"
 HERE = Path(__file__).parent
 
 
-def shrink_conda_meta(prefix):
-    conda_meta = os.path.join(prefix, "conda-meta")
+def shrink_conda_meta(prefix, target_dir=None):
+    if not target_dir:
+        target_dir = Path(prefix)
 
-    for filename in os.listdir(conda_meta):
-        f = os.path.join(conda_meta, filename)
-        if os.path.isfile(f) and f.endswith(".json"):
-            with open(f, "r") as file:
-                data = json.load(file)
+    prefix = Path(prefix)
 
-                data.pop("paths_data", None)
-                data.pop("files", None)
+    conda_meta = prefix / "conda-meta"
+    target_dir = Path(target_dir) / "conda-meta"
+    target_dir.mkdir(parents=True, exist_ok=True)
 
-            with open(f, "w") as outfile:
-                json.dump(data, outfile)
+    for p in conda_meta.glob("*.json"):
+        with open(p, "r") as file:
+            data = json.load(file)
+
+            data.pop("paths_data", None)
+            data.pop("files", None)
+
+        with open(target_dir / p.name, "w") as outfile:
+            json.dump(data, outfile)
 
 
 def download_and_setup_emsdk(emsdk_version):
@@ -146,17 +151,24 @@ def emscripten_file_packager(
 
     if lz4:
         cmd += ["--lz4"]
-    if not silent:
-        subprocess.run(cmd, shell=False, check=True, cwd=cwd)
-    else:
-        subprocess.run(
-            cmd,
-            shell=False,
-            check=True,
-            cwd=cwd,
-            stderr=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-        )
+    try:
+        if not silent:
+            res = subprocess.check_output(
+                cmd, shell=False, cwd=cwd, stderr=subprocess.STDOUT
+            )
+            print(res.decode("utf-8"))
+        else:
+            subprocess.run(
+                cmd,
+                shell=False,
+                check=True,
+                cwd=cwd,
+                stderr=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+            )
+    except subprocess.CalledProcessError as e:
+        print(e.output.decode("utf-8"))
+        raise e
 
 
 def pack_environment(
@@ -172,6 +184,7 @@ def pack_environment(
         os.makedirs(target_dir)
 
         filter_env(env_prefix=env_prefix, target_dir=target_dir)
+        shrink_conda_meta(env_prefix, target_dir=target_dir)
 
         emscripten_file_packager(
             outname=outname,
