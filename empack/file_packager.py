@@ -131,7 +131,7 @@ def emscripten_file_packager(
 
     cmd = [
         sys.executable,
-        file_packager_path,
+        str(file_packager_path),
         f"{outname}.data",
         "--preload",
         f"{to_mount}@{mount_path}",
