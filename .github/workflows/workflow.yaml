@@ -67,7 +67,20 @@ jobs:
           emsdk activate ${{ matrix.emsdk_ver }}
           source $CONDA_EMSDK_DIR/emsdk_env.sh
 
-          empack pack python core $MAMBA_ROOT_PREFIX/envs/env1 --version=3.10
+          empack pack env \
+            --env-prefix $MAMBA_ROOT_PREFIX/envs/env1 \
+            --outname env_1 \
+            --config $GITHUB_WORKSPACE/tests/empack_test_config.yaml
+
+          if [ ! -f "env_1.js" ]; then
+            echo "env_1.js is missing"
+            exit 1
+          fi
+          if [ ! -f "env_1.data" ]; then
+            echo "env_1.data is missing"
+            exit 1
+          fi
+
 
       - name: Create another lib-only env and pack it up
         shell: bash -l {0}
@@ -77,4 +90,31 @@ jobs:
           emsdk activate ${{ matrix.emsdk_ver }}
           source $CONDA_EMSDK_DIR/emsdk_env.sh
 
-          empack pack python core $MAMBA_ROOT_PREFIX/envs/env2 --version=3.10
+          empack pack env \
+            --env-prefix $MAMBA_ROOT_PREFIX/envs/env2 \
+            --outname env_2 \
+            --config $GITHUB_WORKSPACE/tests/empack_test_config.yaml
+
+          if [ ! -f "env_2.js" ]; then
+            echo "env_2.js is missing"
+            exit 1
+          fi
+          if [ ! -f "env_2.data" ]; then
+            echo "env_2.data is missing"
+            exit 1
+          fi
+
+
+          empack pack env \
+            -c $GITHUB_WORKSPACE/tests/empack_test_config.yaml \
+            -e $MAMBA_ROOT_PREFIX/envs/env2 \
+            -o env_2_b \
+
+          if [ ! -f "env_2_b.js" ]; then
+            echo "env_2_b.js is missing"
+            exit 1
+          fi
+          if [ ! -f "env_2_b.data" ]; then
+            echo "env_2_b.data is missing"
+            exit 1
+          fi

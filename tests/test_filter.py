@@ -1,5 +1,4 @@
-from empack.file_patterns import FileFilter, FilePattern, PkgFileFilter
-from empack.filter_env import pack_config
+from empack.file_patterns import FileFilter, FilePattern, pkg_file_filter_from_yaml
 
 
 def test_regex_pattern():
@@ -73,25 +72,24 @@ def test_dataset_filter():
     assert not fp.match("/home/fu/sxklearn/datasets/some/folder.txt")
 
 
-def test_default():
+def test_from_yaml():
+    import os
 
-    FileFilter.parse_obj(pack_config["default"])
-    for _pkg_name, conf in pack_config["packages"].items():
-        FileFilter.parse_obj(conf)
+    dn = os.path.dirname(os.path.realpath(__file__))
+    config_path = os.path.join(dn, "empack_test_config.yaml")
+    pkg_file_filter = pkg_file_filter_from_yaml(config_path)
 
-
-def test_default_pkg_filter():
-    f = PkgFileFilter.parse_obj(pack_config)
-    assert f.match(pkg_name="fubar", path="/home/fu/bar.py")
-    assert f.match(pkg_name="fubar", path="/home/fu/bar.so")
-    assert not f.match(pkg_name="fubar", path="/home/tests/fu/bar.py")
-    assert not f.match(pkg_name="fubar", path="/home/tests/fu/bar.so")
-    assert f.match(pkg_name="fubar", path="/hometests/fu/bar.py")
-    assert f.match(pkg_name="fubar", path="/hometests/fu/bar.so")
+    assert pkg_file_filter.match(pkg_name="fubar", path="/home/fu/bar.py")
+    assert pkg_file_filter.match(pkg_name="fubar", path="/home/fu/bar.so")
+    assert not pkg_file_filter.match(pkg_name="fubar", path="/home/tests/fu/bar.py")
+    assert not pkg_file_filter.match(pkg_name="fubar", path="/home/tests/fu/bar.so")
+    assert pkg_file_filter.match(pkg_name="fubar", path="/hometests/fu/bar.py")
+    assert pkg_file_filter.match(pkg_name="fubar", path="/hometests/fu/bar.so")
 
 
 if __name__ == "__main__":
     import sys
+
     import pytest
 
     retcode = pytest.main()

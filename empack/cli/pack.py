@@ -1,8 +1,10 @@
 from pathlib import Path
+from typing import Optional
 
 import typer
 
-from empack.file_packager import pack_file, pack_python_core
+from empack.file_packager import pack_environment, pack_file
+from empack.file_patterns import pkg_file_filter_from_yaml
 
 from .app import app
 
@@ -19,44 +21,61 @@ def file(file: Path, mount_path, outname: str, export_name="globalThis.Module"):
     )
 
 
-# @pack_app.command()
-# def conda_pkg(
-#     pkg_name,
-#     prefix,
-#     env_name,
-#     channels: Optional[List[str]] = typer.Option(
-#         ["https://repo.mamba.pm/emscripten-forge", "conda-forge"]
-#     ),
-#     target_platform: Optional[str] = typer.Option("emscripten-32"),
-#     override: Optional[bool] = typer.Option(False),
-# ):
-#     print(f"{override=}")
-#     pack_conda_pkg(
-#         pkg_name=pkg_name,
-#         channels=channels,
-#         prefix=prefix,
-#         override=override,
-#         target_platform=target_platform,
-#     )
-
-
-# emscripten
-pack_python_app = typer.Typer()
-pack_app.add_typer(pack_python_app, name="python")
-
-
-@pack_python_app.command()
-def core(
-    env_prefix: Path,
-    outname: str = "python_data",
-    version: str = "3.11",
-    export_name="globalThis.Module",
-    download_emsdk: str = "",
+@pack_app.command()
+def env(
+    env_prefix: Path = typer.Option(  # noqa: B008
+        ...,
+        "--env-prefix",
+        "-e",
+        help="location/prefix of the emscripten-32 environment",
+    ),
+    outname: str = typer.Option(  # noqa: B008
+        ...,
+        "--outname",
+        "-o",
+        help="base filename of outputs:  {outname}.js / {outname}.data",
+    ),
+    config: Path = typer.Option(  # noqa: B008
+        ..., "--config", "-c", help="path to a .yaml file with the empack config"
+    ),
+    export_name: str = typer.Option(  # noqa: B008
+        "globalThis.Module", "--export-name", "-n"
+    ),  # noqa: B008
+    download_emsdk: bool = typer.Option(  # noqa: B008
+        False, "--download-emsdk", "-d", help="should emsdk be downloaded"
+    ),
+    emsdk_version: Optional[str] = typer.Option(  # noqa: B008
+        None,
+        "--emsdk-version",
+        "-v",
+        help="emsdk version (only useful when --download-emsdk is used)",
+    ),
 ):
-    pack_python_core(
+
+    # check that the environment prefix existis
+    if not env_prefix.is_dir():
+        print(f"""empack error: env-prefix `{env_prefix}` directory does not exist""")
+        raise typer.Exit(code=1)
+
+    # check that config file exists
+    if not config.is_file():
+        print(f"""empack error: config file `{config}` file does not exist""")
+        raise typer.Exit(code=1)
+
+    # load config
+    pkg_file_filter = pkg_file_filter_from_yaml(config)
+
+    # downstream `download_emsdk` handles two things:
+    # if the emsdk should be downloaded and the version
+    if not download_emsdk:
+        download_emsdk = None
+    else:
+        download_emsdk = emsdk_version
+
+    pack_environment(
         env_prefix=env_prefix,
         outname=outname,
-        version=version,
         export_name=export_name,
         download_emsdk=download_emsdk,
+        pkg_file_filter=pkg_file_filter,
     )
