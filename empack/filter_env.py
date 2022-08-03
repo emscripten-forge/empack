@@ -37,6 +37,15 @@ pack_config = {
             ],
             "exclude_patterns": [],
         },
+        "scikit-image": {
+            "include_patterns": [
+                {
+                    "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))",
+                },
+                {"pattern": "**/skimage/data/**"},
+            ],
+            "exclude_patterns": [],
+        },
     },
     "default": {
         "include_patterns": [
