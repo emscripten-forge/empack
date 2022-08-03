@@ -24,7 +24,7 @@ pack_config = {
                 {
                     "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))",
                 },
-                {"pattern": "*matplotlibrc"},
+                {"pattern": "**/matplotlib/mpl-data/**"},
             ],
             "exclude_patterns": [],
         },
