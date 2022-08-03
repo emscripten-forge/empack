@@ -38,7 +38,8 @@ def test_file_filter():
         }
     )
     assert fp.match(
-        "/tmp/xeus-python-kernel/envs/xeus-python-kernel/lib/python3.10/site-packages/matplotlib/mpl-data/matplotlibrc"
+        "/tmp/xeus-python-kernel/envs/xeus-python-kernel/lib/python3.10/"
+        "site-packages/matplotlib/mpl-data/matplotlibrc"
     )
     assert fp.match("/home/fu/bar.py")
     assert fp.match("/home/fu/bar.so")
@@ -59,11 +60,24 @@ def test_empty_file_filter():
     assert not fp.match("/hometests/fu/bar.so")
 
 
+def test_dataset_filter():
+
+    fp = FileFilter.parse_obj(
+        {
+            "include_patterns": [{"pattern": "**/sklearn/datasets/**"}],
+            "exclude_patterns": [],
+        }
+    )
+    assert fp.match("/home/fu/sklearn/datasets/some/folder.txt")
+    assert fp.match("/home/fu/sklearn/datasets/some/folder.py")
+    assert not fp.match("/home/fu/sxklearn/datasets/some/folder.txt")
+
+
 def test_default():
 
-    p = FileFilter.parse_obj(pack_config["default"])
-    for pkg_name, conf in pack_config["packages"].items():
-        p = FileFilter.parse_obj(conf)
+    FileFilter.parse_obj(pack_config["default"])
+    for _pkg_name, conf in pack_config["packages"].items():
+        FileFilter.parse_obj(conf)
 
 
 if __name__ == "__main__":

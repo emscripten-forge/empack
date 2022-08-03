@@ -37,18 +37,21 @@ jobs:
           environment-name: ci-env
           micromamba-version: '0.25.1'
 
-      - name: Install emsdk
-        shell: bash -l {0}
-        run: |
-          micromamba activate ci-env
-          emsdk install ${{ matrix.emsdk_ver }}
-          emsdk activate ${{ matrix.emsdk_evr }}
-
       - name: Install empack
         shell: bash -l {0}
         run: |
-          micromamba activate ci-env
           pip install .
+
+      - name: Run pytest
+        shell: bash -l {0}
+        run: |
+          pytest -v -s tests/
+
+      - name: Install emsdk
+        shell: bash -l {0}
+        run: |
+          emsdk install ${{ matrix.emsdk_ver }}
+          emsdk activate ${{ matrix.emsdk_evr }}
 
       - name: Run smoke tests
         shell: bash -l {0}

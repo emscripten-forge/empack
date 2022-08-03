@@ -28,6 +28,15 @@ pack_config = {
             ],
             "exclude_patterns": [],
         },
+        "scikit-learn": {
+            "include_patterns": [
+                {
+                    "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))",
+                },
+                {"pattern": "**/sklearn/datasets/**"},
+            ],
+            "exclude_patterns": [],
+        },
     },
     "default": {
         "include_patterns": [
