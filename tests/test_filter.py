@@ -1,4 +1,4 @@
-from empack.file_patterns import FileFilter, FilePattern
+from empack.file_patterns import FileFilter, FilePattern, PkgFileFilter
 from empack.filter_env import pack_config
 
 
@@ -80,9 +80,18 @@ def test_default():
         FileFilter.parse_obj(conf)
 
 
+def test_default_pkg_filter():
+    f = PkgFileFilter.parse_obj(pack_config)
+    assert f.match(pkg_name="fubar", path="/home/fu/bar.py")
+    assert f.match(pkg_name="fubar", path="/home/fu/bar.so")
+    assert not f.match(pkg_name="fubar", path="/home/tests/fu/bar.py")
+    assert not f.match(pkg_name="fubar", path="/home/tests/fu/bar.so")
+    assert f.match(pkg_name="fubar", path="/hometests/fu/bar.py")
+    assert f.match(pkg_name="fubar", path="/hometests/fu/bar.so")
+
+
 if __name__ == "__main__":
     import sys
-
     import pytest
 
     retcode = pytest.main()

@@ -1,6 +1,6 @@
 import fnmatch
 import re
-from typing import List, Union
+from typing import List, Union, Dict
 
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 
@@ -52,3 +52,12 @@ class FileFilter(BaseModel, extra=Extra.forbid):
                     return False
 
         return include
+
+
+class PkgFileFilter(BaseModel, extra=Extra.forbid):
+    packages: Dict[str, FileFilter]
+    default: FileFilter
+
+    def match(self, pkg_name, path):
+        matcher = self.packages.get(pkg_name, self.default)
+        return matcher.match(path)
