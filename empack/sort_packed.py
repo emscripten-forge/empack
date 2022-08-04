@@ -6,7 +6,7 @@ def sort_packed(in_file_path, out_file_path):
     with open(in_file_path, "r") as in_file:
         for line in in_file:
             if 'loadPackage({"files":' in line:
-                files = eval(line[16:-3])["files"]
+                files = json.loads(line[16:-3])["files"]
                 files.sort(key=lambda x: x["filename"])
                 # for file in files:
                 #     print(file)
