@@ -17,10 +17,3 @@ def sort_packed(in_file_path, out_file_path):
     with open(out_file_path, "wt") as out_file:
         for line in lines:
             out_file.write(line)
-
-
-if __name__ == "__main__":
-
-    in_file_path = "/home/derthorsten/src/empack/python_dataa.js"
-    out_file_path = "/home/derthorsten/src/empack/sorted_python_dataa.js"
-    sort_packed(in_file_path=in_file_path, out_file_path=out_file_path)
