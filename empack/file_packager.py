@@ -13,6 +13,7 @@ import typer
 
 from .file_patterns import PkgFileFilter
 from .filter_env import filter_env
+from .sort_packed import sort_packed
 
 EMSDK_VER = "latest"
 
@@ -213,6 +214,11 @@ def pack_environment(
 
         shutil.copy(os.path.join(str(temp_dir), f"{outname}.data"), pack_outdir)
         shutil.copy(os.path.join(str(temp_dir), f"{outname}.js"), pack_outdir)
+
+        sort_packed(
+            os.path.join(pack_outdir, f"{outname}.js"),
+            os.path.join(pack_outdir, f"{outname}.js"),
+        )
 
 
 def pack_file(
