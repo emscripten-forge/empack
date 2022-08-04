@@ -8,8 +8,8 @@ def sort_packed(in_file_path, out_file_path):
             if 'loadPackage({"files":' in line:
                 files = eval(line[16:-3])["files"]
                 files.sort(key=lambda x: x["filename"])
-                for file in files:
-                    print(file)
+                # for file in files:
+                #     print(file)
                 line = f"""loadPackage({
                     json.dumps({"files": files})
                 });"""
