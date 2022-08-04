@@ -1,7 +1,8 @@
 import fnmatch
 import re
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
+import yaml
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 
 
@@ -61,3 +62,11 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
     def match(self, pkg_name, path):
         matcher = self.packages.get(pkg_name, self.default)
         return matcher.match(path)
+
+
+def pkg_file_filter_from_yaml(path):
+
+    with open(path, "r") as pack_config_file:
+        pack_config = yaml.safe_load(pack_config_file)
+        pkg_file_filter = PkgFileFilter.parse_obj(pack_config)
+    return pkg_file_filter

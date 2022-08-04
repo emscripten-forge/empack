@@ -1,0 +1,27 @@
+packages:
+  python-dateutil:
+    include_patterns:
+      - regex: '^(?!.*\/tests\/).*(.*.\.py$)|(.*.\.so$)|(.*dateutil-zoneinfo\.tar\.gz$)'
+  matplotlib:
+    include_patterns:
+      - regex: '^(?!.*\/tests\/).*(.*.\.py$)|(.*.\.so$)'
+      - pattern: "*matplotlibrc"
+
+  scikit-learn:
+    include_patterns:
+      - regex: '^(?!.*\/tests\/).*(.*.\.py$)|(.*.\.so$)'
+      - pattern: "**/sklearn/datasets/**"
+
+  scikit-image:
+    include_patterns:
+      - regex: '^(?!.*\/tests\/).*(.*.\.py$)|(.*.\.so$)'
+      - pattern: "**/skimage/data/**"
+
+
+default:
+  include_patterns:
+    - pattern: '*.so'
+    - pattern: '*.py'
+  exclude_patterns:
+    - pattern: '**/tests/**/*.py'
+    - pattern: '**/tests/**/*.so'

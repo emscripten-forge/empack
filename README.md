@@ -16,10 +16,11 @@ pip install empack
 
 ## Usage
 
-You can pack the Python 3.10 environment (located at `/path/to/env`) with the following command:
+You can pack the  environment (located at `/path/to/env`) with the following command:
 
 ```bash
-empack pack python core /path/to/env --version=3.10
+empack pack env --env-prefix /path/to/env --outname python_data  --config /path/to/config.yaml
 ```
 
 This will generate two files `python_data.js` and `python_data.data` that you can use in the browser.
+A sample config is located in [`tests/empack_test_config.yaml`](https://github.com/emscripten-forge/empack/blob/main/tests/empack_test_config.yaml)

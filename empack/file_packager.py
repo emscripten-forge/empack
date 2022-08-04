@@ -4,13 +4,14 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import warnings
 from pathlib import Path, PurePath
+from typing import Union
 from urllib import request
 
 import requests
 import typer
 
+from .file_patterns import PkgFileFilter
 from .filter_env import filter_env
 
 EMSDK_VER = "latest"
@@ -172,7 +173,12 @@ def emscripten_file_packager(
 
 
 def pack_environment(
-    env_prefix: Path, outname, export_name, pack_outdir=None, download_emsdk=None
+    env_prefix: Path,
+    outname: str,
+    export_name: str,
+    pkg_file_filter: PkgFileFilter,
+    pack_outdir: Union[str, None] = None,
+    download_emsdk: Union[str, None] = None,
 ):
     # name of the env
     env_name = PurePath(env_prefix).parts[-1]
@@ -183,7 +189,11 @@ def pack_environment(
         target_dir = os.path.join(temp_dir, env_name)
         os.makedirs(target_dir)
 
-        filter_env(env_prefix=env_prefix, target_dir=target_dir)
+        filter_env(
+            env_prefix=env_prefix,
+            target_dir=target_dir,
+            pkg_file_filter=pkg_file_filter,
+        )
         shrink_conda_meta(env_prefix, target_dir=target_dir)
 
         emscripten_file_packager(
@@ -205,26 +215,13 @@ def pack_environment(
         shutil.copy(os.path.join(str(temp_dir), f"{outname}.js"), pack_outdir)
 
 
-def pack_python_core(env_prefix: Path, outname, version, export_name, download_emsdk):
-    warnings.warn(
-        "pack_python_core is deprecated, use `pack_environment`",
-        DeprecationWarning,
-    )
-    pack_environment(
-        env_prefix=env_prefix,
-        outname=outname,
-        export_name=export_name,
-        download_emsdk=download_emsdk,
-    )
-
-
 def pack_file(
     file: Path,
-    mount_path,
+    mount_path: str,
     outname: str,
-    export_name,
-    use_preload_plugins=True,
-    silent=False,
+    export_name: str,
+    use_preload_plugins: bool = True,
+    silent: bool = False,
 ):
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -249,7 +246,7 @@ def pack_file(
         shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), os.getcwd())
 
 
-def create_env(pkg_name, prefix, platform):
+def create_env(pkg_name: str, prefix: str, platform: str):
     cmd = [
         f"$MAMBA_EXE create --yes --prefix {prefix} --platform={platform} --no-deps {pkg_name}"
     ]
@@ -260,16 +257,7 @@ def create_env(pkg_name, prefix, platform):
     assert returncode == 0
 
 
-def make_pkg_name(recipe):
-
-    name = recipe["package"]["name"]
-    version = recipe["package"]["version"].replace(".", "_")
-    build_number = recipe["build"].get("number", 0)
-
-    return f"{name}_v_{version}__bn_{build_number}"
-
-
-def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname):
+def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname, pkg_file_filter):
     """pack a conda pkg with emscriptens filepackager
 
     Args:
@@ -279,13 +267,12 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname):
         pack_outdir (str): destination folder for the created pkgs
     """
     pkg_name = recipe["package"]["name"]
-    print("pack_prefix", pack_prefix)
     create_env(pkg_name, pack_prefix, platform="emscripten-32")
-    # shrink_conda_meta(pack_prefix)
 
     pack_environment(
         env_prefix=pack_prefix,
         outname=outname,
         export_name="globalThis.Module",
+        pkg_file_filter=pkg_file_filter,
         pack_outdir=pack_outdir,
     )
