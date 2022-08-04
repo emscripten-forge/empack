@@ -34,6 +34,6 @@ setup(
     name="empack",
     packages=find_packages(),
     url="https://github.com/emscripten-forge/empack",
-    version="1.0.0",
+    version="1.1.0",
     zip_safe=False,
 )
