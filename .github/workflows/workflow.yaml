@@ -82,6 +82,23 @@ jobs:
           fi
 
 
+          empack pack env \
+            --env-prefix $MAMBA_ROOT_PREFIX/envs/env1 \
+            --outname env_2 \
+            --config $GITHUB_WORKSPACE/tests/empack_test_config.yaml \
+            --config $GITHUB_WORKSPACE/tests/empack_test_extra_config.yaml \
+            --split
+
+          if [ ! -f "env_2.js" ]; then
+            echo "env_2.js is missing"
+            exit 1
+          fi
+          if [-f "env_2.data" ]; then
+            echo "env_2.data is present but should not be there!"
+            exit 1
+          fi
+
+
       - name: Create another lib-only env and pack it up
         shell: bash -l {0}
         run: |

@@ -1,6 +1,6 @@
 import fnmatch
 import re
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import yaml
 from pydantic import BaseModel, Extra, Field, PrivateAttr
@@ -63,10 +63,31 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
         matcher = self.packages.get(pkg_name, self.default)
         return matcher.match(path)
 
+    def merge(self, *others):
+        for other in others:
+            if other.default is not None:
+                self.default = other.default
 
-def pkg_file_filter_from_yaml(path):
+            for pkg_name, filters in other.packages.items():
+                self.packages[pkg_name] = filters
+
+
+# when multiple config files are provided, the default
+# must be optional for the additional configs, otherwise
+# the would always overwrite the main default config
+class AdditionalPkgFileFilter(BaseModel, extra=Extra.forbid):
+    packages: Dict[str, FileFilter]
+    default: Optional[FileFilter]
+
+
+def pkg_file_filter_from_yaml(path, *extra_path):
 
     with open(path, "r") as pack_config_file:
         pack_config = yaml.safe_load(pack_config_file)
         pkg_file_filter = PkgFileFilter.parse_obj(pack_config)
+
+    for path in extra_path:
+        with open(path, "r") as pack_config_file:
+            pack_config = yaml.safe_load(pack_config_file)
+            pkg_file_filter.merge(AdditionalPkgFileFilter.parse_obj(pack_config))
     return pkg_file_filter

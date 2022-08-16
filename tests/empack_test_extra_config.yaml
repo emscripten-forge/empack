@@ -1,0 +1,4 @@
+packages:
+  scikit-image:
+    exclude_patterns:
+      - pattern: '**'
