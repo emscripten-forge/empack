@@ -11,9 +11,9 @@ from urllib import request
 import requests
 import typer
 
+from .extend_js import extend_js
 from .file_patterns import PkgFileFilter
-from .filter_env import filter_env
-from .sort_packed import sort_packed
+from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta
 
 EMSDK_VER = "latest"
 
@@ -173,6 +173,70 @@ def emscripten_file_packager(
         raise e
 
 
+def split_pack_environment(
+    env_prefix: Path,
+    outname: str,
+    export_name: str,
+    pkg_file_filter: PkgFileFilter,
+    pack_outdir: Union[str, None] = None,
+    download_emsdk: Union[str, None] = None,
+):
+    if pack_outdir is None:
+        pack_outdir = os.getcwd()
+
+    # name of the env
+    env_name = PurePath(env_prefix).parts[-1]
+    print(env_name)
+
+    all_pks = []
+    for pkg_meta in iterate_env_pkg_meta(env_prefix):
+
+        pkg_outname = pkg_meta["fn"][:-8]
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            target_dir = os.path.join(temp_dir, env_name)
+            os.makedirs(target_dir)
+
+        has_any_file = filter_pkg(
+            env_prefix=env_prefix,
+            pkg_meta=pkg_meta,
+            target_dir=target_dir,
+            pkg_file_filter=pkg_file_filter,
+        )
+        if has_any_file:
+            all_pks.append(pkg_outname)
+            emscripten_file_packager(
+                outname=pkg_outname,
+                to_mount=env_name,
+                mount_path=env_prefix,
+                export_name=export_name,
+                use_preload_plugins=True,
+                no_node=export_name.startswith("globalThis"),
+                lz4=True,
+                cwd=str(temp_dir),
+                download_emsdk=download_emsdk,
+            )
+
+            shutil.copy(os.path.join(str(temp_dir), f"{pkg_outname}.data"), pack_outdir)
+            shutil.copy(os.path.join(str(temp_dir), f"{pkg_outname}.js"), pack_outdir)
+
+            extend_js(os.path.join(pack_outdir, f"{pkg_outname}.js"))
+
+    # create the base js file
+    lines = []
+    for pkg_outname in all_pks:
+        lines.append(f"    promises.push(import('./{pkg_outname}.js'));")
+    txt = "\n".join(lines)
+    js_import_all_func = f"""export default async function(){{
+    let promises = [];
+{txt}
+    await Promise.all(promises);
+}}
+    """
+    with open(os.path.join(pack_outdir, f"{outname}.js"), "w") as f:
+        f.write(js_import_all_func)
+
+
 def pack_environment(
     env_prefix: Path,
     outname: str,
@@ -215,10 +279,7 @@ def pack_environment(
         shutil.copy(os.path.join(str(temp_dir), f"{outname}.data"), pack_outdir)
         shutil.copy(os.path.join(str(temp_dir), f"{outname}.js"), pack_outdir)
 
-        sort_packed(
-            os.path.join(pack_outdir, f"{outname}.js"),
-            os.path.join(pack_outdir, f"{outname}.js"),
-        )
+        extend_js(os.path.join(pack_outdir, f"{outname}.js"))
 
 
 def pack_file(
