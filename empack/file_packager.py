@@ -45,8 +45,10 @@ def download_and_setup_emsdk(emsdk_version):
     tag = None
     if emsdk_version == "latest":
         tags = requests.get("https://api.github.com/repos/emscripten-core/emsdk/tags")
-        if tags.content:
+        if tags.ok and tags.content:
             tag = json.loads(tags.content)[0]["name"]
+        else:
+            tag = '3.1.2'
     else:
         tag = emsdk_version
 
