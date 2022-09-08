@@ -1,0 +1,120 @@
+packages:
+  bokeh:
+    - include_patterns:
+        - pattern: '*.py'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+
+
+    - include_patterns:
+        - pattern: '**/bokeh/server/static/js/compiler.js'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+
+    - include_patterns:
+        - pattern: '*.js'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+
+    - include_patterns:
+        - pattern: '**/bokeh/server/static/js/bokeh.json'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+
+    - include_patterns:
+        - pattern: '*.json'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+
+    - include_patterns:
+        - pattern: '*.so'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+
+    - include_patterns:
+        - pattern: '*.so'
+        - pattern: '*.py'
+        - pattern: '**/bokeh/**/*.html'
+        - pattern: '**/bokeh/**/*.js'
+        - pattern: '**/bokeh/*.json'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+  scipy:
+    - include_patterns:
+        - pattern: '**/scipy/cluster/*.py'
+        - pattern: '**/scipy/cluster/*.json'
+        - pattern: '**/scipy/cluster/*.so'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+        - pattern: '**/tests/*.py'
+        - pattern: '**/tests/*.so'
+        - pattern: '**/stats/tests/**/*'
+        - pattern: '**/_test_*.so'
+        - pattern: '**/_ctest.*.so'
+        - pattern: '**/_cytest.*.so'
+
+    - include_patterns:
+        - pattern: '**/scipy/special/*.py'
+        - pattern: '**/scipy/special/*.json'
+        - pattern: '**/scipy/special/*.so'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+        - pattern: '**/tests/*.py'
+        - pattern: '**/tests/*.so'
+        - pattern: '**/stats/tests/**/*'
+        - pattern: '**/_test_*.so'
+        - pattern: '**/_ctest.*.so'
+        - pattern: '**/_cytest.*.so'
+
+    - include_patterns:
+        - pattern: '**/scipy/optimize/*.py'
+        - pattern: '**/scipy/optimize/*.json'
+        - pattern: '**/scipy/optimize/*.so'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+        - pattern: '**/tests/*.py'
+        - pattern: '**/tests/*.so'
+        - pattern: '**/stats/tests/**/*'
+        - pattern: '**/_test_*.so'
+        - pattern: '**/_ctest.*.so'
+        - pattern: '**/_cytest.*.so'
+
+    - include_patterns:
+        - pattern: '**/scipy/sparse/*.py'
+        - pattern: '**/scipy/sparse/*.json'
+        - pattern: '**/scipy/sparse/*.so'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+        - pattern: '**/tests/*.py'
+        - pattern: '**/tests/*.so'
+        - pattern: '**/stats/tests/**/*'
+        - pattern: '**/_test_*.so'
+        - pattern: '**/_ctest.*.so'
+        - pattern: '**/_cytest.*.so'
+
+    - include_patterns:
+        - pattern: '*.py'
+        - pattern: '*.json'
+        - pattern: '*.so'
+      exclude_patterns:
+        - pattern: '**/tests/**/*.py'
+        - pattern: '**/tests/**/*.so'
+        - pattern: '**/tests/*.py'
+        - pattern: '**/tests/*.so'
+        - pattern: '**/stats/tests/**/*'
+        - pattern: '**/_test_*.so'
+        - pattern: '**/_ctest.*.so'
+        - pattern: '**/_cytest.*.so'
+
+

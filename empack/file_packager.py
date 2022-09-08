@@ -13,7 +13,7 @@ import typer
 
 from .extend_js import extend_js
 from .file_patterns import PkgFileFilter
-from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta
+from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta, split_filter_pkg
 
 EMSDK_VER = "latest"
 
@@ -48,7 +48,7 @@ def download_and_setup_emsdk(emsdk_version):
         if tags.ok and tags.content:
             tag = json.loads(tags.content)[0]["name"]
         else:
-            tag = '3.1.2'
+            tag = "3.1.2"
     else:
         tag = emsdk_version
 
@@ -326,17 +326,9 @@ def create_env(pkg_name: str, prefix: str, platform: str):
     assert returncode == 0
 
 
-def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname, pkg_file_filter):
-    """pack a conda pkg with emscriptens filepackager
+def pack_conda_pkg(pkg_specs, pack_prefix, pack_outdir, outname, pkg_file_filter):
 
-    Args:
-        recipe (dict): the rendered recipe as dict
-        pack_prefix (str): path where the packed env will be created
-                           (WARNING this will override the envs content)
-        pack_outdir (str): destination folder for the created pkgs
-    """
-    pkg_name = recipe["package"]["name"]
-    create_env(pkg_name, pack_prefix, platform="emscripten-32")
+    create_env(pkg_specs, pack_prefix, platform="emscripten-32")
 
     pack_environment(
         env_prefix=pack_prefix,
@@ -345,3 +337,95 @@ def pack_conda_pkg(recipe, pack_prefix, pack_outdir, outname, pkg_file_filter):
         pkg_file_filter=pkg_file_filter,
         pack_outdir=pack_outdir,
     )
+
+
+def pack_from_repodata(
+    repodata,
+    env_prefix,
+    export_name: str,
+    pkg_file_filter: PkgFileFilter,
+    pack_outdir: Union[str, None] = None,
+    download_emsdk: Union[str, None] = None,
+):
+    if pack_outdir is None:
+        pack_outdir = os.getcwd()
+
+    env_name = "env"
+    for pkg_key, pkg_meta in repodata["packages"].items():
+
+        pkg_outname = pkg_key  # pkg_meta["fn"][:-8]
+
+        name = pkg_meta["name"]
+
+        version = pkg_meta["version"]
+        build = pkg_meta["build"]
+        spec = f"{name}={version}={build}"
+
+        if os.path.exists(env_prefix):
+            shutil.rmtree(env_prefix)
+
+        create_env(spec, env_prefix, platform="emscripten-32")
+
+        if name in pkg_file_filter.packages:
+            pkg_filt = pkg_file_filter.packages[name]
+        else:
+            pkg_filt = pkg_file_filter.default
+
+        if not isinstance(pkg_filt, list):
+            pkg_filt = [pkg_filt]
+
+        n_pkg = len(pkg_filt)
+
+        with tempfile.TemporaryDirectory() as temp_dir_root:
+
+            # make all target dirs
+            target_dirs = []
+            for i in range(n_pkg):
+                target_dir = os.path.join(temp_dir_root, f"{i}", env_name)
+                os.makedirs(target_dir)
+                target_dirs.append(target_dir)
+
+            pkg_metas = [pkg_meta for pkg_meta in iterate_env_pkg_meta(env_prefix)]
+            assert len(pkg_metas) == 1
+            pkg_meta = pkg_metas[0]
+
+            has_any_files = split_filter_pkg(
+                env_prefix=env_prefix,
+                pkg_meta=pkg_meta,
+                target_dirs=target_dirs,
+                pkg_file_filters=pkg_filt,
+            )
+            files = []
+            for i in range(n_pkg):
+
+                temp_dir = os.path.join(temp_dir_root, f"{i}")
+
+                if has_any_files[i]:
+                    emscripten_file_packager(
+                        outname=pkg_outname + f".{i}",
+                        to_mount=env_name,
+                        mount_path=env_prefix,
+                        export_name=export_name,
+                        use_preload_plugins=True,
+                        no_node=export_name.startswith("globalThis"),
+                        lz4=True,
+                        cwd=str(temp_dir),
+                        download_emsdk=download_emsdk,
+                        silent=True,
+                    )
+
+                    shutil.copy(
+                        os.path.join(str(temp_dir), f"{pkg_outname}.{i}.data"),
+                        pack_outdir,
+                    )
+                    shutil.copy(
+                        os.path.join(str(temp_dir), f"{pkg_outname}.{i}.js"),
+                        pack_outdir,
+                    )
+
+                    extend_js(os.path.join(pack_outdir, f"{pkg_outname}.{i}.js"))
+
+                    files.append(f"{pkg_outname}.{i}.js")
+
+            with open(os.path.join(pack_outdir, f"{pkg_outname}.json"), "w") as f:
+                json.dump(files, f)

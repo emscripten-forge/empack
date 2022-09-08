@@ -23,7 +23,7 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, pkg_file_filter):
     files = pkg_meta["files"]
     for file in files:
 
-        include = pkg_file_filter.match(pkg_name=name, path=file)
+        include = pkg_file_filter.match(path=file)
         if include:
             path = env_path / file
             if path.is_symlink() and not path.exists():
@@ -33,6 +33,33 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, pkg_file_filter):
             os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
             shutil.copy(os.path.join(env_prefix, file), dest_fpath)
             any_file = True
+    return any_file
+
+
+def split_filter_pkg(env_prefix, pkg_meta, target_dirs, pkg_file_filters):
+    n_pkg = len(target_dirs)
+    assert n_pkg == len(pkg_file_filters)
+
+    any_file = [False for i in range(n_pkg)]
+    env_path = Path(env_prefix)
+
+    name = pkg_meta["name"]
+    files = pkg_meta["files"]
+    for file in files:
+
+        for i in range(n_pkg):
+
+            include = pkg_file_filters[i].match(path=file)
+            if include:
+                path = env_path / file
+                if path.is_symlink() and not path.exists():
+                    continue
+
+                dest_fpath = os.path.join(target_dirs[i], file)
+                os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
+                shutil.copy(os.path.join(env_prefix, file), dest_fpath)
+                any_file[i] = True
+                break
     return any_file
 
 
