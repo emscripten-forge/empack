@@ -1,11 +1,13 @@
-import json
 import copy
-from collections import defaultdict
+import json
 import subprocess
+from collections import defaultdict
+
 
 # remove items not strictly needed to do the package solving (things like licenses)
 # from the pkg meta dict
 def shrink_pkg_meta(pkg_meta):
+    print(pkg_meta.keys())
     to_keep = ["name", "version", "build", "depends", "build_number"]
     return {key: pkg_meta[key] for key in to_keep}
 
@@ -181,7 +183,7 @@ def filter_out_by_micromamba(noarch_repodata):
                 -c https://repo.mamba.pm/conda-forge \
                 --yes \
                 --dry-run \
-                {pkg_meta["name"]}
+                {pkg_meta["name"]}=={pkg_meta["version"]}=={pkg_meta["build"]}
             """
             # args = args.split(" ")
             args = [args]
@@ -200,28 +202,3 @@ def filter_out_by_micromamba(noarch_repodata):
     shrinked_noarch_repodata["packages"] = shrinked_packages
 
     return shrinked_noarch_repodata
-
-
-# if __name__ == "__main__":
-#     noarch_in = "conda_forge_noarch_repodata.json"
-#     em_32_in = "emscripten_forge_emscripten_32_repodata.json"
-#     noarch_out = "shrinked_conda_forge_noarch_repodata.json"
-
-#     with open(noarch_in, "r") as f_in:
-#         noarch_repodata = json.load(f_in)
-
-#     with open(em_32_in, "r") as f_in:
-#         em_32_repodata = json.load(f_in)
-
-#     shrinked_noarch_repodata = noarch_repodata
-#     shrinked_noarch_repodata = filter_out_by_pkg_name(shrinked_noarch_repodata)
-#     shrinked_noarch_repodata = shrink_pkg_meta_items(shrinked_noarch_repodata)
-#     shrinked_noarch_repodata = only_keep_latest_build_number(shrinked_noarch_repodata)
-#     shrinked_noarch_repodata = shrink_trivial_unsatisfiable(
-#         shrinked_noarch_repodata, em_32_repodata
-#     )
-#     shrinked_noarch_repodata = filter_out_explict_unsat_deps(shrinked_noarch_repodata)
-#     # shrinked_noarch_repodata = filter_out_by_micromamba(shrinked_noarch_repodata)
-#     with open(noarch_out, "w") as f_out:
-#         # repodata = json.dump(shrinked_noarch_repodata, f_out, indent=4)
-#         repodata = json.dump(shrinked_noarch_repodata, f_out)

@@ -5,7 +5,6 @@ from typing import List, Optional
 import typer
 
 from ..shrink_repodata import *
-
 from .app import app
 from .err import exit_with_err
 
@@ -30,12 +29,37 @@ def shrink(
         "-a",
         help="location of arch repodata json",
     ),
-    split: bool = typer.Option(  # noqa: B008
+    outfile: Path = typer.Option(  # noqa: B008
+        ...,
+        "--outfile",
+        "-o",
+        help="location of noarch repodata json",
+    ),
+    indent: bool = typer.Option(  # noqa: B008
         False,
-        "--split",
+        "--indent",
         "-s",
-        help="if true, each pkg is packaged in its on *.js/*data",
+        help="if true, we add indent of 4 to the json",
     ),
 ):
 
-    pass
+    with open(noarch_repodata, "r") as f_in:
+        noarch_repodata = json.load(f_in)
+
+    with open(arch_repodata, "r") as f_in:
+        arch_repodata = json.load(f_in)
+
+    shrinked_noarch_repodata = noarch_repodata
+    shrinked_noarch_repodata = filter_out_by_pkg_name(shrinked_noarch_repodata)
+    # shrinked_noarch_repodata = shrink_pkg_meta_items(shrinked_noarch_repodata)
+    shrinked_noarch_repodata = only_keep_latest_build_number(shrinked_noarch_repodata)
+    shrinked_noarch_repodata = shrink_trivial_unsatisfiable(
+        shrinked_noarch_repodata, arch_repodata
+    )
+    shrinked_noarch_repodata = filter_out_explict_unsat_deps(shrinked_noarch_repodata)
+    shrinked_noarch_repodata = filter_out_by_micromamba(shrinked_noarch_repodata)
+    with open(outfile, "w") as f_out:
+        extra_kwargs = {}
+        if indent:
+            extra_kwargs["indent"] = 4
+        repodata = json.dump(shrinked_noarch_repodata, f_out, **extra_kwargs)

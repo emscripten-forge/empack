@@ -21,7 +21,7 @@ packages:
 
     - include_patterns:
         - pattern: '**/bokeh/server/static/js/bokeh.json'
-      exclude_patterns:
+    - exclude_patterns:
         - pattern: '**/tests/**/*.py'
         - pattern: '**/tests/**/*.so'
 
@@ -116,5 +116,3 @@ packages:
         - pattern: '**/_test_*.so'
         - pattern: '**/_ctest.*.so'
         - pattern: '**/_cytest.*.so'
-
-

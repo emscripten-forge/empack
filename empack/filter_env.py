@@ -43,9 +43,8 @@ def split_filter_pkg(env_prefix, pkg_meta, target_dirs, pkg_file_filters):
     any_file = [False for i in range(n_pkg)]
     env_path = Path(env_prefix)
 
-    name = pkg_meta["name"]
     files = pkg_meta["files"]
-    for file in files:
+    for file in pkg_meta["files"]:
 
         for i in range(n_pkg):
 
@@ -60,6 +59,22 @@ def split_filter_pkg(env_prefix, pkg_meta, target_dirs, pkg_file_filters):
                 shutil.copy(os.path.join(env_prefix, file), dest_fpath)
                 any_file[i] = True
                 break
+
+    # add conda meta to pkg 0
+    pkg_filename = f"{pkg_meta['name']}-{pkg_meta['version']}-{pkg_meta['build']}.json"
+    conda_meta_target = Path(os.path.join(target_dirs[0], "conda-meta"))
+    conda_meta_target.mkdir(parents=True, exist_ok=True)
+
+    # create absolute minimum conda-meta
+    pkg_conda_meta = dict(
+        name=pkg_meta["name"],
+        version=pkg_meta["version"],
+        build=pkg_meta["build"],
+        build_number=pkg_meta["build_number"],
+    )
+    with open(conda_meta_target / pkg_filename, "w") as f:
+        json.dump(pkg_conda_meta, f)
+
     return any_file
 
 
@@ -68,12 +83,16 @@ def filter_env(env_prefix, target_dir, pkg_file_filter):
         shutil.rmtree(target_dir)
         os.makedirs(target_dir)
     any_file = False
+
     for pkg_meta in iterate_env_pkg_meta(env_prefix):
+
         any_file_in_pkg = filter_pkg(
             env_prefix=env_prefix,
             pkg_meta=pkg_meta,
             target_dir=target_dir,
-            pkg_file_filter=pkg_file_filter,
+            pkg_file_filter=pkg_file_filter.packages.get(
+                pkg_meta["name"], pkg_file_filter.default
+            ),
         )
         if any_file_in_pkg:
             any_file = True
