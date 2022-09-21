@@ -3,16 +3,11 @@ import json
 
 
 def inspect_packed(js_file: Path):
-    print(f"inspecting {js_file}")
-
     with open(js_file, "r") as f:
-
         for line in f.readlines():
             start = 'loadPackage({"files": ['
             crop_from_start = len("loadPackage(")
             if line.startswith(start):
-                print("bingo")
-
                 content = line[crop_from_start:-3]
                 content = json.loads(content)
                 break
