@@ -59,10 +59,6 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
     packages: Dict[str, Union[FileFilter, List[FileFilter]]]
     default: FileFilter
 
-    # def match(self, pkg_name, path):
-    #     matcher = self.packages.get(pkg_name, self.default)
-    #     return matcher.match(path)
-
     def get_matcher(self, pkg_name):
         return self.packages.get(pkg_name, self.default)
 

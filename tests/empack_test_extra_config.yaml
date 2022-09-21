@@ -8,5 +8,7 @@ packages:
     - include_patterns:
       - pattern: '**/core'
     - include_patterns:
+      - pattern: '**/sparse'
+    - include_patterns:
       - pattern: '**'
 
