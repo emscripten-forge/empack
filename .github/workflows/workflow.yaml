@@ -83,8 +83,6 @@ jobs:
 
           empack pack inspect -j env_1.js 
 
-
-
           empack pack env \
             --env-prefix $MAMBA_ROOT_PREFIX/envs/env1 \
             --outname env_2 \
@@ -100,7 +98,6 @@ jobs:
             echo "env_2.data is present but should not be there!"
             exit 1
           fi
-
 
 
       - name: Create another lib-only env and pack it up
