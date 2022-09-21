@@ -81,6 +81,7 @@ jobs:
             exit 1
           fi
 
+          empack pack inspect -j env_1.js 
 
           empack pack env \
             --env-prefix $MAMBA_ROOT_PREFIX/envs/env1 \
