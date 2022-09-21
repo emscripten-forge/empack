@@ -188,13 +188,11 @@ def split_pack_environment(
 
     # name of the env
     env_name = PurePath(env_prefix).parts[-1]
-    print(env_name)
     js_files = []
     for pkg_meta in iterate_env_pkg_meta(env_prefix):
 
         pkg_outname = pkg_meta["fn"][:-8]
         pkg_name = pkg_meta["name"]
-        print(pkg_name)
 
         matchers = pkg_file_filter.get_matchers(pkg_name=pkg_name)
 

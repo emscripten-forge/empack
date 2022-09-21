@@ -126,7 +126,7 @@ jobs:
           empack pack env \
             -c $GITHUB_WORKSPACE/tests/empack_test_config.yaml \
             -e $MAMBA_ROOT_PREFIX/envs/env2 \
-            -o env_2_b \
+            -o env_2_b 
 
           if [ ! -f "env_2_b.js" ]; then
             echo "env_2_b.js is missing"
