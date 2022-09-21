@@ -56,12 +56,17 @@ class FileFilter(BaseModel, extra=Extra.forbid):
 
 
 class PkgFileFilter(BaseModel, extra=Extra.forbid):
-    packages: Dict[str, FileFilter]
+    packages: Dict[str, Union[FileFilter, List[FileFilter]]]
     default: FileFilter
 
-    def match(self, pkg_name, path):
-        matcher = self.packages.get(pkg_name, self.default)
-        return matcher.match(path)
+    def get_matcher(self, pkg_name):
+        return self.packages.get(pkg_name, self.default)
+
+    def get_matchers(self, pkg_name):
+        matchers = self.get_matcher(pkg_name)
+        if not isinstance(matchers, list):
+            matchers = [matchers]
+        return matchers
 
     def merge(self, *others):
         for other in others:
@@ -76,7 +81,7 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
 # must be optional for the additional configs, otherwise
 # the would always overwrite the main default config
 class AdditionalPkgFileFilter(BaseModel, extra=Extra.forbid):
-    packages: Dict[str, FileFilter]
+    packages: Dict[str, Union[FileFilter, List[FileFilter]]]
     default: Optional[FileFilter]
 
 

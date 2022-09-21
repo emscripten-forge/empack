@@ -14,7 +14,7 @@ def iterate_env_pkg_meta(env_prefix):
             yield pkg_meta
 
 
-def filter_pkg(env_prefix, pkg_meta, target_dir, pkg_file_filter):
+def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
 
     any_file = False
     env_path = Path(env_prefix)
@@ -23,17 +23,49 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, pkg_file_filter):
     files = pkg_meta["files"]
     for file in files:
 
-        include = pkg_file_filter.match(pkg_name=name, path=file)
-        if include:
-            path = env_path / file
-            if path.is_symlink() and not path.exists():
-                continue
+        for i, matcher in enumerate(matchers):
 
-            dest_fpath = os.path.join(target_dir, file)
-            os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
-            shutil.copy(os.path.join(env_prefix, file), dest_fpath)
-            any_file = True
+            include = matcher.match(path=file)
+            if include:
+                path = env_path / file
+                if path.is_symlink() and not path.exists():
+                    continue
+
+                dest_fpath = os.path.join(target_dir, file)
+                os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
+                shutil.copy(os.path.join(env_prefix, file), dest_fpath)
+                any_file = True
+                break
     return any_file
+
+
+def split_filter_pkg(env_prefix, pkg_meta, target_dirs, matchers):
+
+    assert len(target_dirs) == len(matchers)
+
+    any_files_array = [False] * len(target_dirs)
+    env_path = Path(env_prefix)
+
+    name = pkg_meta["name"]
+    files = pkg_meta["files"]
+    for file in files:
+
+        for i, matcher in enumerate(matchers):
+
+            include = matcher.match(path=file)
+            if include:
+                path = env_path / file
+                if path.is_symlink() and not path.exists():
+                    continue
+
+                dest_fpath = os.path.join(target_dirs[i], file)
+                os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
+                shutil.copy(os.path.join(env_prefix, file), dest_fpath)
+                any_files_array[i] = True
+
+                break
+
+    return any_files_array
 
 
 def filter_env(env_prefix, target_dir, pkg_file_filter):
@@ -42,11 +74,14 @@ def filter_env(env_prefix, target_dir, pkg_file_filter):
         os.makedirs(target_dir)
     any_file = False
     for pkg_meta in iterate_env_pkg_meta(env_prefix):
+
+        matchers = pkg_file_filter.get_matchers(pkg_name=pkg_meta["name"])
+
         any_file_in_pkg = filter_pkg(
             env_prefix=env_prefix,
             pkg_meta=pkg_meta,
             target_dir=target_dir,
-            pkg_file_filter=pkg_file_filter,
+            matchers=matchers,
         )
         if any_file_in_pkg:
             any_file = True

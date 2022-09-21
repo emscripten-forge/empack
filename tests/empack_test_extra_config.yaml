@@ -2,3 +2,13 @@ packages:
   scikit-image:
     exclude_patterns:
       - pattern: '**'
+
+
+  scipy:
+    - include_patterns:
+      - pattern: '**/core'
+    - include_patterns:
+      - pattern: '**/sparse'
+    - include_patterns:
+      - pattern: '**'
+

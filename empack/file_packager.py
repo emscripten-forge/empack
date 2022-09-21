@@ -13,7 +13,7 @@ import typer
 
 from .extend_js import extend_js
 from .file_patterns import PkgFileFilter
-from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta
+from .filter_env import filter_env, iterate_env_pkg_meta, split_filter_pkg
 
 EMSDK_VER = "latest"
 
@@ -48,7 +48,7 @@ def download_and_setup_emsdk(emsdk_version):
         if tags.ok and tags.content:
             tag = json.loads(tags.content)[0]["name"]
         else:
-            tag = '3.1.2'
+            tag = "3.1.2"
     else:
         tag = emsdk_version
 
@@ -188,46 +188,61 @@ def split_pack_environment(
 
     # name of the env
     env_name = PurePath(env_prefix).parts[-1]
-    print(env_name)
-
-    all_pks = []
+    js_files = []
     for pkg_meta in iterate_env_pkg_meta(env_prefix):
 
         pkg_outname = pkg_meta["fn"][:-8]
+        pkg_name = pkg_meta["name"]
 
-        with tempfile.TemporaryDirectory() as temp_dir:
-            target_dir = os.path.join(temp_dir, env_name)
-            os.makedirs(target_dir)
+        matchers = pkg_file_filter.get_matchers(pkg_name=pkg_name)
 
-        has_any_file = filter_pkg(
-            env_prefix=env_prefix,
-            pkg_meta=pkg_meta,
-            target_dir=target_dir,
-            pkg_file_filter=pkg_file_filter,
-        )
-        if has_any_file:
-            all_pks.append(pkg_outname)
-            emscripten_file_packager(
-                outname=pkg_outname,
-                to_mount=env_name,
-                mount_path=env_prefix,
-                export_name=export_name,
-                use_preload_plugins=True,
-                no_node=export_name.startswith("globalThis"),
-                lz4=True,
-                cwd=str(temp_dir),
-                download_emsdk=download_emsdk,
+        with tempfile.TemporaryDirectory() as temp_root_dir:
+
+            temp_dirs = []
+            target_dirs = []
+            for i in range(len(matchers)):
+                temp_dir = os.path.join(temp_root_dir, f"{i}")
+                target_dir = os.path.join(temp_dir, env_name)
+                os.makedirs(target_dir)
+                temp_dirs.append(temp_dir)
+                target_dirs.append(target_dir)
+
+            has_any_files = split_filter_pkg(
+                env_prefix=env_prefix,
+                pkg_meta=pkg_meta,
+                target_dirs=target_dirs,
+                matchers=matchers,
             )
 
-            shutil.copy(os.path.join(str(temp_dir), f"{pkg_outname}.data"), pack_outdir)
-            shutil.copy(os.path.join(str(temp_dir), f"{pkg_outname}.js"), pack_outdir)
+            for i in range(len(matchers)):
+                if has_any_files[i]:
+                    emscripten_file_packager(
+                        outname=f"{pkg_outname}.{i}",
+                        to_mount=env_name,
+                        mount_path=env_prefix,
+                        export_name=export_name,
+                        use_preload_plugins=True,
+                        no_node=export_name.startswith("globalThis"),
+                        lz4=True,
+                        cwd=str(temp_dirs[i]),
+                        download_emsdk=download_emsdk,
+                    )
+                    js_files.append(f"{pkg_outname}.{i}.js")
+                    shutil.copy(
+                        os.path.join(str(temp_dirs[i]), f"{pkg_outname}.{i}.data"),
+                        pack_outdir,
+                    )
+                    shutil.copy(
+                        os.path.join(str(temp_dirs[i]), f"{pkg_outname}.{i}.js"),
+                        pack_outdir,
+                    )
 
-            extend_js(os.path.join(pack_outdir, f"{pkg_outname}.js"))
+                    extend_js(os.path.join(pack_outdir, f"{pkg_outname}.{i}.js"))
 
     # create the base js file
     lines = []
-    for pkg_outname in all_pks:
-        lines.append(f"    promises.push(import('./{pkg_outname}.js'));")
+    for js_file in js_files:
+        lines.append(f"    promises.push(import('./{js_file}'));")
     txt = "\n".join(lines)
     js_import_all_func = f"""export default async function(){{
     let promises = [];
