@@ -5,7 +5,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path, PurePath
-from typing import Union
+from typing import Union, List
 from urllib import request
 
 import requests
@@ -233,6 +233,97 @@ def split_pack_environment(
         f.write(js_import_all_func)
 
 
+def pack_repodata(
+    repodata: dict,
+    env_prefix: Path,
+    channels: List,
+    export_name: str,
+    pkg_file_filter: PkgFileFilter,
+    pack_outdir: Union[str, None] = None,
+    download_emsdk: Union[str, None] = None,
+):
+
+    if pack_outdir is None:
+        pack_outdir = os.getcwd()
+
+    packages = repodata["packages"]
+    for pkg_key, pkg_meta in packages.items():
+
+        # for each pkg we need to make sure env prefix is empty
+        if env_prefix.is_dir():
+            shutil.rmtree(env_prefix)
+
+        env_prefix.mkdir(parents=True, exist_ok=True)
+
+        # create the env at a temp dir
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            # install environment to temp dir
+            env_name = "env"
+            temp_env_dir = Path(temp_dir) / env_name
+            pkg_spec = f"{pkg_meta['name']}={pkg_meta['version']}={pkg_meta['build']}"
+            create_env(
+                pkg_spec, temp_env_dir, platform="emscripten-32", channels=channels
+            )
+
+            js_files = []
+            for pkg_meta in iterate_env_pkg_meta(temp_env_dir):
+
+                pkg_outname = pkg_meta["fn"][:-8]
+                pkg_name = pkg_meta["name"]
+
+                matchers = pkg_file_filter.get_matchers(pkg_name=pkg_name)
+
+                with tempfile.TemporaryDirectory() as temp_root_dir:
+
+                    temp_dirs = []
+                    target_dirs = []
+                    for i in range(len(matchers)):
+                        temp_dir = os.path.join(temp_root_dir, f"{i}")
+                        target_dir = os.path.join(temp_dir, env_name)
+                        os.makedirs(target_dir)
+                        temp_dirs.append(temp_dir)
+                        target_dirs.append(target_dir)
+
+                    has_any_files = split_filter_pkg(
+                        env_prefix=temp_env_dir,
+                        pkg_meta=pkg_meta,
+                        target_dirs=target_dirs,
+                        matchers=matchers,
+                    )
+
+                    for i in range(len(matchers)):
+                        if has_any_files[i]:
+                            emscripten_file_packager(
+                                outname=f"{pkg_outname}.{i}",
+                                to_mount=env_name,
+                                mount_path=env_prefix,
+                                export_name=export_name,
+                                use_preload_plugins=True,
+                                no_node=export_name.startswith("globalThis"),
+                                lz4=True,
+                                cwd=str(temp_dirs[i]),
+                                download_emsdk=download_emsdk,
+                            )
+                            js_files.append(f"{pkg_outname}.{i}.js")
+                            shutil.copy(
+                                os.path.join(
+                                    str(temp_dirs[i]), f"{pkg_outname}.{i}.data"
+                                ),
+                                pack_outdir,
+                            )
+                            shutil.copy(
+                                os.path.join(
+                                    str(temp_dirs[i]), f"{pkg_outname}.{i}.js"
+                                ),
+                                pack_outdir,
+                            )
+
+                            extend_js(
+                                os.path.join(pack_outdir, f"{pkg_outname}.{i}.js")
+                            )
+
+
 def pack_environment(
     env_prefix: Path,
     outname: str,
@@ -308,9 +399,14 @@ def pack_file(
         shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), os.getcwd())
 
 
-def create_env(pkg_name: str, prefix: str, platform: str):
+def create_env(pkg_name: str, prefix: str, platform: str, channels=None):
+
+    channel_args = ""
+    if channels is not None:
+        channel_args = " ".join([f" -c {c} " for c in channels])
+
     cmd = [
-        f"$MAMBA_EXE create --yes --prefix {prefix} --platform={platform} --no-deps {pkg_name}"
+        f"$MAMBA_EXE create --yes --prefix {prefix} {channel_args} --platform={platform} --no-deps {pkg_name} "
     ]
     ret = subprocess.run(cmd, shell=True, check=False, capture_output=True)
     if ret.returncode != 0:
