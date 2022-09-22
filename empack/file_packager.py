@@ -20,27 +20,6 @@ EMSDK_VER = "latest"
 HERE = Path(__file__).parent
 
 
-def shrink_conda_meta(prefix, target_dir=None):
-    if not target_dir:
-        target_dir = Path(prefix)
-
-    prefix = Path(prefix)
-
-    conda_meta = prefix / "conda-meta"
-    target_dir = Path(target_dir) / "conda-meta"
-    target_dir.mkdir(parents=True, exist_ok=True)
-
-    for p in conda_meta.glob("*.json"):
-        with open(p, "r") as file:
-            data = json.load(file)
-
-            data.pop("paths_data", None)
-            data.pop("files", None)
-
-        with open(target_dir / p.name, "w") as outfile:
-            json.dump(data, outfile)
-
-
 def download_and_setup_emsdk(emsdk_version):
     tag = None
     if emsdk_version == "latest":
@@ -276,7 +255,6 @@ def pack_environment(
             target_dir=target_dir,
             pkg_file_filter=pkg_file_filter,
         )
-        shrink_conda_meta(env_prefix, target_dir=target_dir)
 
         emscripten_file_packager(
             outname=outname,
