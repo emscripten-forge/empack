@@ -30,6 +30,19 @@ def file(file: Path, mount_path, outname: str, export_name="globalThis.Module"):
 
 
 @pack_app.command()
+def directory(
+    directory: Path, mount_path, outname: str, export_name="globalThis.Module"
+):
+
+    pack_directory(
+        directory=directory,
+        mount_path=mount_path,
+        outname=outname,
+        export_name=export_name,
+    )
+
+
+@pack_app.command()
 def env(
     env_prefix: Path = typer.Option(  # noqa: B008
         ...,

@@ -399,6 +399,39 @@ def pack_file(
         shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), os.getcwd())
 
 
+def pack_directory(
+    directory: Path,
+    mount_path: str,
+    outname: str,
+    export_name: str,
+    use_preload_plugins: bool = True,
+    silent: bool = False,
+):
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_str = str(temp_dir)
+
+        os.makedirs(os.path.join(temp_dir_str, "assets"), exist_ok=False)
+        assets_dir = os.path.join(temp_dir_str, "assets")  # , PurePath(directory).name)
+        # print("SORUCDE", directory, "assets_dir", assets_dir)
+        shutil.copytree(directory, assets_dir, dirs_exist_ok=True)
+
+        emscripten_file_packager(
+            outname=outname,
+            to_mount="assets/",
+            mount_path=mount_path,
+            export_name=export_name,
+            use_preload_plugins=use_preload_plugins,
+            no_node=export_name.startswith("globalThis"),
+            lz4=True,
+            cwd=temp_dir_str,
+            silent=silent,
+        )
+
+        shutil.copy(os.path.join(temp_dir_str, f"{outname}.data"), os.getcwd())
+        shutil.copy(os.path.join(temp_dir_str, f"{outname}.js"), os.getcwd())
+
+
 def create_env(pkg_name: str, prefix: str, platform: str, channels=None):
 
     channel_args = ""
