@@ -14,9 +14,19 @@ def iterate_env_pkg_meta(env_prefix):
             yield pkg_meta
 
 
+def write_minimal_conda_meta(pkg_meta, env_prefix):
+    content = {k: pkg_meta[k] for k in ["name", "version", "build", "build_number"]}
+    conda_meta_dir = Path(env_prefix) / "conda-meta"
+    conda_meta_dir.mkdir(parents=True, exist_ok=True)
+
+    filename = f"{pkg_meta['name']}-{pkg_meta['version']}-{pkg_meta['build']}.json"
+    path = conda_meta_dir / filename
+    with open(path, "w") as f:
+        json.dump(content, f)
+
+
 def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
 
-    any_file = False
     env_path = Path(env_prefix)
 
     name = pkg_meta["name"]
@@ -34,9 +44,12 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
                 dest_fpath = os.path.join(target_dir, file)
                 os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
                 shutil.copy(os.path.join(env_prefix, file), dest_fpath)
-                any_file = True
                 break
-    return any_file
+    write_minimal_conda_meta(pkg_meta=pkg_meta, env_prefix=target_dir)
+    # true indicates there is a file,
+    # since we always have the conda-meta
+    # we awlays return true here
+    return True
 
 
 def split_filter_pkg(env_prefix, pkg_meta, target_dirs, matchers):
@@ -64,7 +77,9 @@ def split_filter_pkg(env_prefix, pkg_meta, target_dirs, matchers):
                 any_files_array[i] = True
 
                 break
-
+    # write conda meta to the pkg at index 0
+    any_files_array[0] = True
+    write_minimal_conda_meta(pkg_meta=pkg_meta, env_prefix=target_dirs[0])
     return any_files_array
 
 
