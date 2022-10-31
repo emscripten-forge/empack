@@ -67,6 +67,7 @@ jobs:
           emsdk activate ${{ matrix.emsdk_ver }}
           source /home/runner/micromamba-root/envs/ci-env/opt/emsdk/emsdk_env.sh
 
+          export FILE_PACKAGER=/home/runner/micromamba-root/envs/ci-env/opt/emsdk/upstream/emscripten/tools/file_packager.py 
           empack pack env \
             --env-prefix $MAMBA_ROOT_PREFIX/envs/env1 \
             --outname env_1 \
