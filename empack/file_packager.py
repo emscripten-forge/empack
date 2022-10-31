@@ -162,6 +162,7 @@ def split_pack_environment(
     pkg_file_filter: PkgFileFilter,
     pack_outdir: Union[str, None] = None,
     download_emsdk: Union[str, None] = None,
+    silent: bool = False,
 ):
     if pack_outdir is None:
         pack_outdir = os.getcwd()
@@ -206,6 +207,7 @@ def split_pack_environment(
                         lz4=True,
                         cwd=str(temp_dirs[i]),
                         download_emsdk=download_emsdk,
+                        silent=silent,
                     )
                     js_files.append(f"{pkg_outname}.{i}.js")
                     shutil.copy(
@@ -224,12 +226,23 @@ def split_pack_environment(
     for js_file in js_files:
         lines.append(f"    promises.push(import('./{js_file}'));")
     txt = "\n".join(lines)
-    js_import_all_func = f"""export default async function(){{
+
+    if export_name.startswith("globalThis"):
+        js_import_all_func = f"""export default async function(){{
     let promises = [];
 {txt}
     await Promise.all(promises);
 }}
-    """
+        """
+    else:
+        js_import_all_func = f"""async function importPackages(){{
+    let promises = [];
+{txt}
+    await Promise.all(promises);
+}}
+module.exports = importPackages
+        """
+
     with open(os.path.join(pack_outdir, f"{outname}.js"), "w") as f:
         f.write(js_import_all_func)
 
@@ -293,10 +306,14 @@ def pack_repodata(
                         matchers=matchers,
                     )
 
+                    js_files = []
                     for i in range(len(matchers)):
                         if has_any_files[i]:
+
+                            pkg_base_name = f"{pkg_outname}.{i}"
+
                             emscripten_file_packager(
-                                outname=f"{pkg_outname}.{i}",
+                                outname=f"{pkg_base_name}",
                                 to_mount=env_name,
                                 mount_path=env_prefix,
                                 export_name=export_name,
@@ -306,23 +323,24 @@ def pack_repodata(
                                 cwd=str(temp_dirs[i]),
                                 download_emsdk=download_emsdk,
                             )
-                            js_files.append(f"{pkg_outname}.{i}.js")
+                            js_files.append(f"{pkg_base_name}.js")
                             shutil.copy(
                                 os.path.join(
-                                    str(temp_dirs[i]), f"{pkg_outname}.{i}.data"
+                                    str(temp_dirs[i]), f"{pkg_base_name}.data"
                                 ),
                                 pack_outdir,
                             )
                             shutil.copy(
-                                os.path.join(
-                                    str(temp_dirs[i]), f"{pkg_outname}.{i}.js"
-                                ),
+                                os.path.join(str(temp_dirs[i]), f"{pkg_base_name}.js"),
                                 pack_outdir,
                             )
 
-                            extend_js(
-                                os.path.join(pack_outdir, f"{pkg_outname}.{i}.js")
-                            )
+                            extend_js(os.path.join(pack_outdir, f"{pkg_base_name}.js"))
+
+                            js_files.append(f"{pkg_base_name}.js")
+
+                    with open(os.path.join(pack_outdir, f"{pkg_base_name}.js")) as f:
+                        json.dump(js_files, f)
 
 
 def pack_environment(
