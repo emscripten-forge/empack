@@ -51,7 +51,7 @@ jobs:
         shell: bash -l {0}
         run: |
           emsdk install ${{ matrix.emsdk_ver }}
-          emsdk activate ${{ matrix.emsdk_evr }}
+          emsdk activate ${{ matrix.emsdk_ver }}
 
       - name: Run smoke tests
         shell: bash -l {0}
