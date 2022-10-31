@@ -65,7 +65,7 @@ jobs:
           micromamba create -n env1 -c https://repo.mamba.pm/emscripten-forge --platform=emscripten-32 python
 
           emsdk activate ${{ matrix.emsdk_ver }}
-          source $CONDA_EMSDK_DIR/emsdk_env.sh
+          source /home/runner/micromamba-root/envs/ci-env/opt/emsdk/emsdk_env.sh
 
           empack pack env \
             --env-prefix $MAMBA_ROOT_PREFIX/envs/env1 \
