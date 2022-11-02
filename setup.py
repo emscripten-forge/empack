@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 with open("README.md") as readme_file:
     readme = readme_file.read()
 
-requirements = ["typer", "requests", "pydantic", "pyyaml", "pydantic"]
+requirements = ["typer", "requests", "pydantic", "pyyaml", "pydantic", "appdirs"]
 
 setup(
     author="Thorsten Beier",
