@@ -68,9 +68,6 @@ def env(
     export_name: str = typer.Option(  # noqa: B008
         "globalThis.Module", "--export-name", "-n"
     ),  # noqa: B008
-    download_emsdk: bool = typer.Option(  # noqa: B008
-        False, "--download-emsdk", "-d", help="should emsdk be downloaded"
-    ),
     emsdk_version: Optional[str] = typer.Option(  # noqa: B008
         None,
         "--emsdk-version",
@@ -107,19 +104,18 @@ def env(
     # load config
     pkg_file_filter = pkg_file_filter_from_yaml(*config)
 
-    # downstream `download_emsdk` handles two things:
-    # if the emsdk should be downloaded and the version
-    if not download_emsdk:
-        download_emsdk = None
+    # downstream `emsdk_version` will download the specified version if not done already
+    if not emsdk_version:
+        emsdk_version = None
     else:
-        download_emsdk = emsdk_version
+        emsdk_version = emsdk_version
 
     if not split:
         pack_environment(
             env_prefix=env_prefix,
             outname=outname,
             export_name=export_name,
-            download_emsdk=download_emsdk,
+            emsdk_version=emsdk_version,
             pkg_file_filter=pkg_file_filter,
             pack_outdir=outdir,
         )
@@ -128,7 +124,7 @@ def env(
             env_prefix=env_prefix,
             outname=outname,
             export_name=export_name,
-            download_emsdk=download_emsdk,
+            emsdk_version=emsdk_version,
             pkg_file_filter=pkg_file_filter,
             pack_outdir=outdir,
         )
@@ -146,7 +142,7 @@ def repodata(
         ...,
         "--env-prefix",
         "-e",
-        help="""location/prefix where the files are bundled. 
+        help="""location/prefix where the files are bundled.
                 This path is also where files are mounted in emscriptens virtual file systen
             """,
     ),
@@ -165,9 +161,6 @@ def repodata(
     export_name: str = typer.Option(  # noqa: B008
         "globalThis.Module", "--export-name", "-n"
     ),  # noqa: B008
-    download_emsdk: bool = typer.Option(  # noqa: B008
-        False, "--download-emsdk", "-d", help="should emsdk be downloaded"
-    ),
     emsdk_version: Optional[str] = typer.Option(  # noqa: B008
         None,
         "--emsdk-version",
@@ -199,19 +192,18 @@ def repodata(
     # load config
     pkg_file_filter = pkg_file_filter_from_yaml(*config)
 
-    # downstream `download_emsdk` handles two things:
-    # if the emsdk should be downloaded and the version
-    if not download_emsdk:
-        download_emsdk = None
+    # downstream `emsdk_version` will download the specified version if not done already
+    if not emsdk_version:
+        emsdk_version = None
     else:
-        download_emsdk = emsdk_version
+        emsdk_version = emsdk_version
 
     pack_repodata(
         repodata=repodata,
         env_prefix=env_prefix,
         channels=channel,
         export_name=export_name,
-        download_emsdk=download_emsdk,
+        emsdk_version=emsdk_version,
         pkg_file_filter=pkg_file_filter,
         pack_outdir=outdir,
     )

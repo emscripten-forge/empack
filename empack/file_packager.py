@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -8,6 +9,7 @@ from pathlib import Path, PurePath
 from typing import Union, List
 from urllib import request
 
+from appdirs import user_cache_dir
 import requests
 import typer
 
@@ -15,88 +17,55 @@ from .extend_js import extend_js
 from .file_patterns import PkgFileFilter
 from .filter_env import filter_env, iterate_env_pkg_meta, split_filter_pkg
 
-EMSDK_VER = "latest"
+EMSDK_VER = "3.1.2"
+EMSDK_INSTALL_PATH = Path(user_cache_dir("empack"))
 
-HERE = Path(__file__).parent
 
+def download_and_setup_emsdk(emsdk_version=None):
+    emsdk_version = EMSDK_VER if emsdk_version is None else emsdk_version
 
-def download_and_setup_emsdk(emsdk_version):
-    tag = None
-    if emsdk_version == "latest":
-        tags = requests.get("https://api.github.com/repos/emscripten-core/emsdk/tags")
-        if tags.ok and tags.content:
-            tag = json.loads(tags.content)[0]["name"]
-        else:
-            tag = "3.1.2"
-    else:
-        tag = emsdk_version
+    emsdk_dir = f"emsdk-{emsdk_version}"
 
-    emsdk_dir = f"emsdk-{tag}"
     file_packager_path = (
-        HERE / emsdk_dir / "upstream" / "emscripten" / "tools" / "file_packager.py"
+        EMSDK_INSTALL_PATH / emsdk_dir / "upstream" / "emscripten" / "tools" / "file_packager.py"
     )
 
-    if not os.path.isdir(HERE / emsdk_dir):
-        file = f"{tag}.zip"
+    EMSDK_INSTALL_PATH.mkdir(parents=True, exist_ok=True)
+
+    if not os.path.isdir(EMSDK_INSTALL_PATH / emsdk_dir):
+        file = f"{emsdk_version}.zip"
         request.urlretrieve(
             f"https://github.com/emscripten-core/emsdk/archive/refs/tags/{file}",
-            HERE / file,
+            EMSDK_INSTALL_PATH / file,
         )
-        shutil.unpack_archive(HERE / file, HERE)
-        os.rename(HERE / f"emsdk-{tag}", HERE / emsdk_dir)
-        os.remove(HERE / file)
+        shutil.unpack_archive(EMSDK_INSTALL_PATH / file, EMSDK_INSTALL_PATH)
+        os.rename(EMSDK_INSTALL_PATH / f"emsdk-{emsdk_version}", EMSDK_INSTALL_PATH / emsdk_dir)
+        os.remove(EMSDK_INSTALL_PATH / file)
 
         subprocess.run(
-            [sys.executable, str(HERE / emsdk_dir / "emsdk.py"), "install", tag],
+            [sys.executable, str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"), "install", emsdk_version],
             shell=False,
             check=True,
         )
         subprocess.run(
-            [sys.executable, str(HERE / emsdk_dir / "emsdk.py"), "activate", tag],
+            [sys.executable, str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"), "activate", emsdk_version],
             shell=False,
             check=True,
         )
+
+        for _file in [
+            "emsdk",
+            Path("upstream") / "emscripten" / "emcc",
+            Path("upstream") / "emscripten" / "emar",
+            Path("upstream") / "emscripten" / "em++"
+        ]:
+            _exec = str(EMSDK_INSTALL_PATH / emsdk_dir / _file)
+
+            st = os.stat(_exec)
+            os.chmod(_exec, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
     assert os.path.exists(file_packager_path)
 
-    return file_packager_path
-
-
-def get_file_packager_path():
-    # First check for the emsdk conda package
-    emsdk_dir = None
-    try:
-        import emsdk
-
-        if emsdk.__file__ is not None:
-            emsdk_dir = Path(emsdk.__file__).parent
-    except ImportError:
-        pass
-
-    if emsdk_dir is not None:
-        # emsdk was installed with conda
-        conda_file_packager = (
-            emsdk_dir / "upstream" / "emscripten" / "tools" / "file_packager.py"
-        )
-
-        # If emsdk is not initialized, we do it
-        if not os.path.isfile(conda_file_packager):
-            subprocess.run(["emsdk", "install", EMSDK_VER], shell=False, check=True)
-            subprocess.run(["emsdk", "activate", EMSDK_VER], shell=False, check=True)
-            os.environ["EMSDK"] = str(emsdk_dir)
-            os.environ["EM_CONFIG"] = str(Path(emsdk_dir) / ".emscripten")
-
-        assert os.path.isfile(conda_file_packager)
-
-        return conda_file_packager
-
-    # Then check for the environment variable
-    file_packager_path = os.environ.get("FILE_PACKAGER")
-    if file_packager_path is None:
-        print(
-            "FILE_PACKAGER needs to be an env variable pointing to emscpriptens file_packager.py"
-        )
-        raise typer.Exit()
     return file_packager_path
 
 
@@ -111,12 +80,9 @@ def emscripten_file_packager(
     lz4: bool = True,
     cwd=None,
     silent=False,
-    download_emsdk=None,
+    emsdk_version=None,
 ):
-    if download_emsdk:
-        file_packager_path = download_and_setup_emsdk(download_emsdk)
-    else:
-        file_packager_path = get_file_packager_path()
+    file_packager_path = download_and_setup_emsdk(emsdk_version)
 
     cmd = [
         sys.executable,
@@ -161,7 +127,7 @@ def split_pack_environment(
     export_name: str,
     pkg_file_filter: PkgFileFilter,
     pack_outdir: Union[str, None] = None,
-    download_emsdk: Union[str, None] = None,
+    emsdk_version: Union[str, None] = None,
     silent: bool = False,
 ):
     if pack_outdir is None:
@@ -206,7 +172,7 @@ def split_pack_environment(
                         no_node=export_name.startswith("globalThis"),
                         lz4=True,
                         cwd=str(temp_dirs[i]),
-                        download_emsdk=download_emsdk,
+                        emsdk_version=emsdk_version,
                         silent=silent,
                     )
                     js_files.append(f"{pkg_outname}.{i}.js")
@@ -254,7 +220,7 @@ def pack_repodata(
     export_name: str,
     pkg_file_filter: PkgFileFilter,
     pack_outdir: Union[str, None] = None,
-    download_emsdk: Union[str, None] = None,
+    emsdk_version: Union[str, None] = None,
 ):
 
     if pack_outdir is None:
@@ -321,7 +287,7 @@ def pack_repodata(
                                 no_node=export_name.startswith("globalThis"),
                                 lz4=True,
                                 cwd=str(temp_dirs[i]),
-                                download_emsdk=download_emsdk,
+                                emsdk_version=emsdk_version,
                             )
                             js_files.append(f"{pkg_base_name}.js")
                             shutil.copy(
@@ -349,7 +315,7 @@ def pack_environment(
     export_name: str,
     pkg_file_filter: PkgFileFilter,
     pack_outdir: Union[str, None] = None,
-    download_emsdk: Union[str, None] = None,
+    emsdk_version: Union[str, None] = None,
 ):
     # name of the env
     env_name = PurePath(env_prefix).parts[-1]
@@ -375,7 +341,7 @@ def pack_environment(
             no_node=export_name.startswith("globalThis"),
             lz4=True,
             cwd=str(temp_dir),
-            download_emsdk=download_emsdk,
+            emsdk_version=emsdk_version,
         )
 
         if pack_outdir is None:
