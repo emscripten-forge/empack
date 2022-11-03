@@ -4,5 +4,4 @@ channels:
 dependencies:
   - python
   - pip
-  - emsdk
   - pytest
