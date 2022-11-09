@@ -1,4 +1,5 @@
 import requests
+import tarfile
 import bz2
 import io
 import json
@@ -59,6 +60,7 @@ def hack_fields(repodata):
 
 
 def download_and_shrink_repodata(repodata_urls, outdir=None):
+    print(repodata_urls)
     if outdir is None:
         outdir = os.getcwd()
     outdir = Path(outdir)
@@ -67,15 +69,6 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
     if "arch" not in repodata_urls or "noarch" not in repodata_urls:
         raise RuntimeError("need'arch' / 'noarch' keys in repodata_urls")
 
-    # print("download")
-    # download
-    repodata_urls[
-        "arch"
-    ] = "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2"
-
-    repodata_urls[
-        "noarch"
-    ] = "https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2"
     repodata_response = {k: requests.get(url) for k, url in repodata_urls.items()}
     [r.raise_for_status() for r in repodata_response.values()]
 
@@ -88,25 +81,33 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
             with open(outdir / f"{k}_repodata.json", "w") as fp:
                 json.dump(repodata[k], fp, indent=4)
 
-    # print("pre", len(repodata["noarch"]["packages"]))
-    remove_non_available(repodata)
-    # print("post", len(repodata["noarch"]["packages"]))
+    # # print("pre", len(repodata["noarch"]["packages"]))
+    # remove_non_available(repodata)
+    # # print("post", len(repodata["noarch"]["packages"]))
 
-    hack_fields(repodata)
+    # hack_fields(repodata)
+
     # wripte bz2
     for k, v in repodata.items():
         with open(outdir / f"{k}_shrinked_repodata.json", "w") as fp:
             json.dump(v, fp, indent=4)
-        tarbz2contents = bz2.compress(json.dumps(v).encode(), 9)
-        with open(outdir / f"{k}_picomamba.bz2", "wb") as f:
-            f.write(tarbz2contents)
+
+        tar_fileobj = tarfile.open(outdir / f"{k}_repodata_picomamba.tar.bz2", "w:bz2")
+
+        my_content = json.dumps(v).encode()
+        tf = tarfile.TarInfo("repodata.json")
+        tf.size = len(my_content)
+        tar_fileobj.addfile(tf, io.BytesIO(my_content))
+        # tar_fileobj.seek(0)
+
+        tar_fileobj.close()
 
 
 if __name__ == "__main__":
 
-    repodata_urls = {
-        "arch": "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2",
-        "noarch": "https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2",
-    }
+    repodata_urls = dict(
+        arch="https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2",
+        noarch="https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2",
+    )
 
     download_and_shrink_repodata(repodata_urls)

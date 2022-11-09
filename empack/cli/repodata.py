@@ -17,7 +17,7 @@ app.add_typer(repodata_app, name="repodata")
 @repodata_app.command()
 def shrink(
     arch: str = typer.Option(  # noqa: B008
-        "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2"
+        "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2",
         "--arch",
         "-a",
         help="arch / emscripten-32 repodata",
