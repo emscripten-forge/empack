@@ -20,6 +20,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
+    data_files=[("share/empack", ["config/empack_config.yaml"])],
     description="empack emscripten+boa",
     entry_points={
         "console_scripts": [
@@ -34,6 +35,6 @@ setup(
     name="empack",
     packages=find_packages(),
     url="https://github.com/emscripten-forge/empack",
-    version="2.0.0",
+    version="2.0.1",
     zip_safe=False,
 )
