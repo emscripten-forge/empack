@@ -14,11 +14,12 @@ import requests
 import typer
 
 from .extend_js import extend_js
-from .file_patterns import PkgFileFilter
+from .file_patterns import PkgFileFilter, pkg_file_filter_from_yaml
 from .filter_env import filter_env, iterate_env_pkg_meta, split_filter_pkg
 
 EMSDK_VER = "3.1.2"
 EMSDK_INSTALL_PATH = Path(user_cache_dir("empack"))
+DEFAULT_CONFIG_PATH = Path(sys.prefix) / "share" / "empack" / "empack_config.yaml"
 
 
 def download_and_setup_emsdk(emsdk_version=None):
@@ -125,13 +126,16 @@ def split_pack_environment(
     env_prefix: Path,
     outname: str,
     export_name: str,
-    pkg_file_filter: PkgFileFilter,
+    pkg_file_filter: Union[PkgFileFilter, None] = None,
     pack_outdir: Union[str, None] = None,
     emsdk_version: Union[str, None] = None,
     silent: bool = False,
 ):
     if pack_outdir is None:
         pack_outdir = os.getcwd()
+
+    if pkg_file_filter is None:
+        pkg_file_filter = pkg_file_filter_from_yaml(DEFAULT_CONFIG_PATH)
 
     # name of the env
     env_name = PurePath(env_prefix).parts[-1]
@@ -218,13 +222,15 @@ def pack_repodata(
     env_prefix: Path,
     channels: List,
     export_name: str,
-    pkg_file_filter: PkgFileFilter,
+    pkg_file_filter: Union[PkgFileFilter, None] = None,
     pack_outdir: Union[str, None] = None,
     emsdk_version: Union[str, None] = None,
 ):
-
     if pack_outdir is None:
         pack_outdir = os.getcwd()
+
+    if pkg_file_filter is None:
+        pkg_file_filter = pkg_file_filter_from_yaml(DEFAULT_CONFIG_PATH)
 
     packages = repodata["packages"]
     for pkg_key, pkg_meta in packages.items():
@@ -315,12 +321,15 @@ def pack_environment(
     env_prefix: Path,
     outname: str,
     export_name: str,
-    pkg_file_filter: PkgFileFilter,
+    pkg_file_filter: Union[PkgFileFilter, None] = None,
     pack_outdir: Union[str, None] = None,
     emsdk_version: Union[str, None] = None,
 ):
     # name of the env
     env_name = PurePath(env_prefix).parts[-1]
+
+    if pkg_file_filter is None:
+        pkg_file_filter = pkg_file_filter_from_yaml(DEFAULT_CONFIG_PATH)
 
     # create a temp dir and store the filter&copy
     # the data to the tmp directory

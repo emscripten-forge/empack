@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import List, Optional
 import json
+import sys
 import typer
 
 from ..file_packager import (
@@ -9,6 +10,7 @@ from ..file_packager import (
     pack_file,
     pack_repodata,
     split_pack_environment,
+    DEFAULT_CONFIG_PATH,
 )
 from ..file_patterns import pkg_file_filter_from_yaml
 from ..inspect import inspect_packed
@@ -63,7 +65,10 @@ def env(
         help="if no output directory is specified the current workdir is used",
     ),
     config: List[Path] = typer.Option(  # noqa: B008
-        ..., "--config", "-c", help="path to a .yaml file with the empack config"
+        [DEFAULT_CONFIG_PATH],
+        "--config",
+        "-c",
+        help="path to a .yaml file with the empack config"
     ),
     export_name: str = typer.Option(  # noqa: B008
         "globalThis.Module", "--export-name", "-n"
@@ -88,7 +93,7 @@ def env(
         )
 
     # check that at least one config file exists
-    if len(config) < 0:
+    if not len(config):
         exit_with_err("""empack error: at least one config file must be provided""")
 
     for i, p in enumerate(config):
