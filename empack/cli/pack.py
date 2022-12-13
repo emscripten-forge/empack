@@ -72,7 +72,7 @@ def env(
         None,
         "--emsdk-version",
         "-v",
-        help="emsdk version (only useful when --download-emsdk is used)",
+        help="emsdk version",
     ),
     split: bool = typer.Option(  # noqa: B008
         False,
@@ -165,7 +165,7 @@ def repodata(
         None,
         "--emsdk-version",
         "-v",
-        help="emsdk version (only useful when --download-emsdk is used)",
+        help="emsdk version",
     ),
 ):
 
