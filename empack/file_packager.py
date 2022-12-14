@@ -190,15 +190,22 @@ def split_pack_environment(
     # create the base js file
     lines = []
     for js_file in js_files:
-        lines.append(f"    promises.push(import('./{js_file}'));")
+        lines.append(f"    promises.push(importPromise('./{js_file}'));")
     txt = "\n".join(lines)
 
     if export_name.startswith("globalThis"):
-        js_import_all_func = f"""export default async function(){{
+        js_import_all_func = f"""(async function(){{
     let promises = [];
+
+    const importPromise = function(file) {{
+        return new Promise((resolve) => {{
+            importScripts(file);
+            resolve();
+        }});
+    }}
 {txt}
     await Promise.all(promises);
-}}
+}})();
         """
     else:
         js_import_all_func = f"""async function importPackages(){{
