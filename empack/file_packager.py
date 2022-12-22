@@ -321,8 +321,6 @@ def pack_repodata(
 
                             extend_js(os.path.join(pack_outdir, f"{pkg_base_name}.js"))
 
-                            js_files.append(f"{pkg_base_name}.js")
-
                     with open(
                         os.path.join(pack_outdir, f"{pkg_outname}.json"), "w"
                     ) as f:

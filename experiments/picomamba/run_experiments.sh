@@ -12,8 +12,9 @@ pyjs_code_runner run script \
     --conda-env     /home/web_user/picomamba/env \
     --host-work-dir $SCRIPT_DIR/outdir/distribution \
     --mount         $SCRIPT_DIR/code:/home/web_user/code \
-    --script        main.py \
+    --script        main_offline.py \
     --work-dir      /home/web_user/code \
     --port          8000 \
     --async-main    \
-    --headless 
+    --no-headless   \
+    --slow-mo 10000

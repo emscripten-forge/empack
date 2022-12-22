@@ -8,5 +8,5 @@ if true; then
         -c https://repo.mamba.pm/emscripten-forge \
         -c https://repo.mamba.pm/conda-forge \
         --yes \
-        python numpy pytest picomamba pyjs
+        python numpy pytest nlohmann_json pyjs libsolv pybind11
 fi

@@ -82,10 +82,10 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
                 json.dump(repodata[k], fp, indent=4)
 
     # # print("pre", len(repodata["noarch"]["packages"]))
-    # remove_non_available(repodata)
+    remove_non_available(repodata)
     # # print("post", len(repodata["noarch"]["packages"]))
 
-    # hack_fields(repodata)
+    hack_fields(repodata)
 
     # wripte bz2
     for k, v in repodata.items():
@@ -93,13 +93,10 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
             json.dump(v, fp, indent=4)
 
         tar_fileobj = tarfile.open(outdir / f"{k}_repodata_picomamba.tar.bz2", "w:bz2")
-
         my_content = json.dumps(v).encode()
         tf = tarfile.TarInfo("repodata.json")
         tf.size = len(my_content)
         tar_fileobj.addfile(tf, io.BytesIO(my_content))
-        # tar_fileobj.seek(0)
-
         tar_fileobj.close()
 
 
