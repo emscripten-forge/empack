@@ -17,9 +17,12 @@ from .extend_js import extend_js
 from .file_patterns import PkgFileFilter, pkg_file_filter_from_yaml
 from .filter_env import filter_env, iterate_env_pkg_meta, split_filter_pkg
 
-EMSDK_VER = "3.1.2"
+EMSDK_VER = "3.1.27"
 EMSDK_INSTALL_PATH = Path(user_cache_dir("empack"))
 DEFAULT_CONFIG_PATH = Path(sys.prefix) / "share" / "empack" / "empack_config.yaml"
+
+
+print(EMSDK_INSTALL_PATH, EMSDK_INSTALL_PATH)
 
 
 def download_and_setup_emsdk(emsdk_version=None):
@@ -28,7 +31,12 @@ def download_and_setup_emsdk(emsdk_version=None):
     emsdk_dir = f"emsdk-{emsdk_version}"
 
     file_packager_path = (
-        EMSDK_INSTALL_PATH / emsdk_dir / "upstream" / "emscripten" / "tools" / "file_packager.py"
+        EMSDK_INSTALL_PATH
+        / emsdk_dir
+        / "upstream"
+        / "emscripten"
+        / "tools"
+        / "file_packager.py"
     )
 
     EMSDK_INSTALL_PATH.mkdir(parents=True, exist_ok=True)
@@ -40,16 +48,29 @@ def download_and_setup_emsdk(emsdk_version=None):
             EMSDK_INSTALL_PATH / file,
         )
         shutil.unpack_archive(EMSDK_INSTALL_PATH / file, EMSDK_INSTALL_PATH)
-        os.rename(EMSDK_INSTALL_PATH / f"emsdk-{emsdk_version}", EMSDK_INSTALL_PATH / emsdk_dir)
+        os.rename(
+            EMSDK_INSTALL_PATH / f"emsdk-{emsdk_version}",
+            EMSDK_INSTALL_PATH / emsdk_dir,
+        )
         os.remove(EMSDK_INSTALL_PATH / file)
 
         subprocess.run(
-            [sys.executable, str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"), "install", emsdk_version],
+            [
+                sys.executable,
+                str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"),
+                "install",
+                emsdk_version,
+            ],
             shell=False,
             check=True,
         )
         subprocess.run(
-            [sys.executable, str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"), "activate", emsdk_version],
+            [
+                sys.executable,
+                str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"),
+                "activate",
+                emsdk_version,
+            ],
             shell=False,
             check=True,
         )
@@ -58,7 +79,7 @@ def download_and_setup_emsdk(emsdk_version=None):
             "emsdk",
             Path("upstream") / "emscripten" / "emcc",
             Path("upstream") / "emscripten" / "emar",
-            Path("upstream") / "emscripten" / "em++"
+            Path("upstream") / "emscripten" / "em++",
         ]:
             _exec = str(EMSDK_INSTALL_PATH / emsdk_dir / _file)
 
