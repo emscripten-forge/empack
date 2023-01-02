@@ -104,6 +104,7 @@ default:
     - pattern: '*.so'
     - pattern: '*.py'
     - pattern: '*.json'
+    - pattern: 'share/zoneinfo/**'
   exclude_patterns:
     - pattern: '**/tests/**/*.py'
     - pattern: '**/tests/**/*.so'
