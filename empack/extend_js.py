@@ -19,15 +19,24 @@ def extend_logging(file_path):
             out_file.write(line)
 
 
+def hotfixes(files):
+    for f in files:
+        if 'clapack_all.so' in f['filename']:
+            f['filename'] = 'clapack_all.so'
+    return files
+
 def sort_packed(file_path):
     lines = []
     with open(file_path, "r") as in_file:
         for line in in_file:
             if 'loadPackage({"files":' in line:
                 files = json.loads(line[16:-3])["files"]
+
+                files = hotfixes(files)
+
+
                 files.sort(key=lambda x: x["filename"])
-                # for file in files:
-                #     print(file)
+                
                 line = f"""loadPackage({
                     json.dumps({"files": files})
                 });"""
