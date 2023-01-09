@@ -106,6 +106,12 @@ packages:
       - pattern: '*.json'
       - pattern: 'share/zoneinfo/**'
       - pattern: '**/tzdata/zoneinfo/**'
+    exclude_patterns:
+      - pattern: '**/tests/**/*.py'
+      - pattern: '**/tests/**/*.so'
+      - pattern: '**/tests/*.py'
+      - pattern: '**/tests/*.so'
+      - pattern: '**/tzdata/zoneinfo/**/*.pyc'
 default:
   include_patterns:
     - pattern: '*.so'
