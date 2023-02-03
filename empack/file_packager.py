@@ -13,11 +13,13 @@ from appdirs import user_cache_dir
 import requests
 import typer
 
+from .toposort import toposort
+
 from .extend_js import extend_js
 from .file_patterns import PkgFileFilter, pkg_file_filter_from_yaml
 from .filter_env import filter_env, iterate_env_pkg_meta, split_filter_pkg
 
-EMSDK_VER = "3.1.2"
+EMSDK_VER = "3.1.27"
 EMSDK_INSTALL_PATH = Path(user_cache_dir("empack"))
 DEFAULT_CONFIG_PATH = Path(sys.prefix) / "share" / "empack" / "empack_config.yaml"
 
@@ -28,7 +30,12 @@ def download_and_setup_emsdk(emsdk_version=None):
     emsdk_dir = f"emsdk-{emsdk_version}"
 
     file_packager_path = (
-        EMSDK_INSTALL_PATH / emsdk_dir / "upstream" / "emscripten" / "tools" / "file_packager.py"
+        EMSDK_INSTALL_PATH
+        / emsdk_dir
+        / "upstream"
+        / "emscripten"
+        / "tools"
+        / "file_packager.py"
     )
 
     EMSDK_INSTALL_PATH.mkdir(parents=True, exist_ok=True)
@@ -40,16 +47,29 @@ def download_and_setup_emsdk(emsdk_version=None):
             EMSDK_INSTALL_PATH / file,
         )
         shutil.unpack_archive(EMSDK_INSTALL_PATH / file, EMSDK_INSTALL_PATH)
-        os.rename(EMSDK_INSTALL_PATH / f"emsdk-{emsdk_version}", EMSDK_INSTALL_PATH / emsdk_dir)
+        os.rename(
+            EMSDK_INSTALL_PATH / f"emsdk-{emsdk_version}",
+            EMSDK_INSTALL_PATH / emsdk_dir,
+        )
         os.remove(EMSDK_INSTALL_PATH / file)
 
         subprocess.run(
-            [sys.executable, str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"), "install", emsdk_version],
+            [
+                sys.executable,
+                str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"),
+                "install",
+                emsdk_version,
+            ],
             shell=False,
             check=True,
         )
         subprocess.run(
-            [sys.executable, str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"), "activate", emsdk_version],
+            [
+                sys.executable,
+                str(EMSDK_INSTALL_PATH / emsdk_dir / "emsdk.py"),
+                "activate",
+                emsdk_version,
+            ],
             shell=False,
             check=True,
         )
@@ -58,7 +78,7 @@ def download_and_setup_emsdk(emsdk_version=None):
             "emsdk",
             Path("upstream") / "emscripten" / "emcc",
             Path("upstream") / "emscripten" / "emar",
-            Path("upstream") / "emscripten" / "em++"
+            Path("upstream") / "emscripten" / "em++",
         ]:
             _exec = str(EMSDK_INSTALL_PATH / emsdk_dir / _file)
 
@@ -140,7 +160,9 @@ def split_pack_environment(
     # name of the env
     env_name = PurePath(env_prefix).parts[-1]
     js_files = []
-    for pkg_meta in iterate_env_pkg_meta(env_prefix):
+    pkg_metas = list(iterate_env_pkg_meta(env_prefix))
+    pkg_metas = toposort(pkg_metas)
+    for pkg_meta in pkg_metas:
 
         pkg_outname = pkg_meta["fn"][:-8]
         pkg_name = pkg_meta["name"]
@@ -194,21 +216,19 @@ def split_pack_environment(
     # create the base js file
     lines = []
     for js_file in js_files:
-        lines.append(f"    promises.push(import('./{js_file}'));")
+        # lines.append(f"    promises.push(import('./{js_file}'));")
+        lines.append(f"await import('./{js_file}')")
+        lines.append(f"await {export_name}._wait_run_dependencies()")
     txt = "\n".join(lines)
 
     if export_name.startswith("globalThis"):
         js_import_all_func = f"""export default async function(){{
-    let promises = [];
 {txt}
-    await Promise.all(promises);
 }}
         """
     else:
         js_import_all_func = f"""async function importPackages(){{
-    let promises = [];
 {txt}
-    await Promise.all(promises);
 }}
 module.exports = importPackages
         """
