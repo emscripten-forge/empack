@@ -146,6 +146,7 @@ def split_pack_environment(
     env_prefix: Path,
     outname: str,
     export_name: str,
+    with_export_default_statement=False,
     pkg_file_filter: Union[PkgFileFilter, None] = None,
     pack_outdir: Union[str, None] = None,
     emsdk_version: Union[str, None] = None,
@@ -222,9 +223,13 @@ def split_pack_environment(
     txt = "\n".join(lines)
 
     if export_name.startswith("globalThis"):
-        js_import_all_func = f"""export default async function(){{
+        kw = ["","export default"][int(with_export_default_statement)]
+        fname = [" importPackages", ""][int(with_export_default_statement)]
+        js_import_all_func = f"""
+{kw} async function{fname}(){{
 {txt}
 }}
+{export_name}.importPackages = importPackages;
         """
     else:
         js_import_all_func = f"""async function importPackages(){{
