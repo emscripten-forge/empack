@@ -26,7 +26,9 @@ def toposort(pkg_metas):
     try:
         sorted_nodes = [name_to_meta[n] for n in nx.topological_sort(g)]
     except nx.exception.NetworkXUnfeasible as e:
-        print(f'Failed to perform the topological sorting on {g.graph}')
+        print('Failed to perform the topological sorting on graph:')
+        for edge in g.edges:
+            print(edge)
         raise e
 
     return sorted_nodes
