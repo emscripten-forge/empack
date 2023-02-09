@@ -21,7 +21,8 @@ def toposort(pkg_metas):
         depends = [d.split(' ')[0] for d in pkg_meta['depends']]
 
         for d in depends:
-            g.add_edge(d, name)
+            if not ((d == "pip" and name == "python") or (d == "python" and name == "pip")):
+                g.add_edge(d, name)
 
     try:
         sorted_nodes = [name_to_meta[n] for n in nx.topological_sort(g)]
