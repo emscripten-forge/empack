@@ -214,12 +214,23 @@ def split_pack_environment(
 
                     extend_js(os.path.join(pack_outdir, f"{pkg_outname}.{i}.js"))
 
-    # create the base js file
-    lines = []
+    # Create the base js file, we either use importScripts if it's available (web worker)
+    # or dynamic import if it's not
+    # We cannot always use dynamic imports, as they are not available yet on Firefox web workers
+    lines = ["if (typeof importScripts !== 'undefined') {"]
+
     for js_file in js_files:
-        # lines.append(f"    promises.push(import('./{js_file}'));")
+        lines.append(f"importScripts('./{js_file}')")
+        lines.append(f"await {export_name}._wait_run_dependencies()")
+
+    lines.append("} else {")
+
+    for js_file in js_files:
         lines.append(f"await import('./{js_file}')")
         lines.append(f"await {export_name}._wait_run_dependencies()")
+
+    lines.append("}")
+
     txt = "\n".join(lines)
 
     if export_name.startswith("globalThis"):
