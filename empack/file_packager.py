@@ -242,7 +242,7 @@ def split_pack_environment(
             }}
             """
         else:
-            js_function_source = f"""async function importPackages{{
+            js_function_source = f"""async function importPackages(){{
                 {function_body}
             }}
             {export_name}.importPackages = importPackages;
@@ -253,7 +253,7 @@ def split_pack_environment(
         js_function_source = f"""async function importPackages(){{
             {function_body}
         }}
-        module.exports = importPackages
+        module.exports = importPackages;
         """
 
     with open(os.path.join(pack_outdir, f"{outname}.js"), "w") as f:
