@@ -231,26 +231,33 @@ def split_pack_environment(
 
     lines.append("}")
 
-    txt = "\n".join(lines)
+    function_body = "\n".join(lines)
 
+
+    # browser
     if export_name.startswith("globalThis"):
-        kw = ["","export default"][int(with_export_default_statement)]
-        fname = [" importPackages", ""][int(with_export_default_statement)]
-        js_import_all_func = f"""
-{kw} async function{fname}(){{
-{txt}
-}}
-{export_name}.importPackages = importPackages;
-        """
+        if with_export_default_statement:
+            js_function_source = f"""export default async function(){{
+                {function_body}
+            }}
+            """
+        else:
+            js_function_source = f"""async function importPackages(){{
+                {function_body}
+            }}
+            {export_name}.importPackages = importPackages;
+            """
+    # node
     else:
-        js_import_all_func = f"""async function importPackages(){{
-{txt}
-}}
-module.exports = importPackages
+
+        js_function_source = f"""async function importPackages(){{
+            {function_body}
+        }}
+        module.exports = importPackages;
         """
 
     with open(os.path.join(pack_outdir, f"{outname}.js"), "w") as f:
-        f.write(js_import_all_func)
+        f.write(js_function_source)
 
 
 def pack_repodata(
