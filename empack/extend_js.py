@@ -1,5 +1,6 @@
 import json
 
+from .patches import scipy_hotfix, clapack_hotfix
 
 def extend_logging(file_path):
     lines = []
@@ -18,25 +19,25 @@ def extend_logging(file_path):
         for line in lines:
             out_file.write(line)
 
-
-def hotfixes(files):
-    for f in files:
-        if 'clapack_all.so' in f['filename']:
-            f['filename'] = 'clapack_all.so'
-    return files
-
 def sort_packed(file_path):
+    
+    use_scipy_hotfix = ('scipy' in str(file_path))
+    use_clapack_hotfix = ('clapack' in str(file_path))
+
     lines = []
     with open(file_path, "r") as in_file:
         for line in in_file:
             if 'loadPackage({"files":' in line:
                 files = json.loads(line[16:-3])["files"]
 
-                files = hotfixes(files)
-
+                if use_clapack_hotfix:
+                    files = clapack_hotfix(files)
 
                 files.sort(key=lambda x: x["filename"])
-                
+
+                if use_scipy_hotfix:
+                    files = scipy_hotfix(files)
+
                 line = f"""loadPackage({
                     json.dumps({"files": files})
                 });"""
