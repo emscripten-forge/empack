@@ -50,34 +50,3 @@ def scipy_hotfix(files):
     new_files.append(files[propack_index+0]) # c-propack
     new_files.extend(files[propack_index+4:])
     return new_files
-
-
-
-def sort_packed(file_path):
-    
-    use_scipy_hotfix = ('scipy' in str(file_path))
-    use_clapack_hotfix = ('clapack' in str(file_path))
-
-
-    lines = []
-    with open(file_path, "r") as in_file:
-        for line in in_file:
-            if 'loadPackage({"files":' in line:
-                files = json.loads(line[16:-3])["files"]
-
-                if use_clapack_hotfix:
-                    files = clapack_hotfix(files)
-
-                files.sort(key=lambda x: x["filename"])
-
-                if use_scipy_hotfix:
-                    files = scipy_hotfix(files)
-
-                
-                line = f"""loadPackage({
-                    json.dumps({"files": files})
-                });"""
-            lines.append(line)
-    with open(file_path, "wt") as out_file:
-        for line in lines:
-            out_file.write(line)
