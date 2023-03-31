@@ -99,6 +99,22 @@ packages:
   widgetsnbextension:
     exclude_patterns:
       - pattern: '**'
+  python:
+    include_patterns:
+      - pattern: '*.so'
+      - pattern: '*.py'
+      - pattern: '*.json'
+      - pattern: 'share/zoneinfo/**'
+    exclude_patterns:
+      - pattern: '**/unittest/**/*.py'
+      - pattern: '**/tests/**/*.py'
+      - pattern: '**/tests/**/*.so'
+      - pattern: '**/tests/*.py'
+      - pattern: '**/tests/*.so'
+      - pattern: 'share/jupyter/nbextensions/**/*'
+      - pattern: 'share/jupyter/labextensions/**/*'
+      - pattern: 'etc/jupyter/nbconfig/**/*'
+
   python-tzdata:
     include_patterns:
       - pattern: '*.so'
