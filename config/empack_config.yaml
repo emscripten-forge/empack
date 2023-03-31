@@ -111,9 +111,6 @@ packages:
       - pattern: '**/tests/**/*.so'
       - pattern: '**/tests/*.py'
       - pattern: '**/tests/*.so'
-      - pattern: 'share/jupyter/nbextensions/**/*'
-      - pattern: 'share/jupyter/labextensions/**/*'
-      - pattern: 'etc/jupyter/nbconfig/**/*'
   python-tzdata:
     include_patterns:
       - pattern: '*.so'
