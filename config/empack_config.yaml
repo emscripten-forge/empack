@@ -106,7 +106,7 @@ packages:
       - pattern: '*.json'
       - pattern: 'share/zoneinfo/**'
     exclude_patterns:
-      - pattern: '**/unittest/**/*.py'
+      - pattern: '**/unittest/**'
       - pattern: '**/tests/**/*.py'
       - pattern: '**/tests/**/*.so'
       - pattern: '**/tests/*.py'
@@ -114,7 +114,6 @@ packages:
       - pattern: 'share/jupyter/nbextensions/**/*'
       - pattern: 'share/jupyter/labextensions/**/*'
       - pattern: 'etc/jupyter/nbconfig/**/*'
-
   python-tzdata:
     include_patterns:
       - pattern: '*.so'
