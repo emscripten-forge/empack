@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 name = "empack"
 description = "empack emscripten+boa"
 readme = "README.md"
-license = { file = "LICENSE.txt" }
+license = { file = "LICENSE" }
 authors = [
     { name = "Thorsten Beier", email = "derthorstenbeier@gmail.com" },
 ]
