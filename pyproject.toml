@@ -1,0 +1,76 @@
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "empack"
+description = "empack emscripten+boa"
+readme = "README.md"
+authors = [
+    { name = "Thorsten Beier", email = "derthorstenbeier@gmail.com" },
+]
+keywords = [
+    "empack",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "appdirs",
+    "networkx",
+    "pydantic",
+    "pydantic",
+    "pyyaml",
+    "requests",
+    "typer",
+]
+version = "2.0.9"
+
+[project.license]
+file = "LICENSE.txt"
+
+[project.scripts]
+empack = "empack.cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/emscripten-forge/empack"
+
+[tool.hatch.build.targets.wheel.shared-data]
+config = "share/empack"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    ".github",
+]
+
+[tool.hatch.build.hooks.jupyter-builder]
+dependencies = [
+    "hatch-jupyter-builder>=0.8.2",
+]
+build-function = "hatch_jupyter_builder.npm_builder"
+
+[tool.tbump]
+field = [
+    { name = "channel", default = "" },
+    { name = "release", default = "" },
+]
+
+[tool.tbump.version]
+current = "2.0.9"
+regex = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)((?P<channel>a|b|rc|.dev)(?P<release>\\d+))?"
+
+[tool.tbump.git]
+message_template = "Bump to {new_version}"
+tag_template = "v{new_version}"
+
+[[tool.tbump.file]]
+src = "pyproject.toml"
+version_template = "version = \"{major}.{minor}.{patch}{channel}{release}\""
