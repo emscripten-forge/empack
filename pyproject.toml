@@ -8,6 +8,7 @@ build-backend = "hatchling.build"
 name = "empack"
 description = "empack emscripten+boa"
 readme = "README.md"
+license = { file = "LICENSE.txt" }
 authors = [
     { name = "Thorsten Beier", email = "derthorstenbeier@gmail.com" },
 ]
@@ -34,8 +35,8 @@ dependencies = [
 ]
 dynamic = ["version"]
 
-[project.license]
-file = "LICENSE.txt"
+[tool.hatch.version]
+path = "empack/version.py"
 
 [project.scripts]
 empack = "empack.cli.main:app"
