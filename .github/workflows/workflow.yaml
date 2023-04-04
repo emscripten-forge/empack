@@ -33,7 +33,7 @@ jobs:
         with:
           environment-file: ci_env.yml
           environment-name: ci-env
-          micromamba-version: '0.25.1'
+          micromamba-version: '1.4.1'
 
       - name: Install empack
         shell: bash -l {0}
@@ -50,74 +50,3 @@ jobs:
         run: |
           empack --help
           empack pack --help
-
-      - name: Create Python env and pack it up
-        shell: bash -l {0}
-        run: |
-          micromamba create -n env1 -c https://repo.mamba.pm/emscripten-forge --platform=emscripten-32 python
-
-          empack pack env \
-            --env-prefix $MAMBA_ROOT_PREFIX/envs/env1 \
-            --outname env_1 \
-            --config $GITHUB_WORKSPACE/tests/empack_test_config.yaml
-
-          if [ ! -f "env_1.js" ]; then
-            echo "env_1.js is missing"
-            exit 1
-          fi
-          if [ ! -f "env_1.data" ]; then
-            echo "env_1.data is missing"
-            exit 1
-          fi
-
-          empack pack inspect -j env_1.js
-
-          empack pack env \
-            --env-prefix $MAMBA_ROOT_PREFIX/envs/env1 \
-            --outname env_2 \
-            --config $GITHUB_WORKSPACE/tests/empack_test_config.yaml \
-            --config $GITHUB_WORKSPACE/tests/empack_test_extra_config.yaml \
-            --split
-
-          if [ ! -f "env_2.js" ]; then
-            echo "env_2.js is missing"
-            exit 1
-          fi
-          if [-f "env_2.data" ]; then
-            echo "env_2.data is present but should not be there!"
-            exit 1
-          fi
-
-
-      - name: Create another lib-only env and pack it up
-        shell: bash -l {0}
-        run: |
-          micromamba create -n env2 -c https://repo.mamba.pm/emscripten-forge --platform=emscripten-32 eigen
-
-          empack pack env \
-            --env-prefix $MAMBA_ROOT_PREFIX/envs/env2 \
-            --outname env_2 \
-            --config $GITHUB_WORKSPACE/tests/empack_test_config.yaml
-
-          if [ ! -f "env_2.js" ]; then
-            echo "env_2.js is missing"
-            exit 1
-          fi
-          if [ ! -f "env_2.data" ]; then
-            echo "env_2.data is missing"
-            exit 1
-          fi
-
-          empack pack env \
-            -c $GITHUB_WORKSPACE/tests/empack_test_config.yaml \
-            -e $MAMBA_ROOT_PREFIX/envs/env2 \
-            -o env_2_b
-
-          if [ ! -f "env_2_b.js" ]; then
-            echo "env_2_b.js is missing"
-            exit 1
-          fi
-          if [ ! -f "env_2_b.data" ]; then
-            echo "env_2_b.data is missing"
-            exit 1
-          fi

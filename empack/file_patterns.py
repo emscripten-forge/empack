@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Union
 import yaml
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 
+import warnings
 
 class FilePatternsModelBase(BaseModel, extra=Extra.forbid):
     pass
@@ -59,15 +60,16 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
     packages: Dict[str, Union[FileFilter, List[FileFilter]]]
     default: FileFilter
 
-    def get_matcher(self, pkg_name):
+
+    def get_filter_for_pkg(self, pkg_name):
         return self.packages.get(pkg_name, self.default)
 
-    def get_matchers(self, pkg_name):
-        matchers = self.get_matcher(pkg_name)
+    def get_filters_for_pkg(self, pkg_name):
+        matchers = self.get_filter_for_pkg(pkg_name)
         if not isinstance(matchers, list):
             matchers = [matchers]
         return matchers
-
+    
     def merge(self, *others):
         for other in others:
             if other.default is not None:
