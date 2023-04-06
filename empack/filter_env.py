@@ -1,3 +1,4 @@
+import csv
 import glob
 import json
 import os
@@ -5,13 +6,66 @@ import shutil
 from pathlib import Path
 
 
+def iterate_pip_pkg_record(env_prefix):
+    # Find all RECORD files for .dist-info folders for which INSTALLER is "pip"
+    # Resolve site-packages directory, ignoring the python3.1/ symlink
+    site_packages = [
+        site_package
+        for site_package
+        in Path(env_prefix).resolve().glob("lib/python*/site-packages")
+        if "python3.1" not in site_package.parts
+    ]
+    if not site_packages:
+        return []
+    site_packages = site_packages[0]
+    relative_site_packages = site_packages.relative_to(env_prefix)
+
+    packages_dist_info = Path(site_packages).resolve().glob("*.dist-info")
+
+    for dist_info in packages_dist_info:
+        # Continue if package not installed with pip
+        with open(dist_info / "INSTALLER") as installer:
+            if installer.read().strip() != 'pip':
+                continue
+
+        # Fetch package name
+        package_name, package_version = dist_info.name.removesuffix('.dist-info').split('-')
+
+        # Find all files
+        with open(dist_info / "RECORD") as record:
+            files = csv.reader(record)
+            all_files = [_file[0] for _file in files]
+            all_files_paths = [
+                relative_site_packages / _file
+                for _file in all_files
+                # Excluding .dist-info files
+                if '.dist-info' not in _file
+            ]
+
+        yield dict(
+            name=package_name,
+            version=package_version,
+            files=all_files_paths,
+            # Some hugly hacks to make it work...
+            fn=package_name + "12345678",
+            build='pip-' + package_version,
+            build_number=0,
+            depends=[]
+        )
+
+
 def iterate_env_pkg_meta(env_prefix):
     meta_dir = os.path.join(env_prefix, "conda-meta")
     pkg_meta_files = glob.glob(os.path.join(meta_dir, "*.json"))
+
     for p in pkg_meta_files:
         with open(p) as pkg_meta_file:
             pkg_meta = json.load(pkg_meta_file)
             yield pkg_meta
+
+    # Iterate through pip installed packages and get mock pkg_meta
+    for pkg_meta in iterate_pip_pkg_record(env_prefix):
+        yield pkg_meta
 
 
 def write_minimal_conda_meta(pkg_meta, env_prefix):
