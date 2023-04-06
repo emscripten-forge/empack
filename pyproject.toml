@@ -28,7 +28,6 @@ dependencies = [
     "appdirs",
     "networkx",
     "pydantic",
-    "pydantic",
     "pyyaml",
     "requests",
     "typer",
