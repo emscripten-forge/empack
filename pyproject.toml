@@ -1,0 +1,52 @@
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "empack"
+description = "empack emscripten+boa"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Thorsten Beier", email = "derthorstenbeier@gmail.com" },
+]
+keywords = [
+    "empack",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "appdirs",
+    "networkx",
+    "pydantic",
+    "pyyaml",
+    "requests",
+    "typer",
+]
+dynamic = ["version"]
+
+[tool.hatch.version]
+path = "empack/version.py"
+
+[project.scripts]
+empack = "empack.cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/emscripten-forge/empack"
+
+[tool.hatch.build.targets.wheel.shared-data]
+config = "share/empack"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    ".github",
+]
