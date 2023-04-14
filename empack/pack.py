@@ -8,7 +8,8 @@ import json
 import shutil
 from appdirs import user_cache_dir
 import sys
-
+import os
+import stat
 from .tar_utils import save_as_tarfile, ALLOWED_FORMATS
 
 
@@ -37,7 +38,6 @@ def pack_pkg_impl(
     cache_dir=None,
     outdir=None,
 ):
-    
     if cache_dir is None:
         cache_dir = PACKED_PACKAGES_CACHE_DIR
     fname_core = f"{filename_base_from_meta(pkg_meta)}.tar.{compression_format}"
@@ -61,10 +61,9 @@ def pack_pkg_impl(
     # make included files absolute
     filenames = [os.path.join(filtered_prefix, f) for f in included_files]
     arcnames = [os.path.join(relocate_prefix, f) for f in included_files]
-    
+
     # arcnames relative to relocate_prefix
     arcnames = [os.path.relpath(a, relocate_prefix) for a in arcnames]
-      
 
     # compress the filtered environment
     save_as_tarfile(
@@ -93,7 +92,6 @@ def pack_pkg(
     outdir=None,
 ):
     with TemporaryDirectory() as tmp_dir:
-
         # create the env at the temporary location
         prefix = Path(tmp_dir) / "env"
         create_environment(
@@ -145,7 +143,6 @@ def pack_env(
     outdir=None,
 ):
     with TemporaryDirectory() as tmp_dir:
-
         #  filter the complete environment
         filtered_prefix = Path(tmp_dir) / "filtered_env"
         included_files = filter_env(
@@ -182,11 +179,15 @@ def pack_env(
             )
 
         # save the list of packages
-        packages_json_filename = "packages.json"
+        env_meta = {
+            "prefix": str(relocate_prefix),
+            "packages": packages_info,
+        }
+        empack_env_meta_filename = "empack_env_meta.json"
         if outdir is not None:
-            packages_json_filename = Path(outdir) / packages_json_filename
-        with open(packages_json_filename, "w") as f:
-            json.dump(packages_info, f, indent=4)
+            empack_env_meta_filename = Path(outdir) / empack_env_meta_filename
+        with open(empack_env_meta_filename, "w") as f:
+            json.dump(env_meta, f, indent=4)
 
 
 def pack_directory(
@@ -219,7 +220,6 @@ def pack_directory(
     filenames = []
     arcnames = []
     for root, dirs, files in os.walk(host_dir):
-        
         for file in files:
             abs_path = os.path.join(root, file)
             rel_path = os.path.relpath(abs_path, host_dir)
@@ -227,7 +227,7 @@ def pack_directory(
             if mount_dir == PosixPath("."):
                 arcnames.append(rel_path)
             else:
-                arcnames.append(os.path.join(mount_dir,rel_path))
+                arcnames.append(os.path.join(mount_dir, rel_path))
 
     save_as_tarfile(
         output_filename=output_filename,

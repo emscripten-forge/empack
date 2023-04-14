@@ -52,8 +52,8 @@ def test_pack_pkg(tmp_path, tmp_path_module, use_cache, pkg_spec):
 
 
 @pytest.mark.parametrize("packages", [["python=3.10", "numpy"]])
-def test_pack_env(tmp_path, packages):
-
+@pytest.mark.parametrize("relocate_prefix", ["/", "/some/dir", "/home/some_dir/"])
+def test_pack_env(tmp_path, packages, relocate_prefix):
     # create the env at the temporary location
     prefix = tmp_path / "env"
 
@@ -61,7 +61,7 @@ def test_pack_env(tmp_path, packages):
         prefix=prefix,
         packages=packages,
         channels=CHANNELS,
-        relocate_prefix="/",
+        relocate_prefix=relocate_prefix,
         platform="emscripten-32",
     )
 
@@ -70,18 +70,21 @@ def test_pack_env(tmp_path, packages):
         outdir=tmp_path,
         use_cache=False,
         compression_format="gz",
-        relocate_prefix="/",
+        relocate_prefix=relocate_prefix,
         file_filters=FILE_FILTERS,
         compresslevel=1,
     )
 
     # check that there is a json with all the packages
-    packages_json = tmp_path / "packages.json"
-    assert packages_json.exists()
+    env_metadata_json_path = tmp_path / "empack_env_meta.json"
+    assert env_metadata_json_path.exists()
 
     # check that json file contains all packages
-    with open(packages_json, "r") as f:
-        packages_metadata = json.load(f)
+    with open(env_metadata_json_path, "r") as f:
+        env_metadata = json.load(f)
+        packages_metadata = env_metadata["packages"]
+        prefix = env_metadata["prefix"]
+        assert prefix == relocate_prefix
         assert len(packages_metadata) >= len(packages)
 
         for pkg in packages:
@@ -197,7 +200,6 @@ def test_pack_file(tmp_path, mount_dir):
 
     # open the tar file and check that the files are there
     with tarfile.open(packed_file, "r:gz") as tar:
-
         # print all names
         assert len(tar.getmembers()) == 1
 
