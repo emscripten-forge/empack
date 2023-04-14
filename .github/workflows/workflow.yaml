@@ -40,6 +40,15 @@ jobs:
         run: |
           pip install .
 
+      - name: Install Playwright
+        run: |
+          playwright install
+
+      - name: Install pyjs-code-runner
+        shell: bash -l {0}
+        run: |
+          python -m pip install git+https://github.com/DerThorsten/pyjs-code-runner@relocate_env   --no-deps --ignore-installed
+
       - name: Run pytest
         shell: bash -l {0}
         run: |
