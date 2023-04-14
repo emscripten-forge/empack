@@ -41,6 +41,7 @@ jobs:
           pip install .
 
       - name: Install Playwright
+        shell: bash -l {0}
         run: |
           playwright install
 
