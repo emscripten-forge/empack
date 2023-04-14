@@ -55,7 +55,7 @@ jobs:
         run: |
           pytest -v -s tests/
 
-      - name: Run smoke tests
+      - name: Run cli from terminal
         shell: bash -l {0}
         run: |
           empack --help
