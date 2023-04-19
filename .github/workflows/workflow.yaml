@@ -99,10 +99,10 @@ jobs:
       - name: Run pytest
         shell: cmd /C CALL {0}
         run: >-
-        python -m  pytest -v -s tests/
+          python -m  pytest -v -s tests/
 
       - name: Run cli from terminal
-        shell: cmd /C CALL {0}
+        shell: powershell
         run: >-
           empack pack --help
 

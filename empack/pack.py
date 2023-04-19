@@ -18,7 +18,6 @@ PACKED_PACKAGES_CACHE_DIR = EMPACK_CACHE_DIR / "packed_packages_cache"
 PACKED_PACKAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 DEFAULT_CONFIG_PATH = Path(sys.prefix) / "share" / "empack" / "empack_config.yaml"
 
-
 def filename_base_from_meta(pkg_meta):
     name = pkg_meta["name"]
     version = pkg_meta["version"]

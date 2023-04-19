@@ -1,5 +1,5 @@
 import pytest
-from .conftest import FILE_FILTERS, CHANNELS
+from .conftest import FILE_FILTERS, CHANNELS, MAMBA_EXE
 import os
 from pathlib import Path
 import sys
@@ -30,6 +30,7 @@ def test_pack_pkg(tmp_path, tmp_path_module, use_cache, pkg_spec):
         cache_dir=tmp_path_module,
         compression_format="gz",
         compresslevel=1,
+        micromamba_exe=MAMBA_EXE,
     )
     assert used_cache == use_cache
     assert fname.endswith(".tar.gz")
@@ -63,6 +64,7 @@ def test_pack_env(tmp_path, packages, relocate_prefix):
         channels=CHANNELS,
         relocate_prefix=relocate_prefix,
         platform="emscripten-32",
+        micromamba_exe=MAMBA_EXE
     )
 
     pack_env(
