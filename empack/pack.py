@@ -229,7 +229,7 @@ def pack_directory(
             if mount_dir == ".":
                 arcnames.append(rel_path)
             else:
-                arcnames.append(os.path.join(mount_dir, rel_path))
+                arcnames.append(f"{mount_dir}/{rel_path}")
 
     save_as_tarfile(
         output_filename=output_filename,
@@ -271,7 +271,7 @@ def pack_file(
     save_as_tarfile(
         output_filename=output_filename,
         filenames=[host_file],
-        arcnames=[mount_dir / host_file.name],
+        arcnames=[f"{mount_dir} / {host_file.name}"],
         compression_format=compression_format,
         compresslevel=compresslevel,
     )
