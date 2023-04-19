@@ -1,10 +1,11 @@
 import pytest
-from .conftest import FILE_FILTERS, CHANNELS, MAMBA_EXE
+from .conftest import FILE_FILTERS, CHANNELS, MAMBA_EXE, to_native_path
 import os
 from pathlib import Path
 import sys
 import json
 
+import platform
 from empack.file_patterns import FileFilter
 from empack.pack import pack_pkg, pack_env, pack_directory, pack_file
 from empack.micromamba_wrapper import create_environment
@@ -13,7 +14,7 @@ import tarfile
 
 # we use the python 3.10 package twice since we want
 # to test if the caching code path is working
-@pytest.mark.parametrize("pkg_spec", ["python=3.10", "numpy", "python=3.10"])
+@pytest.mark.parametrize("pkg_spec", ["python=3.10", "numpy", "scipy", "python=3.10"])
 @pytest.mark.parametrize("use_cache", [False, True])
 def test_pack_pkg(tmp_path, tmp_path_module, use_cache, pkg_spec):
     pkg_name = pkg_spec.split("=")[0]
@@ -153,6 +154,9 @@ def test_pack_directory(tmp_path, mount_dir):
 
     # open the tar file and check that the files are there
     with tarfile.open(packed_file, "r:gz") as tar:
+
+        mount_dir = to_native_path(posix_path_str=mount_dir)
+
         file = tar.extractfile(os.path.join(mount_dir[1:], "file1.txt"))
         assert file.read().decode("utf-8") == "file1"
 
@@ -204,6 +208,8 @@ def test_pack_file(tmp_path, mount_dir):
     with tarfile.open(packed_file, "r:gz") as tar:
         # print all names
         assert len(tar.getmembers()) == 1
+
+        mount_dir = to_native_path(posix_path_str=mount_dir)
 
         if mount_dir == "/":
             file = tar.extractfile("nested_file.txt")
