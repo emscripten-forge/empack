@@ -82,9 +82,9 @@ jobs:
  
 
       - name: Install empack
-        shell: cmd /C CALL {0}
-        run: >-
-          pip install .
+        shell: powershell
+        run: |
+          python -m pip install .
 
       - name: Install Playwright
         shell: powershell
@@ -97,8 +97,8 @@ jobs:
           python -m pip install git+https://github.com/emscripten-forge/pyjs-code-runner@main  --no-deps --ignore-installed
 
       - name: Run pytest
-        shell: cmd /C CALL {0}
-        run: >-
+        shell: powershell
+        run: |
           python -m  pytest -v -s tests/
 
       - name: Run cli from terminal
