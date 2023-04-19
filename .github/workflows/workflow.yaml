@@ -14,21 +14,17 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-        matrix:
-            os: [ubuntu-latest, 	macos-latest]
+      fail-fast: false
+      matrix:
+          os: [ubuntu-latest, 	macos-latest]
 
     env:
       TARGET_PLATFORM: emscripten-32
       GITHUB_OWNER: "emscripten-forge"
 
     strategy:
-      fail-fast: false
 
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
 
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -55,7 +51,7 @@ jobs:
       - name: Install pyjs-code-runner
         shell: bash -l {0}
         run: |
-          python -m pip install git+https://github.com/DerThorsten/pyjs-code-runner@relocate_env   --no-deps --ignore-installed
+          python -m pip install git+https://github.com/emscripten-forge/pyjs-code-runner@main  --no-deps --ignore-installed
 
       - name: Run pytest
         shell: bash -l {0}
@@ -67,3 +63,54 @@ jobs:
         run: |
           empack --help
           empack pack --help
+
+win:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022 ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install mamba and dependencies
+        uses: mamba-org/provision-with-micromamba@main
+        with:
+          environment-file: ci_env.yml
+          environment-name: ci-env
+          micromamba-version: '1.4.1'
+
+      - name: micromamba shell hook
+        shell: powershell
+        run: |
+          micromamba shell hook -s cmd.exe -p C:\Users\runneradmin\micromamba-root
+
+      - name: Install empack
+        shell: cmd
+        run: |
+          pip install .
+
+      - name: Install Playwright
+        shell: cmd
+        run: |
+          playwright install
+
+      - name: Install pyjs-code-runner
+        shell: bash -l {0}
+        run: |
+          python -m pip install git+https://github.com/emscripten-forge/pyjs-code-runner@main  --no-deps --ignore-installed
+          
+      - name: Run pytest
+        shell: cmd
+        run: |
+          pytest -v -s tests/
+
+      - name: Run cli from terminal
+        shell: cmd
+        run: |
+          empack --help
+          empack pack --help
+
