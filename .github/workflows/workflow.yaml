@@ -103,6 +103,6 @@ jobs:
 
       - name: Run cli from terminal
         shell: powershell
-        run: >-
+        run: |
           empack pack --help
 
