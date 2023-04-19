@@ -124,6 +124,9 @@ packages:
       - pattern: '**/tests/*.py'
       - pattern: '**/tests/*.so'
       - pattern: '**/tzdata/zoneinfo/**/*.pyc'
+  zlib:
+    exclude_patterns:
+      - pattern: '**/so'
 default:
   include_patterns:
     - pattern: '*.so'

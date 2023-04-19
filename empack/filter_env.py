@@ -23,13 +23,13 @@ def write_minimal_conda_meta(pkg_meta, env_prefix):
     path = conda_meta_dir / filename
     with open(path, "w") as f:
         json.dump(content, f)
+    return path
 
 
 def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
 
+    included = []
     env_path = Path(env_prefix)
-
-    name = pkg_meta["name"]
     files = pkg_meta["files"]
     for file in files:
 
@@ -37,6 +37,7 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
 
             include = matcher.match(path=file)
             if include:
+                included.append(file)
                 path = env_path / file
                 if path.is_symlink() and not path.exists():
                     continue
@@ -45,59 +46,31 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
                 os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
                 shutil.copy(os.path.join(env_prefix, file), dest_fpath)
                 break
-    write_minimal_conda_meta(pkg_meta=pkg_meta, env_prefix=target_dir)
-    # true indicates there is a file,
-    # since we always have the conda-meta
-    # we awlays return true here
-    return True
+    path = write_minimal_conda_meta(pkg_meta=pkg_meta, env_prefix=target_dir)
+    included.append(path.relative_to(target_dir))
+    return included
 
 
-def split_filter_pkg(env_prefix, pkg_meta, target_dirs, matchers):
 
-    assert len(target_dirs) == len(matchers)
-
-    any_files_array = [False] * len(target_dirs)
-    env_path = Path(env_prefix)
-
-    name = pkg_meta["name"]
-    files = pkg_meta["files"]
-    for file in files:
-
-        for i, matcher in enumerate(matchers):
-
-            include = matcher.match(path=file)
-            if include:
-                path = env_path / file
-                if path.is_symlink() and not path.exists():
-                    continue
-
-                dest_fpath = os.path.join(target_dirs[i], file)
-                os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
-                shutil.copy(os.path.join(env_prefix, file), dest_fpath)
-                any_files_array[i] = True
-
-                break
-    # write conda meta to the pkg at index 0
-    any_files_array[0] = True
-    write_minimal_conda_meta(pkg_meta=pkg_meta, env_prefix=target_dirs[0])
-    return any_files_array
-
-
-def filter_env(env_prefix, target_dir, pkg_file_filter):
+def filter_env(env_prefix, target_dir, pkg_file_filter, verbose=0):
     if os.path.isdir(target_dir):
         shutil.rmtree(target_dir)
         os.makedirs(target_dir)
     any_file = False
+
+    per_pkg_included_files = {}
     for pkg_meta in iterate_env_pkg_meta(env_prefix):
 
-        matchers = pkg_file_filter.get_matchers(pkg_name=pkg_meta["name"])
+        if verbose > 0:
+            print(f"filtering {pkg_meta['name']}")
+        file_filter = pkg_file_filter.get_filters_for_pkg(pkg_name=pkg_meta["name"])
 
-        any_file_in_pkg = filter_pkg(
+        included_files = filter_pkg(
             env_prefix=env_prefix,
             pkg_meta=pkg_meta,
             target_dir=target_dir,
-            matchers=matchers,
+            matchers=file_filter,
         )
-        if any_file_in_pkg:
-            any_file = True
-    return any_file
+        per_pkg_included_files[pkg_meta["name"]] = included_files
+    
+    return per_pkg_included_files

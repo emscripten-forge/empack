@@ -5,3 +5,5 @@ dependencies:
   - python
   - pip
   - pytest
+  - micromamba >=1.4.1
+  - microsoft::playwright
