@@ -8,9 +8,7 @@ on:
 
 jobs:
 
-  test_empack:
-
-
+  test_empack_unix:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -62,7 +60,7 @@ jobs:
           empack --help
           empack pack --help
 
-win:
+  test_empack_windows:
 
     runs-on: ${{ matrix.os }}
 
