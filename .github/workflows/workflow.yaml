@@ -87,8 +87,8 @@ jobs:
           pip install .
 
       - name: Install Playwright
-        shell: cmd /C CALL {0}
-        run: >-
+        shell: powershell
+        run: |
           playwright install
 
       - name: Install pyjs-code-runner
