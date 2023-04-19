@@ -97,12 +97,12 @@ jobs:
           python -m pip install git+https://github.com/emscripten-forge/pyjs-code-runner@main  --no-deps --ignore-installed
 
       - name: Run pytest
-        shell: powershell
-        run: |
-          pytest -v -s tests/
+        shell: cmd /C CALL {0}
+        run: >-
+        python -m  pytest -v -s tests/
 
       - name: Run cli from terminal
-        shell: powershell
-        run: |
+        shell: cmd /C CALL {0}
+        run: >-
           empack pack --help
 
