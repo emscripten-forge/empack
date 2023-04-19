@@ -56,6 +56,8 @@ def create_environment(prefix, channels=None, packages=None, platform=None, no_d
         except subprocess.CalledProcessError as e:
             # run again but without supressing stdout
             if supress_stdout:
+                # add --log-level=debug
+                micromamba_command += ["--log-level=debug"]
                 subprocess.run(micromamba_command, check=True)
             
             raise Exception(f"Error: Micromamba command failed with return code {e.returncode}") from e
