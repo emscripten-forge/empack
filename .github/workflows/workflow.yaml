@@ -9,7 +9,14 @@ on:
 jobs:
 
   test_empack:
-    runs-on: ubuntu-latest
+
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+        matrix:
+            os: [ubuntu-latest, 	macos-latest]
+
     env:
       TARGET_PLATFORM: emscripten-32
       GITHUB_OWNER: "emscripten-forge"
