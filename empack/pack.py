@@ -213,10 +213,12 @@ def pack_directory(
         )
 
     # remove  the "/" at the beginning
-    if mount_dir == "/":
-        mount_dir = "."
-    else:    
+    if mount_dir == "/": 
         mount_dir = mount_dir[1:]
+
+    # remove the "/" at the end
+    if mount_dir.endswith("/"):
+        mount_dir = mount_dir[:-1]
 
     # iterate over all files in host_dir and store in list
     filenames = []
@@ -226,7 +228,7 @@ def pack_directory(
             abs_path = os.path.join(root, file)
             rel_path = os.path.relpath(abs_path, host_dir)
             filenames.append(os.path.join(root, file))
-            if mount_dir == ".":
+            if mount_dir == "":
                 arcnames.append(rel_path)
             else:
                 arcnames.append(f"{mount_dir}/{rel_path}")
@@ -265,13 +267,20 @@ def pack_file(
 
     # remove  the "/" at the beginning
     if mount_dir == "/":
-        mount_dir = "."
-    else:    
         mount_dir = mount_dir[1:]
+    
+    if mount_dir.endswith("/"):
+        mount_dir = mount_dir[:-1]
+    
+    if mount_dir == "":
+        arcname = host_file.name
+    else:
+        arcname = f"{mount_dir}/{host_file.name}"
+    print(f"mount_dir: {mount_dir}  arcname: {arcname}")
     save_as_tarfile(
         output_filename=output_filename,
         filenames=[host_file],
-        arcnames=[f"{mount_dir} / {host_file.name}"],
+        arcnames=[arcname],
         compression_format=compression_format,
         compresslevel=compresslevel,
     )
