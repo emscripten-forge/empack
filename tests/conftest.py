@@ -10,7 +10,8 @@ CONFIG_PATH = os.path.join(THIS_DIR, "..", "config", "empack_config.yaml")
 FILE_FILTERS = pkg_file_filter_from_yaml(CONFIG_PATH)
 CHANNELS = ["conda-forge", "https://repo.mamba.pm/emscripten-forge"]
 
-
+# check if environment variable MAMBA_EXE is set
+MAMBA_EXE = os.environ.get("MAMBA_EXE")
 
 def get_free_port():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
