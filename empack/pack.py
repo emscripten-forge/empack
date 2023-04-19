@@ -1,7 +1,7 @@
 from .micromamba_wrapper import create_environment
 from .filter_env import filter_pkg, filter_env, iterate_env_pkg_meta
 from tempfile import TemporaryDirectory
-from pathlib import Path, PosixPath
+from pathlib import Path
 import tarfile
 import os.path
 import json
@@ -17,7 +17,6 @@ EMPACK_CACHE_DIR = Path(user_cache_dir("empack"))
 PACKED_PACKAGES_CACHE_DIR = EMPACK_CACHE_DIR / "packed_packages_cache"
 PACKED_PACKAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 DEFAULT_CONFIG_PATH = Path(sys.prefix) / "share" / "empack" / "empack_config.yaml"
-
 
 def filename_base_from_meta(pkg_meta):
     name = pkg_meta["name"]
@@ -206,15 +205,19 @@ def pack_directory(
     else:
         output_filename = outname
 
-    mount_dir = PosixPath(mount_dir)
-    if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
+    mount_dir = str(mount_dir)
+    if not mount_dir.startswith("/"):
         raise RuntimeError(
             f'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar" but is: {mount_dir}'
         )
 
-    # remove first part from mount_dir
-    mount_dir = PosixPath(*mount_dir.parts[1:])
-    assert mount_dir.is_absolute() == False
+    # remove  the "/" at the beginning
+    if mount_dir == "/": 
+        mount_dir = mount_dir[1:]
+
+    # remove the "/" at the end
+    if mount_dir.endswith("/"):
+        mount_dir = mount_dir[:-1]
 
     # iterate over all files in host_dir and store in list
     filenames = []
@@ -224,10 +227,10 @@ def pack_directory(
             abs_path = os.path.join(root, file)
             rel_path = os.path.relpath(abs_path, host_dir)
             filenames.append(os.path.join(root, file))
-            if mount_dir == PosixPath("."):
+            if mount_dir == "":
                 arcnames.append(rel_path)
             else:
-                arcnames.append(os.path.join(mount_dir, rel_path))
+                arcnames.append(f"{mount_dir}/{rel_path}")
 
     save_as_tarfile(
         output_filename=output_filename,
@@ -250,8 +253,8 @@ def pack_file(
     if not host_file.is_file():
         raise RuntimeError(f"File {host_file} is not a file")
 
-    mount_dir = PosixPath(mount_dir)
-    if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
+    mount_dir = str(mount_dir)
+    if not mount_dir.startswith("/"):
         raise RuntimeError(
             'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
         )
@@ -261,14 +264,22 @@ def pack_file(
     else:
         output_filename = outname
 
-    # remove first part from mount_dir
-    mount_dir = PosixPath(*mount_dir.parts[1:])
-    assert mount_dir.is_absolute() == False
-
+    # remove  the "/" at the beginning
+    if mount_dir == "/":
+        mount_dir = mount_dir[1:]
+    
+    if mount_dir.endswith("/"):
+        mount_dir = mount_dir[:-1]
+    
+    if mount_dir == "":
+        arcname = host_file.name
+    else:
+        arcname = f"{mount_dir}/{host_file.name}"
+    print(f"mount_dir: {mount_dir}  arcname: {arcname}")
     save_as_tarfile(
         output_filename=output_filename,
         filenames=[host_file],
-        arcnames=[mount_dir / host_file.name],
+        arcnames=[arcname],
         compression_format=compression_format,
         compresslevel=compresslevel,
     )

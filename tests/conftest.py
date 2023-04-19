@@ -5,12 +5,23 @@ import os
 
 from empack.file_patterns import pkg_file_filter_from_yaml
 
+import platform
+IS_WINDOWS = (platform.system() == "Windows")
+
+def to_native_path(posix_path_str):
+    if IS_WINDOWS:
+        return posix_path_str.replace("/", "\\")
+    else:
+        return posix_path_str
+    
+
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_PATH = os.path.join(THIS_DIR, "..", "config", "empack_config.yaml")
 FILE_FILTERS = pkg_file_filter_from_yaml(CONFIG_PATH)
 CHANNELS = ["conda-forge", "https://repo.mamba.pm/emscripten-forge"]
 
-
+# check if environment variable MAMBA_EXE is set
+MAMBA_EXE = os.environ.get("MAMBA_EXE")
 
 def get_free_port():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,4 +41,6 @@ def free_port():
 def tmp_path_module(request, tmpdir_factory):
     """A tmpdir fixture for the module scope. Persists throughout the module."""
     return Path(tmpdir_factory.mktemp(request.module.__name__))
+
+
 
