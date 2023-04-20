@@ -129,9 +129,9 @@ packages:
       - pattern: '**/so'
   itables:
     include_patterns:
-      - pattern: 'html/**/*'
-      - pattern: 'external/**/*'
       - pattern: '*.py'
+      - pattern: '**/html/**'
+      - pattern: '**/external/**'
 default:
   include_patterns:
     - pattern: '*.so'
