@@ -130,8 +130,8 @@ packages:
   itables:
     include_patterns:
       - pattern: '*.py'
-      - pattern: '**/html/**'
-      - pattern: '**/external/**'
+      - pattern: 'html/**'
+      - pattern: 'external/**'
 default:
   include_patterns:
     - pattern: '*.so'
