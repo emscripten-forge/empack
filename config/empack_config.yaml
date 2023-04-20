@@ -131,7 +131,7 @@ packages:
     include_patterns:
       - pattern: 'html/**/*'
       - pattern: 'external/**/*'
-      - pattent: '*.py'
+      - pattern: '*.py'
 default:
   include_patterns:
     - pattern: '*.so'
