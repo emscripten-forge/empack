@@ -127,6 +127,11 @@ packages:
   zlib:
     exclude_patterns:
       - pattern: '**/so'
+  itables:
+    include_patterns:
+      - pattern: '*.py'
+      - pattern: 'html/**'
+      - pattern: 'external/**'
 default:
   include_patterns:
     - pattern: '*.so'
