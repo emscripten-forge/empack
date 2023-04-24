@@ -87,5 +87,14 @@ ignore = [
   "T201",
 ]
 
+[tool.ruff.per-file-ignores]
+# S101 Use of `assert` detected
+# F841 Local variable `foo` is assigned to but never used
+# PLR2004 Magic value used in comparison
+"tests/*" = ["S101", "F841", "PLR2004"]
+
+# E501 Line too long
+"empack/micromamba_wrapper.py" = ["E501"]
+
 [tool.ruff.isort]
 known-third-party = ["pybind11", "conda", "conda_env"]
