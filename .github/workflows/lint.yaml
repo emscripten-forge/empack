@@ -1,4 +1,4 @@
-name: Run some simple tests on empack
+name: Lint
 on:
   push:
     branches:
