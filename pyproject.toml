@@ -18,7 +18,6 @@ keywords = [
 classifiers = [
     "Intended Audience :: Developers",
     "Natural Language :: English",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -60,10 +59,10 @@ exclude = [
 
 [tool.black]
 line-length = 100
-target-version = ["py37"]
+target-version = ["py38"]
 
 [tool.ruff]
-target-version = "py37"
+target-version = "py38"
 exclude = [
     "*/tests/*",
     "docs/source/tools/*",
