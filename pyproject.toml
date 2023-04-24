@@ -58,21 +58,33 @@ exclude = [
     ".github",
 ]
 
+[tool.black]
+line-length = 100
+target-version = ["py37"]
+
 [tool.ruff]
+target-version = "py37"
 exclude = [
     "*/tests/*",
     "docs/source/tools/*",
 ]
-ignore = [
-    "D100",
-    "D104",
-]
 line-length = 100
 select = [
-    "D",
-    "E",
-    "F",
-    "W",
+  "A", "B", "C", "DTZ", "E", "EM", "F", "FBT", "I", "ICN", "ISC", "N",
+  "PLC", "PLE", "PLR", "PLW", "Q", "RUF", "S", "SIM", "T", "TID", "UP",
+  "W", "YTT",
+]
+ignore = [
+  "D100",
+  "D104",
+  # Q000 Single quotes found but double quotes preferred
+  "Q000",
+  # FBT001 Boolean positional arg in function definition
+  "FBT001", "FBT002", "FBT003",
+  # C408 Unnecessary `dict` call (rewrite as a literal)
+  "C408", "C416",
+  # allow for using print()
+  "T201",
 ]
 
 [tool.ruff.isort]
