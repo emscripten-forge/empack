@@ -56,13 +56,14 @@ def create_environment(
     if dry_run:
         print("Dry run: Micromamba command that would be run:")
         print(" ".join(micromamba_command))
-    else:
-        try:
-            extra_kwargs = {}
-            if supress_stdout:
-                extra_kwargs["stdout"] = subprocess.DEVNULL
-            subprocess.run(micromamba_command, check=True, **extra_kwargs)
-        except subprocess.CalledProcessError as e:
-            raise Exception(
-                f"Error: Micromamba command failed with return code {e.returncode}"
-            ) from e
+        return
+
+    try:
+        extra_kwargs = {}
+        if supress_stdout:
+            extra_kwargs["stdout"] = subprocess.DEVNULL
+        subprocess.run(micromamba_command, check=True, **extra_kwargs)
+    except subprocess.CalledProcessError as e:
+        raise Exception(
+            f"Error: Micromamba command failed with return code {e.returncode}"
+        ) from e
