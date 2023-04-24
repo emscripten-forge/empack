@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import typer
 
@@ -38,27 +39,25 @@ def pack_env_cli(
         "-c",
         help="path to a .yaml file with the empack config",
     ),
-    use_cache: bool
-    | None = typer.Option(  # noqa: B008
+    use_cache: Optional[bool] = typer.Option(  # noqa: B008
         True,
         "--use-cache/--no-use-cache",
         help="use caching",
     ),
-    cache_dir: str
-    | None = typer.Option(  # noqa: B008
+    cache_dir: Optional[str] = typer.Option(  # noqa: B008
         None,
         "--cache-dir",
         help="cache directory",
     ),
-    outdir: str
-    | None = typer.Option(  # noqa: B008
+    outdir: Optional[str] = typer.Option(  # noqa: B008
         None,
         "--outdir",
         "-o",
         help="if no output directory is specified the current workdir is used",
     ),
-    compresslevel: int
-    | None = typer.Option(9, "--compresslevel", "-l", help="compression level"),  # noqa: B008
+    compresslevel: Optional[int] = typer.Option(  # noqa: B008
+        9, "--compresslevel", "-l", help="compression level"
+    ),
 ):
     file_filters = pkg_file_filter_from_yaml(*config)
 
