@@ -1,11 +1,11 @@
 from pathlib import Path
-from typing import List, Optional
+
 import typer
 
-from .app import app
+from empack.file_patterns import pkg_file_filter_from_yaml
+from empack.pack import DEFAULT_CONFIG_PATH, pack_env
 
-from ..pack import pack_env, DEFAULT_CONFIG_PATH
-from ..file_patterns import pkg_file_filter_from_yaml
+from .app import app
 
 # packaging
 pack_app = typer.Typer()
@@ -32,31 +32,33 @@ def pack_env_cli(
         "-r",
         help="path of the env in the the virtual filesystem",
     ),
-    config: List[Path] = typer.Option(  # noqa: B008
+    config: list[Path] = typer.Option(  # noqa: B008
         [DEFAULT_CONFIG_PATH],
         "--config",
         "-c",
         help="path to a .yaml file with the empack config",
     ),
-    use_cache: Optional[bool] = typer.Option(  # noqa: B008
+    use_cache: bool
+    | None = typer.Option(  # noqa: B008
         True,
         "--use-cache/--no-use-cache",
         help="use caching",
     ),
-    cache_dir: Optional[str] = typer.Option(  # noqa: B008
+    cache_dir: str
+    | None = typer.Option(  # noqa: B008
         None,
         "--cache-dir",
         help="cache directory",
     ),
-    outdir: Optional[str] = typer.Option(  # noqa: B008
+    outdir: str
+    | None = typer.Option(  # noqa: B008
         None,
         "--outdir",
         "-o",
         help="if no output directory is specified the current workdir is used",
     ),
-    compresslevel: Optional[int] = typer.Option(  # noqa: B008
-        9, "--compresslevel", "-l", help="compression level"
-    ),
+    compresslevel: int
+    | None = typer.Option(9, "--compresslevel", "-l", help="compression level"),  # noqa: B008
 ):
     file_filters = pkg_file_filter_from_yaml(*config)
 

@@ -1,16 +1,15 @@
 import pytest
-from .conftest import CHANNELS
-
 from typer.testing import CliRunner
 
 from empack.cli.main import app
 from empack.micromamba_wrapper import create_environment
 
+from .conftest import CHANNELS
 
 runner = CliRunner()
 
 
-class TestCLI(object):
+class TestCLI:
     def test_help(self):
         result = runner.invoke(app, ["--help"])
         assert result.exit_code == 0

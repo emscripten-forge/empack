@@ -1,7 +1,8 @@
-import pytest
-from pathlib import Path
-import socket
 import os
+import socket
+from pathlib import Path
+
+import pytest
 
 from empack.file_patterns import pkg_file_filter_from_yaml
 

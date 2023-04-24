@@ -9,7 +9,7 @@ def iterate_env_pkg_meta(env_prefix):
     meta_dir = os.path.join(env_prefix, "conda-meta")
     pkg_meta_files = glob.glob(os.path.join(meta_dir, "*.json"))
     for p in pkg_meta_files:
-        with open(p, "r") as pkg_meta_file:
+        with open(p) as pkg_meta_file:
             pkg_meta = json.load(pkg_meta_file)
             yield pkg_meta
 
@@ -31,7 +31,7 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
     env_path = Path(env_prefix)
     files = pkg_meta["files"]
     for file in files:
-        for i, matcher in enumerate(matchers):
+        for _i, matcher in enumerate(matchers):
             include = matcher.match(path=file)
             if include:
                 included.append(file)

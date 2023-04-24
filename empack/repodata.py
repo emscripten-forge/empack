@@ -1,15 +1,16 @@
-import requests
 import bz2
 import io
 import json
-from pathlib import Path
 import os
+from pathlib import Path
+
+import requests
 
 
 def get_pkg_names(repodata):
     pkg_names = set()
-    for k, v in repodata.items():
-        for pkg_key, meta in v["packages"].items():
+    for _k, v in repodata.items():
+        for _pkg_key, meta in v["packages"].items():
             pkg_names.add(meta["name"])
     # print("#",len(pkg_names))
     return pkg_names
@@ -44,8 +45,8 @@ def remove_non_available(repodata):
 
 
 def hack_fields(repodata):
-    for k, v in repodata.items():
-        for pkg_key, meta in v["packages"].items():
+    for _k, v in repodata.items():
+        for _pkg_key, meta in v["packages"].items():
             # fmt: off
 
             meta['md5'] = "00000000000000000000000000000000"
@@ -71,9 +72,7 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
         "arch"
     ] = "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2"
 
-    repodata_urls[
-        "noarch"
-    ] = "https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2"
+    repodata_urls["noarch"] = "https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2"
     repodata_response = {k: requests.get(url) for k, url in repodata_urls.items()}
     [r.raise_for_status() for r in repodata_response.values()]
 

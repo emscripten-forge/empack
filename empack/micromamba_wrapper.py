@@ -1,7 +1,5 @@
 import subprocess
 
-import subprocess
-
 
 def create_environment(
     prefix,

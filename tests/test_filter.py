@@ -77,12 +77,8 @@ def test_from_yaml():
     config_path = os.path.join(dn, "empack_test_config.yaml")
     pkg_file_filter = pkg_file_filter_from_yaml(config_path)
 
-    assert pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(
-        path="/home/fu/bar.py"
-    )
-    assert pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(
-        path="/home/fu/bar.so"
-    )
+    assert pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(path="/home/fu/bar.py")
+    assert pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(path="/home/fu/bar.so")
     assert not pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(
         path="/home/tests/fu/bar.py"
     )
@@ -111,12 +107,8 @@ def test_from_yaml_with_multiple():
     extra_config_path = os.path.join(dn, "empack_test_extra_config.yaml")
     pkg_file_filter = pkg_file_filter_from_yaml(config_path, extra_config_path)
 
-    assert pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(
-        path="/home/fu/bar.py"
-    )
-    assert pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(
-        path="/home/fu/bar.so"
-    )
+    assert pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(path="/home/fu/bar.py")
+    assert pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(path="/home/fu/bar.so")
     assert not pkg_file_filter.get_filters_for_pkg(pkg_name="fubar")[0].match(
         path="/home/tests/fu/bar.py"
     )
