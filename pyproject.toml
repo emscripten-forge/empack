@@ -50,3 +50,23 @@ config = "share/empack"
 exclude = [
     ".github",
 ]
+
+[tool.ruff]
+exclude = [
+    "*/tests/*",
+    "docs/source/tools/*",
+]
+ignore = [
+    "D100",
+    "D104",
+]
+line-length = 100
+select = [
+    "D",
+    "E",
+    "F",
+    "W",
+]
+
+[tool.ruff.isort]
+known-third-party = ["pybind11", "conda", "conda_env"]
