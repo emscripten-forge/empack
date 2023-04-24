@@ -1,17 +1,16 @@
-from .micromamba_wrapper import create_environment
-from .filter_env import filter_pkg, filter_env, iterate_env_pkg_meta
-from tempfile import TemporaryDirectory
-from pathlib import Path, PosixPath
-import tarfile
-import os.path
 import json
-import shutil
-from appdirs import user_cache_dir
-import sys
 import os
-import stat
-from .tar_utils import save_as_tarfile, ALLOWED_FORMATS
+import os.path
+import shutil
+import sys
+from pathlib import Path, PosixPath
+from tempfile import TemporaryDirectory
 
+from appdirs import user_cache_dir
+
+from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta
+from .micromamba_wrapper import create_environment
+from .tar_utils import ALLOWED_FORMATS, save_as_tarfile
 
 EMPACK_CACHE_DIR = Path(user_cache_dir("empack"))
 PACKED_PACKAGES_CACHE_DIR = EMPACK_CACHE_DIR / "packed_packages_cache"
@@ -43,16 +42,12 @@ def pack_pkg_impl(
     fname_core = f"{filename_base_from_meta(pkg_meta)}.tar.{compression_format}"
     cache_file = cache_dir / fname_core
 
-    if outdir is not None:
-        fname = os.path.join(outdir, fname_core)
-    else:
-        fname = fname_core
+    fname = os.path.join(outdir, fname_core) if outdir is not None else fname_core
 
-    if use_cache:
-        if cache_file.exists():
-            if outdir is not None:
-                shutil.copy(cache_file, fname)
-            return fname_core, True
+    if use_cache and cache_file.exists():
+        if outdir is not None:
+            shutil.copy(cache_file, fname)
+        return fname_core, True
 
     conda_meta_filename = f"{filename_base_from_meta(pkg_meta)}.json"
     with open(filtered_prefix / "conda-meta" / conda_meta_filename, "w") as f:
@@ -151,8 +146,6 @@ def pack_env(
             pkg_file_filter=file_filters,
         )
 
-        package_filenames = []
-
         packages_info = []
         for pkg_meta in iterate_env_pkg_meta(filtered_prefix):
             pack_pkg_impl(
@@ -200,26 +193,28 @@ def pack_directory(
 ):
     host_dir = Path(host_dir)
     if not host_dir.is_dir():
-        raise RuntimeError(f"host_dir must be a directory: {host_dir=}")
-    if outdir is not None:
-        output_filename = Path(outdir) / outname
-    else:
-        output_filename = outname
+        error = f"host_dir must be a directory: {host_dir}"
+        raise RuntimeError(error)
+    output_filename = Path(outdir) / outname if outdir is not None else outname
 
     mount_dir = PosixPath(mount_dir)
     if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
-        raise RuntimeError(
-            f'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar" but is: {mount_dir}'
+        error_message = (
+            'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
+            f" but is: {mount_dir}"
         )
+        raise RuntimeError(error_message)
 
     # remove first part from mount_dir
     mount_dir = PosixPath(*mount_dir.parts[1:])
-    assert mount_dir.is_absolute() == False
+    if mount_dir.is_absolute():
+        error_message = f"{mount_dir} should not be absolute"
+        raise RuntimeError(error_message)
 
     # iterate over all files in host_dir and store in list
     filenames = []
     arcnames = []
-    for root, dirs, files in os.walk(host_dir):
+    for root, _dirs, files in os.walk(host_dir):
         for file in files:
             abs_path = os.path.join(root, file)
             rel_path = os.path.relpath(abs_path, host_dir)
@@ -248,7 +243,8 @@ def pack_file(
 ):
     host_file = Path(host_file)
     if not host_file.is_file():
-        raise RuntimeError(f"File {host_file} is not a file")
+        error = f"File {host_file} is not a file"
+        raise RuntimeError(error)
 
     mount_dir = PosixPath(mount_dir)
     if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
@@ -256,14 +252,13 @@ def pack_file(
             'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
         )
 
-    if outdir is not None:
-        output_filename = Path(outdir) / outname
-    else:
-        output_filename = outname
+    output_filename = Path(outdir) / outname if outdir is not None else outname
 
     # remove first part from mount_dir
     mount_dir = PosixPath(*mount_dir.parts[1:])
-    assert mount_dir.is_absolute() == False
+    if mount_dir.is_absolute() is True:
+        error = f"{mount_dir} is an absolute path"
+        raise Exception(error)
 
     save_as_tarfile(
         output_filename=output_filename,

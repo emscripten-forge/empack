@@ -11,4 +11,3 @@ packages:
       - pattern: '**/sparse'
     - include_patterns:
       - pattern: '**'
-

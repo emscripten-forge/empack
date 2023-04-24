@@ -1,24 +1,22 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
+
 import typer
-import sys
+
+from empack.file_patterns import pkg_file_filter_from_yaml
+from empack.pack import DEFAULT_CONFIG_PATH, pack_env
 
 from .app import app
-from .err import exit_with_err
-
-from ..pack import pack_pkg, pack_env,DEFAULT_CONFIG_PATH
-from ..file_patterns import pkg_file_filter_from_yaml
 
 # packaging
 pack_app = typer.Typer()
 app.add_typer(pack_app, name="pack")
 
 
-
 @pack_app.command(
     name="env",
     help="""Pack an environment into a multiple tarballs:
-This will pack and exisiting enviroment into multiple tarballs 
+This will pack and exisiting enviroment into multiple tarballs
 and a json file with a list of package filenmmes.
 """,
 )
@@ -35,7 +33,7 @@ def pack_env_cli(
         "-r",
         help="path of the env in the the virtual filesystem",
     ),
-    config: List[Path] = typer.Option(  # noqa: B008
+    config: list[Path] = typer.Option(  # noqa: B008
         [DEFAULT_CONFIG_PATH],
         "--config",
         "-c",
@@ -58,13 +56,9 @@ def pack_env_cli(
         help="if no output directory is specified the current workdir is used",
     ),
     compresslevel: Optional[int] = typer.Option(  # noqa: B008
-        9,
-        "--compresslevel",
-        "-l",
-        help="compression level"
+        9, "--compresslevel", "-l", help="compression level"
     ),
 ):
-
     file_filters = pkg_file_filter_from_yaml(*config)
 
     pack_env(

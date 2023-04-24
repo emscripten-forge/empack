@@ -1,11 +1,9 @@
 import fnmatch
 import re
-from typing import Dict, List, Optional, Union
 
 import yaml
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 
-import warnings
 
 class FilePatternsModelBase(BaseModel, extra=Extra.forbid):
     pass
@@ -32,16 +30,15 @@ class UnixPattern(FilePatternsModelBase):
 
 
 class FilePattern(BaseModel, extra=Extra.forbid):
-    __root__: Union[RegexPattern, UnixPattern]
+    __root__: RegexPattern | UnixPattern
 
     def match(self, path):
         return self.__root__.match(path)
 
 
 class FileFilter(BaseModel, extra=Extra.forbid):
-
-    include_patterns: List[FilePattern] = Field(default_factory=list)
-    exclude_patterns: List[FilePattern] = Field(default_factory=list)
+    include_patterns: list[FilePattern] = Field(default_factory=list)
+    exclude_patterns: list[FilePattern] = Field(default_factory=list)
 
     def match(self, path):
         include = False
@@ -57,9 +54,8 @@ class FileFilter(BaseModel, extra=Extra.forbid):
 
 
 class PkgFileFilter(BaseModel, extra=Extra.forbid):
-    packages: Dict[str, Union[FileFilter, List[FileFilter]]]
+    packages: dict[str, FileFilter | list[FileFilter]]
     default: FileFilter
-
 
     def get_filter_for_pkg(self, pkg_name):
         return self.packages.get(pkg_name, self.default)
@@ -69,7 +65,7 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
         if not isinstance(matchers, list):
             matchers = [matchers]
         return matchers
-    
+
     def merge(self, *others):
         for other in others:
             if other.default is not None:
@@ -83,18 +79,17 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
 # must be optional for the additional configs, otherwise
 # the would always overwrite the main default config
 class AdditionalPkgFileFilter(BaseModel, extra=Extra.forbid):
-    packages: Dict[str, Union[FileFilter, List[FileFilter]]]
-    default: Optional[FileFilter]
+    packages: dict[str, FileFilter | list[FileFilter]]
+    default: FileFilter | None
 
 
 def pkg_file_filter_from_yaml(path, *extra_path):
-
-    with open(path, "r") as pack_config_file:
+    with open(path) as pack_config_file:
         pack_config = yaml.safe_load(pack_config_file)
         pkg_file_filter = PkgFileFilter.parse_obj(pack_config)
 
     for path in extra_path:
-        with open(path, "r") as pack_config_file:
+        with open(path) as pack_config_file:
             pack_config = yaml.safe_load(pack_config_file)
             pkg_file_filter.merge(AdditionalPkgFileFilter.parse_obj(pack_config))
     return pkg_file_filter

@@ -1,13 +1,10 @@
-import os
 from pathlib import Path
-from typing import List, Optional
-import json
+
 import typer
 
-from ..repodata import download_and_shrink_repodata
+from empack.repodata import download_and_shrink_repodata
 
 from .app import app
-from .err import exit_with_err
 
 # packaging
 repodata_app = typer.Typer()
@@ -17,8 +14,7 @@ app.add_typer(repodata_app, name="repodata")
 @repodata_app.command()
 def shrink(
     arch: str = typer.Option(  # noqa: B008
-        "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2"
-        "--arch",
+        "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2--arch",
         "-a",
         help="arch / emscripten-32 repodata",
     ),

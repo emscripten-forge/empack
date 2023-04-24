@@ -1,0 +1,32 @@
+name: Lint
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_PLATFORM: emscripten-32
+      GITHUB_OWNER: "emscripten-forge"
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install mamba and dependencies
+        uses: mamba-org/provision-with-micromamba@main
+        with:
+          environment-file: ci_env.yml
+          environment-name: ci-env
+          micromamba-version: '1.4.1'
+
+      - name: Lint check
+        shell: bash -l {0}
+        run: |
+          pre-commit run --all-files --show-diff-on-failure

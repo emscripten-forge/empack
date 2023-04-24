@@ -1,14 +1,14 @@
-import pytest
-from .conftest import FILE_FILTERS, CHANNELS
-import os
-from pathlib import Path
-import sys
 import json
+import os
+import tarfile
+
+import pytest
 
 from empack.file_patterns import FileFilter
-from empack.pack import pack_pkg, pack_env, pack_directory, pack_file
 from empack.micromamba_wrapper import create_environment
-import tarfile
+from empack.pack import pack_directory, pack_env, pack_file, pack_pkg
+
+from .conftest import CHANNELS, FILE_FILTERS
 
 
 # we use the python 3.10 package twice since we want
@@ -80,7 +80,7 @@ def test_pack_env(tmp_path, packages, relocate_prefix):
     assert env_metadata_json_path.exists()
 
     # check that json file contains all packages
-    with open(env_metadata_json_path, "r") as f:
+    with open(env_metadata_json_path) as f:
         env_metadata = json.load(f)
         packages_metadata = env_metadata["packages"]
         prefix = env_metadata["prefix"]
@@ -95,9 +95,7 @@ def test_pack_env(tmp_path, packages, relocate_prefix):
                 if pkg_meta["name"] == pkg_name:
                     found = True
                     break
-            assert found, "Could not find package {} in {}".format(
-                pkg, packages_metadata
-            )
+            assert found, f"Could not find package {pkg} in {packages_metadata}"
 
     # check that there is a tar.gz file for each package
     for pkg_info in packages_metadata:
@@ -158,9 +156,7 @@ def test_pack_directory(tmp_path, mount_dir):
         assert file.read().decode("utf-8") == "file2"
 
         file = tar.extractfile(
-            os.path.join(
-                mount_dir[1:], "nested_dir_a", "nested_dir_b", "nested_file.txt"
-            )
+            os.path.join(mount_dir[1:], "nested_dir_a", "nested_dir_b", "nested_file.txt")
         )
         assert file.read().decode("utf-8") == "nested_file"
 

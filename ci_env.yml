@@ -2,6 +2,7 @@ name: ci-env
 channels:
   - conda-forge
 dependencies:
+  - pre-commit
   - python
   - pip
   - pytest

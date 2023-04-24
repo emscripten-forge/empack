@@ -1,11 +1,11 @@
-import pytest
 import textwrap
-from .conftest import CHANNELS
+
+import pytest
+from pyjs_code_runner.run import run
 
 from empack.micromamba_wrapper import create_environment
 
-from pyjs_code_runner.run import run
-
+from .conftest import CHANNELS
 
 PYJS_VERSION = "1.0.0"
 PYJS_SPEC = f"pyjs>={PYJS_VERSION}"
@@ -28,7 +28,6 @@ def test_integration(tmp_path, tmp_path_module, free_port, backend_type):
     script_dir = tmp_path / "scripts"
     script_dir.mkdir()
     script_path = script_dir / "main.py"
-
 
     py_main = """
 import scipy
