@@ -2,9 +2,9 @@ name: ci-env
 channels:
   - conda-forge
 dependencies:
+  - pre-commit
   - python
   - pip
   - pytest
-  - ruff==0.0.262
   - micromamba >=1.4.1
   - microsoft::playwright
