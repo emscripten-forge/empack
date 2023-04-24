@@ -1,5 +1,4 @@
 import subprocess
-from pathlib import Path
 
 import subprocess
 
@@ -15,10 +14,10 @@ def create_environment(
     micromamba_exe=None,
     supress_stdout=True,
 ):
-    """
-    Creates a new environment using Micromamba.
+    """Creates a new environment using Micromamba.
 
-    Parameters:
+    Parameters
+    ----------
     prefix (str): The path to the prefix directory in which to create the environment. Defaults to None.
     channels (list[str], optional): A list of additional channels to use when searching for packages. Defaults to None.
     packages (list[str], optional): A list of packages to install in the new environment. Defaults to None.
@@ -27,7 +26,10 @@ def create_environment(
     dry_run (bool, optional): Whether to perform a dry run (i.e. print the Micromamba command that would be run) without actually running the command. Defaults to False.
     micromamba_exe (str, optional): The path to the micromamba executable. Defaults to "micromamba".
     supress_stdout (bool, optional): Whether to supress the output of the Micromamba command. Defaults to True.
-    Returns:
+
+
+    Returns
+    -------
     None
     """
     if micromamba_exe is None:

@@ -1,8 +1,6 @@
 import pytest
 from .conftest import FILE_FILTERS, CHANNELS
 import os
-from pathlib import Path
-import sys
 import json
 
 from empack.file_patterns import FileFilter

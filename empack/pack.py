@@ -2,14 +2,12 @@ from .micromamba_wrapper import create_environment
 from .filter_env import filter_pkg, filter_env, iterate_env_pkg_meta
 from tempfile import TemporaryDirectory
 from pathlib import Path, PosixPath
-import tarfile
 import os.path
 import json
 import shutil
 from appdirs import user_cache_dir
 import sys
 import os
-import stat
 from .tar_utils import save_as_tarfile, ALLOWED_FORMATS
 
 
@@ -151,7 +149,6 @@ def pack_env(
             pkg_file_filter=file_filters,
         )
 
-        package_filenames = []
 
         packages_info = []
         for pkg_meta in iterate_env_pkg_meta(filtered_prefix):
@@ -214,7 +211,7 @@ def pack_directory(
 
     # remove first part from mount_dir
     mount_dir = PosixPath(*mount_dir.parts[1:])
-    assert mount_dir.is_absolute() == False
+    assert mount_dir.is_absolute() is False
 
     # iterate over all files in host_dir and store in list
     filenames = []
@@ -263,7 +260,7 @@ def pack_file(
 
     # remove first part from mount_dir
     mount_dir = PosixPath(*mount_dir.parts[1:])
-    assert mount_dir.is_absolute() == False
+    assert mount_dir.is_absolute() is False
 
     save_as_tarfile(
         output_filename=output_filename,

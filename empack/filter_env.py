@@ -52,7 +52,6 @@ def filter_env(env_prefix, target_dir, pkg_file_filter, verbose=0):
     if os.path.isdir(target_dir):
         shutil.rmtree(target_dir)
         os.makedirs(target_dir)
-    any_file = False
 
     per_pkg_included_files = {}
     for pkg_meta in iterate_env_pkg_meta(env_prefix):

@@ -1,12 +1,10 @@
 from pathlib import Path
 from typing import List, Optional
 import typer
-import sys
 
 from .app import app
-from .err import exit_with_err
 
-from ..pack import pack_pkg, pack_env, DEFAULT_CONFIG_PATH
+from ..pack import pack_env, DEFAULT_CONFIG_PATH
 from ..file_patterns import pkg_file_filter_from_yaml
 
 # packaging
@@ -17,7 +15,7 @@ app.add_typer(pack_app, name="pack")
 @pack_app.command(
     name="env",
     help="""Pack an environment into a multiple tarballs:
-This will pack and exisiting enviroment into multiple tarballs 
+This will pack and exisiting enviroment into multiple tarballs
 and a json file with a list of package filenmmes.
 """,
 )

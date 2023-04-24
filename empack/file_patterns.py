@@ -5,7 +5,6 @@ from typing import Dict, List, Optional, Union
 import yaml
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 
-import warnings
 
 
 class FilePatternsModelBase(BaseModel, extra=Extra.forbid):

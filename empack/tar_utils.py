@@ -1,5 +1,4 @@
 import tarfile
-import os
 from pathlib import Path
 
 ALLOWED_FORMATS = ["gz"]
