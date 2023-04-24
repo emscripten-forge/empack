@@ -12,7 +12,6 @@ def get_pkg_names(repodata):
     for _k, v in repodata.items():
         for _pkg_key, meta in v["packages"].items():
             pkg_names.add(meta["name"])
-    # print("#",len(pkg_names))
     return pkg_names
 
 
@@ -66,7 +65,6 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
     if "arch" not in repodata_urls or "noarch" not in repodata_urls:
         raise RuntimeError("need'arch' / 'noarch' keys in repodata_urls")
 
-    # print("download")
     # download
     repodata_urls[
         "arch"

@@ -17,9 +17,10 @@ def save_as_tarfile(
         )
 
     if not Path(output_filename).parts[-1].endswith(f".tar.{compression_format}"):
-        raise RuntimeError(
+        error_message = (
             f"Output filename {output_filename} does not end with .tar.{compression_format}"
         )
+        raise RuntimeError(error_message)
 
     with tarfile.open(
         output_filename, f"w:{compression_format}", compresslevel=compresslevel

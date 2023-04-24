@@ -193,14 +193,14 @@ def pack_directory(
 ):
     host_dir = Path(host_dir)
     if not host_dir.is_dir():
-        raise RuntimeError(f"host_dir must be a directory: {host_dir=}")
+        error = f"host_dir must be a directory: {host_dir}"
+        raise RuntimeError(error)
     output_filename = Path(outdir) / outname if outdir is not None else outname
 
     mount_dir = PosixPath(mount_dir)
     if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
-        raise RuntimeError(
-            f'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar" but is: {mount_dir}'
-        )
+        error_message = f'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar" but is: {mount_dir}'
+        raise RuntimeError(error_message)
 
     # remove first part from mount_dir
     mount_dir = PosixPath(*mount_dir.parts[1:])
@@ -238,7 +238,8 @@ def pack_file(
 ):
     host_file = Path(host_file)
     if not host_file.is_file():
-        raise RuntimeError(f"File {host_file} is not a file")
+        error = f"File {host_file} is not a file"
+        raise RuntimeError(error)
 
     mount_dir = PosixPath(mount_dir)
     if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
@@ -250,7 +251,9 @@ def pack_file(
 
     # remove first part from mount_dir
     mount_dir = PosixPath(*mount_dir.parts[1:])
-    assert mount_dir.is_absolute() is False
+    if mount_dir.is_absolute() is True:
+        error = f"{mount_dir} is an absolute path"
+        raise Exception(error)
 
     save_as_tarfile(
         output_filename=output_filename,
