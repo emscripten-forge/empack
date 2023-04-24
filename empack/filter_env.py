@@ -27,14 +27,11 @@ def write_minimal_conda_meta(pkg_meta, env_prefix):
 
 
 def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
-
     included = []
     env_path = Path(env_prefix)
     files = pkg_meta["files"]
     for file in files:
-
         for i, matcher in enumerate(matchers):
-
             include = matcher.match(path=file)
             if include:
                 included.append(file)
@@ -51,7 +48,6 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
     return included
 
 
-
 def filter_env(env_prefix, target_dir, pkg_file_filter, verbose=0):
     if os.path.isdir(target_dir):
         shutil.rmtree(target_dir)
@@ -60,7 +56,6 @@ def filter_env(env_prefix, target_dir, pkg_file_filter, verbose=0):
 
     per_pkg_included_files = {}
     for pkg_meta in iterate_env_pkg_meta(env_prefix):
-
         if verbose > 0:
             print(f"filtering {pkg_meta['name']}")
         file_filter = pkg_file_filter.get_filters_for_pkg(pkg_name=pkg_meta["name"])
@@ -72,5 +67,5 @@ def filter_env(env_prefix, target_dir, pkg_file_filter, verbose=0):
             matchers=file_filter,
         )
         per_pkg_included_files[pkg_meta["name"]] = included_files
-    
+
     return per_pkg_included_files

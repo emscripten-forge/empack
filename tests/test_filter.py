@@ -49,7 +49,6 @@ def test_file_filter():
 
 
 def test_empty_file_filter():
-
     fp = FileFilter.parse_obj({"include_patterns": [], "exclude_patterns": []})
     assert not fp.match("/home/fu/bar.py")
     assert not fp.match("/home/fu/bar.so")
@@ -60,7 +59,6 @@ def test_empty_file_filter():
 
 
 def test_dataset_filter():
-
     fp = FileFilter.parse_obj(
         {
             "include_patterns": [{"pattern": "**/sklearn/datasets/**"}],

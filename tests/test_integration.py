@@ -29,7 +29,6 @@ def test_integration(tmp_path, tmp_path_module, free_port, backend_type):
     script_dir.mkdir()
     script_path = script_dir / "main.py"
 
-
     py_main = """
 import scipy
 import numpy as np

@@ -6,13 +6,12 @@ import sys
 from .app import app
 from .err import exit_with_err
 
-from ..pack import pack_pkg, pack_env,DEFAULT_CONFIG_PATH
+from ..pack import pack_pkg, pack_env, DEFAULT_CONFIG_PATH
 from ..file_patterns import pkg_file_filter_from_yaml
 
 # packaging
 pack_app = typer.Typer()
 app.add_typer(pack_app, name="pack")
-
 
 
 @pack_app.command(
@@ -58,13 +57,9 @@ def pack_env_cli(
         help="if no output directory is specified the current workdir is used",
     ),
     compresslevel: Optional[int] = typer.Option(  # noqa: B008
-        9,
-        "--compresslevel",
-        "-l",
-        help="compression level"
+        9, "--compresslevel", "-l", help="compression level"
     ),
 ):
-
     file_filters = pkg_file_filter_from_yaml(*config)
 
     pack_env(

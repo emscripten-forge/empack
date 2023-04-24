@@ -7,6 +7,7 @@ from pydantic import BaseModel, Extra, Field, PrivateAttr
 
 import warnings
 
+
 class FilePatternsModelBase(BaseModel, extra=Extra.forbid):
     pass
 
@@ -39,7 +40,6 @@ class FilePattern(BaseModel, extra=Extra.forbid):
 
 
 class FileFilter(BaseModel, extra=Extra.forbid):
-
     include_patterns: List[FilePattern] = Field(default_factory=list)
     exclude_patterns: List[FilePattern] = Field(default_factory=list)
 
@@ -60,7 +60,6 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
     packages: Dict[str, Union[FileFilter, List[FileFilter]]]
     default: FileFilter
 
-
     def get_filter_for_pkg(self, pkg_name):
         return self.packages.get(pkg_name, self.default)
 
@@ -69,7 +68,7 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
         if not isinstance(matchers, list):
             matchers = [matchers]
         return matchers
-    
+
     def merge(self, *others):
         for other in others:
             if other.default is not None:
@@ -88,7 +87,6 @@ class AdditionalPkgFileFilter(BaseModel, extra=Extra.forbid):
 
 
 def pkg_file_filter_from_yaml(path, *extra_path):
-
     with open(path, "r") as pack_config_file:
         pack_config = yaml.safe_load(pack_config_file)
         pkg_file_filter = PkgFileFilter.parse_obj(pack_config)

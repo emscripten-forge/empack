@@ -11,7 +11,6 @@ FILE_FILTERS = pkg_file_filter_from_yaml(CONFIG_PATH)
 CHANNELS = ["conda-forge", "https://repo.mamba.pm/emscripten-forge"]
 
 
-
 def get_free_port():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(("", 0))
@@ -30,4 +29,3 @@ def free_port():
 def tmp_path_module(request, tmpdir_factory):
     """A tmpdir fixture for the module scope. Persists throughout the module."""
     return Path(tmpdir_factory.mktemp(request.module.__name__))
-

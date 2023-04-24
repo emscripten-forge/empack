@@ -3,7 +3,18 @@ from pathlib import Path
 
 import subprocess
 
-def create_environment(prefix, channels=None, packages=None, platform=None, no_deps=False, relocate_prefix=None, dry_run=False, micromamba_exe=None, supress_stdout=True):
+
+def create_environment(
+    prefix,
+    channels=None,
+    packages=None,
+    platform=None,
+    no_deps=False,
+    relocate_prefix=None,
+    dry_run=False,
+    micromamba_exe=None,
+    supress_stdout=True,
+):
     """
     Creates a new environment using Micromamba.
 
@@ -25,7 +36,7 @@ def create_environment(prefix, channels=None, packages=None, platform=None, no_d
 
     if prefix:
         micromamba_command += ["-p", str(prefix)]
-    
+
     if relocate_prefix:
         micromamba_command += ["--relocate-prefix", str(relocate_prefix)]
 
@@ -37,9 +48,7 @@ def create_environment(prefix, channels=None, packages=None, platform=None, no_d
 
     if channels:
         for channel in channels:
-
             micromamba_command += ["-c", str(channel)]
-            
 
     if packages:
         micromamba_command += packages
@@ -54,4 +63,6 @@ def create_environment(prefix, channels=None, packages=None, platform=None, no_d
                 extra_kwargs["stdout"] = subprocess.DEVNULL
             subprocess.run(micromamba_command, check=True, **extra_kwargs)
         except subprocess.CalledProcessError as e:
-            raise Exception(f"Error: Micromamba command failed with return code {e.returncode}") from e
+            raise Exception(
+                f"Error: Micromamba command failed with return code {e.returncode}"
+            ) from e

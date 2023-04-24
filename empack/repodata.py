@@ -23,7 +23,6 @@ def pkg_name_from_dependency_str(s):
 
 
 def remove_non_available(repodata):
-
     noarch_pkgs = repodata["noarch"]["packages"]
 
     i = 0
@@ -47,7 +46,6 @@ def remove_non_available(repodata):
 def hack_fields(repodata):
     for k, v in repodata.items():
         for pkg_key, meta in v["packages"].items():
-
             # fmt: off
 
             meta['md5'] = "00000000000000000000000000000000"
@@ -103,7 +101,6 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
 
 
 if __name__ == "__main__":
-
     repodata_urls = {
         "arch": "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2",
         "noarch": "https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2",
