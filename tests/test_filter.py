@@ -37,7 +37,7 @@ def test_file_filter():
         }
     )
     assert fp.match(
-        "/tmp/xeus-python-kernel/envs/xeus-python-kernel/lib/python3.10/"
+        "/tmp/xeus-python-kernel/envs/xeus-python-kernel/lib/python3.10/"  # noqa: S108
         "site-packages/matplotlib/mpl-data/matplotlibrc"
     )
     assert fp.match("/home/fu/bar.py")

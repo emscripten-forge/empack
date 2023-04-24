@@ -199,12 +199,17 @@ def pack_directory(
 
     mount_dir = PosixPath(mount_dir)
     if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
-        error_message = f'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar" but is: {mount_dir}'
+        error_message = (
+            'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
+            f" but is: {mount_dir}"
+        )
         raise RuntimeError(error_message)
 
     # remove first part from mount_dir
     mount_dir = PosixPath(*mount_dir.parts[1:])
-    assert mount_dir.is_absolute() is False
+    if mount_dir.is_absolute():
+        error_message = f"{mount_dir} should not be absolute"
+        raise RuntimeError(error_message)
 
     # iterate over all files in host_dir and store in list
     filenames = []

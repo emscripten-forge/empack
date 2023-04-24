@@ -12,9 +12,11 @@ def save_as_tarfile(
     compresslevel=9,
 ):
     if compression_format not in ALLOWED_FORMATS:
-        raise RuntimeError(
-            f"Compression format {compression_format} not supported, only {ALLOWED_FORMATS} are supported."
+        error_message = (
+            f"Compression format {compression_format} not supported, only {ALLOWED_FORMATS} are"
+            " supported."
         )
+        raise RuntimeError(error_message)
 
     if not Path(output_filename).parts[-1].endswith(f".tar.{compression_format}"):
         error_message = (

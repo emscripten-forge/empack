@@ -66,12 +66,12 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
         raise RuntimeError("need'arch' / 'noarch' keys in repodata_urls")
 
     # download
-    repodata_urls[
-        "arch"
-    ] = "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2"
+    repodata_urls["arch"] = (
+        "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2"
+    )
 
     repodata_urls["noarch"] = "https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2"
-    repodata_response = {k: requests.get(url) for k, url in repodata_urls.items()}
+    repodata_response = {k: requests.get(url, timeout=10) for k, url in repodata_urls.items()}
     [r.raise_for_status() for r in repodata_response.values()]
 
     # unzip
