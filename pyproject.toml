@@ -34,6 +34,13 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "black",
+    "ruff==0.0.262",
+]
+
 [tool.hatch.version]
 path = "empack/version.py"
 
