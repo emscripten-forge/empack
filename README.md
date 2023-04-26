@@ -19,8 +19,16 @@ pip install empack
 You can pack the  environment (located at `/path/to/env`) with the following command:
 
 ```bash
-empack pack env --env-prefix /path/to/env --outname python_data  --config /path/to/config.yaml
+empack pack env --env-prefix /path/to/env
 ```
 
-This will generate two files `python_data.js` and `python_data.data` that you can use in the browser.
-A sample config is located in [`tests/empack_test_config.yaml`](https://github.com/emscripten-forge/empack/blob/main/tests/empack_test_config.yaml)
+This will generate a few `.tag.gz` files that correspond to the packages in the environment located at `/path/to/env`.
+
+You can also provide a custom config with the `--config` flag. A sample config is located in [`tests/empack_test_config.yaml`](https://github.com/emscripten-forge/empack/blob/main/tests/empack_test_config.yaml)
+
+
+Run the following command for more information about the other CLI parameters:
+
+```bash
+empack pack env --help
+```
