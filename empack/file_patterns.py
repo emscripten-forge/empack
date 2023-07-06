@@ -1,5 +1,6 @@
 import fnmatch
 import re
+from typing import Optional
 
 import yaml
 from pydantic import BaseModel, Field, PrivateAttr, RootModel
@@ -80,7 +81,7 @@ class PkgFileFilter(BaseModel, extra="forbid"):
 # the would always overwrite the main default config
 class AdditionalPkgFileFilter(BaseModel, extra="forbid"):
     packages: dict[str, FileFilter | list[FileFilter]]
-    default: FileFilter | None
+    default: Optional[FileFilter] = None
 
 
 def pkg_file_filter_from_yaml(path, *extra_path):
@@ -91,6 +92,5 @@ def pkg_file_filter_from_yaml(path, *extra_path):
     for path in extra_path:
         with open(path) as pack_config_file:
             pack_config = yaml.safe_load(pack_config_file)
-            raise RuntimeError(pack_config)
             pkg_file_filter.merge(AdditionalPkgFileFilter.model_validate(pack_config))
     return pkg_file_filter
