@@ -91,5 +91,6 @@ def pkg_file_filter_from_yaml(path, *extra_path):
     for path in extra_path:
         with open(path) as pack_config_file:
             pack_config = yaml.safe_load(pack_config_file)
+            raise RuntimeError(pack_config)
             pkg_file_filter.merge(AdditionalPkgFileFilter.model_validate(pack_config))
     return pkg_file_filter
