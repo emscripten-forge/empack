@@ -3,8 +3,10 @@ import re
 
 import yaml
 from pydantic import BaseModel, Extra, Field, PrivateAttr
+
 try:
     from pydantic import RootModel
+
     PYDANTIC_MAJOR = 2
 except ImportError:
     PYDANTIC_MAJOR = 1
@@ -35,12 +37,15 @@ class UnixPattern(FilePatternsModelBase):
 
 
 if PYDANTIC_MAJOR == 1:
+
     class FilePattern(BaseModel, extra=Extra.forbid):
         __root__: RegexPattern | UnixPattern
 
         def match(self, path):
             return self.__root__.match(path)
+
 else:
+
     class FilePattern(RootModel, extra=Extra.forbid):
         root: RegexPattern | UnixPattern
 
