@@ -26,7 +26,7 @@ classifiers = [
 dependencies = [
     "appdirs",
     "networkx",
-    "pydantic",
+    "pydantic>=2,<3",
     "pyyaml",
     "requests",
     "typer",

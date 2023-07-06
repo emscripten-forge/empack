@@ -2,7 +2,7 @@ from empack.file_patterns import FileFilter, FilePattern, pkg_file_filter_from_y
 
 
 def test_regex_pattern():
-    fp = FilePattern.parse_obj(
+    fp = FilePattern.model_validate(
         {
             "regex": R"^(?!.*\/tests\/).*((.*.\.py$)|(.*.\.so$))|(.*dateutil-zoneinfo\.tar\.gz$)",
         }
@@ -16,17 +16,17 @@ def test_regex_pattern():
 
 
 def test_unix_pattern():
-    fp = FilePattern.parse_obj({"pattern": "*.py"})
+    fp = FilePattern.model_validate({"pattern": "*.py"})
     assert fp.match("/home/fu/bar.py")
     assert not fp.match("/hometests/fu/bar.pyc")
 
-    fp = FilePattern.parse_obj({"pattern": "**/tests/*"})
+    fp = FilePattern.model_validate({"pattern": "**/tests/*"})
     assert fp.match("/home/tests/bar")
     assert not fp.match("/home/fu/bar")
 
 
 def test_file_filter():
-    fp = FileFilter.parse_obj(
+    fp = FileFilter.model_validate(
         {
             "include_patterns": [
                 {"pattern": "*.py"},
@@ -49,7 +49,7 @@ def test_file_filter():
 
 
 def test_empty_file_filter():
-    fp = FileFilter.parse_obj({"include_patterns": [], "exclude_patterns": []})
+    fp = FileFilter.model_validate({"include_patterns": [], "exclude_patterns": []})
     assert not fp.match("/home/fu/bar.py")
     assert not fp.match("/home/fu/bar.so")
     assert not fp.match("/home/tests/fu/bar.py")
@@ -59,7 +59,7 @@ def test_empty_file_filter():
 
 
 def test_dataset_filter():
-    fp = FileFilter.parse_obj(
+    fp = FileFilter.model_validate(
         {
             "include_patterns": [{"pattern": "**/sklearn/datasets/**"}],
             "exclude_patterns": [],

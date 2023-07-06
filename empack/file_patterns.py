@@ -1,11 +1,12 @@
 import fnmatch
 import re
+from typing import Optional
 
 import yaml
-from pydantic import BaseModel, Extra, Field, PrivateAttr
+from pydantic import BaseModel, Field, PrivateAttr, RootModel
 
 
-class FilePatternsModelBase(BaseModel, extra=Extra.forbid):
+class FilePatternsModelBase(BaseModel, extra="forbid"):
     pass
 
 
@@ -29,14 +30,14 @@ class UnixPattern(FilePatternsModelBase):
         return fnmatch.fnmatch(path, self.pattern)
 
 
-class FilePattern(BaseModel, extra=Extra.forbid):
-    __root__: RegexPattern | UnixPattern
+class FilePattern(RootModel, extra="forbid"):
+    root: RegexPattern | UnixPattern
 
     def match(self, path):
-        return self.__root__.match(path)
+        return self.root.match(path)
 
 
-class FileFilter(BaseModel, extra=Extra.forbid):
+class FileFilter(BaseModel, extra="forbid"):
     include_patterns: list[FilePattern] = Field(default_factory=list)
     exclude_patterns: list[FilePattern] = Field(default_factory=list)
 
@@ -53,7 +54,7 @@ class FileFilter(BaseModel, extra=Extra.forbid):
         return include
 
 
-class PkgFileFilter(BaseModel, extra=Extra.forbid):
+class PkgFileFilter(BaseModel, extra="forbid"):
     packages: dict[str, FileFilter | list[FileFilter]]
     default: FileFilter
 
@@ -78,18 +79,18 @@ class PkgFileFilter(BaseModel, extra=Extra.forbid):
 # when multiple config files are provided, the default
 # must be optional for the additional configs, otherwise
 # the would always overwrite the main default config
-class AdditionalPkgFileFilter(BaseModel, extra=Extra.forbid):
+class AdditionalPkgFileFilter(BaseModel, extra="forbid"):
     packages: dict[str, FileFilter | list[FileFilter]]
-    default: FileFilter | None
+    default: Optional[FileFilter] = None
 
 
 def pkg_file_filter_from_yaml(path, *extra_path):
     with open(path) as pack_config_file:
         pack_config = yaml.safe_load(pack_config_file)
-        pkg_file_filter = PkgFileFilter.parse_obj(pack_config)
+        pkg_file_filter = PkgFileFilter.model_validate(pack_config)
 
     for path in extra_path:
         with open(path) as pack_config_file:
             pack_config = yaml.safe_load(pack_config_file)
-            pkg_file_filter.merge(AdditionalPkgFileFilter.parse_obj(pack_config))
+            pkg_file_filter.merge(AdditionalPkgFileFilter.model_validate(pack_config))
     return pkg_file_filter
