@@ -22,6 +22,9 @@ def iterate_pip_pkg_record(env_prefix):
     packages_dist_info = Path(site_packages).resolve().glob("*.dist-info")
 
     for dist_info in packages_dist_info:
+        if not (dist_info / "INSTALLER").exists():
+            continue
+
         # Continue if package not installed with pip
         with open(dist_info / "INSTALLER") as installer:
             if installer.read().strip() != "pip":
