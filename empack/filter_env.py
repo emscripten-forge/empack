@@ -11,8 +11,7 @@ def iterate_pip_pkg_record(env_prefix):
     # Resolve site-packages directory, ignoring the python3.1/ symlink
     site_packages = [
         site_package
-        for site_package
-        in Path(env_prefix).resolve().glob("lib/python*/site-packages")
+        for site_package in Path(env_prefix).resolve().glob("lib/python*/site-packages")
         if "python3.1" not in site_package.parts
     ]
     if not site_packages:
@@ -25,11 +24,11 @@ def iterate_pip_pkg_record(env_prefix):
     for dist_info in packages_dist_info:
         # Continue if package not installed with pip
         with open(dist_info / "INSTALLER") as installer:
-            if installer.read().strip() != 'pip':
+            if installer.read().strip() != "pip":
                 continue
 
         # Fetch package name
-        package_name, package_version = dist_info.name.removesuffix('.dist-info').split('-')
+        package_name, package_version = dist_info.name.removesuffix(".dist-info").split("-")
 
         # Find all files
         with open(dist_info / "RECORD") as record:
@@ -39,7 +38,7 @@ def iterate_pip_pkg_record(env_prefix):
                 relative_site_packages / _file
                 for _file in all_files
                 # Excluding .dist-info files
-                if '.dist-info' not in _file
+                if ".dist-info" not in _file
             ]
 
         yield dict(
@@ -48,9 +47,9 @@ def iterate_pip_pkg_record(env_prefix):
             files=all_files_paths,
             # Some hugly hacks to make it work...
             fn=package_name + "12345678",
-            build='pip-' + package_version,
+            build="pip-" + package_version,
             build_number=0,
-            depends=[]
+            depends=[],
         )
 
 
