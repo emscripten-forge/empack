@@ -49,8 +49,8 @@ def iterate_pip_pkg_record(env_prefix):
             version=package_version,
             files=all_files_paths,
             # Some hugly hacks to make it work...
-            fn=package_name + "12345678",
-            build="pip-" + package_version,
+            fn=f"{package_name}-{package_version}",
+            build="pip",
             build_number=0,
             depends=[],
         )
