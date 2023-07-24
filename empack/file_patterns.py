@@ -1,6 +1,6 @@
 import fnmatch
 import re
-from typing import Optional
+from typing import Optional, Union
 
 import yaml
 from pydantic import BaseModel, Field, PrivateAttr, RootModel
@@ -31,7 +31,7 @@ class UnixPattern(FilePatternsModelBase):
 
 
 class FilePattern(RootModel, extra="forbid"):
-    root: RegexPattern | UnixPattern
+    root: Union[RegexPattern, UnixPattern]
 
     def match(self, path):
         return self.root.match(path)
@@ -55,7 +55,7 @@ class FileFilter(BaseModel, extra="forbid"):
 
 
 class PkgFileFilter(BaseModel, extra="forbid"):
-    packages: dict[str, FileFilter | list[FileFilter]]
+    packages: dict[str, Union[FileFilter, list[FileFilter]]]
     default: FileFilter
 
     def get_filter_for_pkg(self, pkg_name):
@@ -80,7 +80,7 @@ class PkgFileFilter(BaseModel, extra="forbid"):
 # must be optional for the additional configs, otherwise
 # the would always overwrite the main default config
 class AdditionalPkgFileFilter(BaseModel, extra="forbid"):
-    packages: dict[str, FileFilter | list[FileFilter]]
+    packages: dict[str, Union[FileFilter, list[FileFilter]]]
     default: Optional[FileFilter] = None
 
 
