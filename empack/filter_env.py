@@ -9,15 +9,17 @@ from pathlib import Path
 def iterate_pip_pkg_record(env_prefix):
     # Find all RECORD files for .dist-info folders for which INSTALLER is "pip"
     # Resolve site-packages directory, ignoring the python3.1/ symlink
+    prefix = Path(env_prefix).resolve()
+
     site_packages = [
         site_package
-        for site_package in Path(env_prefix).resolve().glob("lib/python*/site-packages")
+        for site_package in prefix.glob("lib/python*/site-packages")
         if "python3.1" not in site_package.parts
     ]
     if not site_packages:
         return []
     site_packages = site_packages[0]
-    relative_site_packages = site_packages.relative_to(env_prefix)
+    relative_site_packages = site_packages.relative_to(prefix)
 
     packages_dist_info = Path(site_packages).resolve().glob("*.dist-info")
 
