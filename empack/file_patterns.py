@@ -30,7 +30,7 @@ class UnixPattern(FilePatternsModelBase):
         return fnmatch.fnmatch(path, self.pattern)
 
 
-class FilePattern(RootModel, extra="forbid"):
+class FilePattern(RootModel):
     root: Union[RegexPattern, UnixPattern]
 
     def match(self, path):
