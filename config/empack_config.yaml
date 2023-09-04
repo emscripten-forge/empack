@@ -6,7 +6,6 @@ packages:
       - pattern: '**/pkg_resources/*.py'
       - pattern: '**/pkg_resources/**/*.py'
       - pattern: '**/*.dist-info/METADATA'
-
   bokeh:
     include_patterns:
       - pattern: '*.so'
