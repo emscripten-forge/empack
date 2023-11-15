@@ -16,7 +16,7 @@ class RegexPattern(FilePatternsModelBase):
     _pattern: str = PrivateAttr()
 
     def match(self, path):
-        if not hasattr(self,  "_pattern") or self._pattern == "":
+        if not hasattr(self, "_pattern") or self._pattern == "":
             self._pattern = re.compile(self.regex)
         return self._pattern.match(path) is not None
 
