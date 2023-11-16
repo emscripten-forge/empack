@@ -3,7 +3,6 @@ import re
 import yaml
 
 
-
 class RegexPattern:
     def __init__(self, regex):
         self._pattern = re.compile(regex)
@@ -60,7 +59,8 @@ class PkgFileFilter:
             elif isinstance(v, list):
                 self.packages[k] = [FileFilter(**x) for x in v]
             else:
-                raise ValueError(f"invalid value for package {k}: {v}")
+                err = f"invalid value for package {k}: {v}"
+                raise ValueError(err)
 
         if default is not None:
             self.default = FileFilter(**default)
