@@ -4,7 +4,7 @@ import yaml
 
 
 
-class RegexPattern(object):
+class RegexPattern:
     def __init__(self, regex):
         self._pattern = re.compile(regex)
 
@@ -14,7 +14,7 @@ class RegexPattern(object):
         return self._pattern.match(path) is not None
 
 
-class UnixPattern(object):
+class UnixPattern:
     def __init__(self, pattern):
         self.pattern = pattern
 
@@ -22,7 +22,7 @@ class UnixPattern(object):
         return fnmatch.fnmatch(path, self.pattern)
 
 
-class FileFilter(object):
+class FileFilter:
     def __init__(self, include_patterns=None, exclude_patterns=None):
         def patter_from_dict(**d):
             if "pattern" in d:
@@ -51,7 +51,7 @@ class FileFilter(object):
         return include
 
 
-class PkgFileFilter(object):
+class PkgFileFilter:
     def __init__(self, packages, default=None):
         self.packages = {}
         for k, v in packages.items():
