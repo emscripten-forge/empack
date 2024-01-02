@@ -135,6 +135,11 @@ def add_tarfile_to_env_meta(env_meta_filename, tarfile):
     with open(env_meta_filename) as f:
         env_meta = json.load(f)
 
+    if env_meta.prefix != "/":
+        raise RuntimeError(
+            "adding tarfile to env meta file only supported environments with prefix '/'"
+        )
+
     tarfile_name = Path(tarfile).name
     package_item = {"name": tarfile_name, "filename": tarfile_name}
     # check that the package is not already in the list
