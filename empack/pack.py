@@ -171,7 +171,6 @@ def pack_env(
     compression_format=ALLOWED_FORMATS[0],
     compresslevel=9,
     outdir=None,
-    append_to_existing=False,
 ):
     with TemporaryDirectory() as tmp_dir:
         #  filter the complete environment
