@@ -127,6 +127,41 @@ def pack_pkg(
     return pkg_fname, used_cache
 
 
+def add_tarfile_to_env_meta(env_meta_filename, tarfile):
+    # if is dir
+    if Path(env_meta_filename).is_dir():
+        env_meta_filename = Path(env_meta_filename) / "empack_env_meta.json"
+
+    with open(env_meta_filename) as f:
+        env_meta = json.load(f)
+
+    if env_meta["prefix"] != "/":
+        raise RuntimeError(
+            "adding tarfile to env meta file only supported environments with prefix '/'"
+        )
+
+    tarfile_name = Path(tarfile).name
+    package_item = {"name": tarfile_name, "filename": tarfile_name}
+    # check that the package is not already in the list
+    for pkg in env_meta["packages"]:
+        if pkg["filename"] == tarfile_name:
+            msg = f"package with filename '{tarfile_name}' already in env meta file"
+            raise RuntimeError(msg)
+        if pkg["name"] == package_item["name"]:
+            msg = f"package with name '{package_item['name']}' already in env meta file"
+            raise RuntimeError(msg)
+
+    env_meta["packages"].append(package_item)
+    with open(env_meta_filename, "w") as f:
+        json.dump(env_meta, f, indent=4)
+
+    # dir of env_meta_filename
+    env_meta_dir = Path(env_meta_filename).parent
+    # copy tarfile to env_meta_dir if not already there
+    if Path(tarfile).parent != env_meta_dir:
+        shutil.copy(tarfile, env_meta_dir)
+
+
 def pack_env(
     env_prefix,
     relocate_prefix,
@@ -179,6 +214,7 @@ def pack_env(
         empack_env_meta_filename = "empack_env_meta.json"
         if outdir is not None:
             empack_env_meta_filename = Path(outdir) / empack_env_meta_filename
+            # write the file
         with open(empack_env_meta_filename, "w") as f:
             json.dump(env_meta, f, indent=4)
 

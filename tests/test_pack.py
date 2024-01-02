@@ -6,7 +6,7 @@ import pytest
 
 from empack.file_patterns import FileFilter
 from empack.micromamba_wrapper import create_environment
-from empack.pack import pack_directory, pack_env, pack_file, pack_pkg
+from empack.pack import add_tarfile_to_env_meta, pack_directory, pack_env, pack_file, pack_pkg
 
 from .conftest import CHANNELS, FILE_FILTERS
 
@@ -49,6 +49,56 @@ def test_pack_pkg(tmp_path, tmp_path_module, use_cache, pkg_spec):
         pkg_meta = json.load(meta)
 
         assert pkg_meta["name"] == pkg_name
+
+
+def test_append(tmp_path):
+    # create the env at the temporary location
+    prefix = tmp_path / "env"
+
+    # create and pack env
+    create_environment(
+        prefix=prefix,
+        packages=["python=3.10", "numpy"],
+        channels=CHANNELS,
+        relocate_prefix="/",
+        platform="emscripten-32",
+    )
+
+    pack_env(
+        env_prefix=prefix,
+        outdir=tmp_path,
+        use_cache=False,
+        compression_format="gz",
+        relocate_prefix="/",
+        file_filters=FILE_FILTERS,
+        compresslevel=1,
+    )
+
+    # create a directory with some files
+    dir_name = "test_dir"
+    dir_path = tmp_path / dir_name
+    dir_path.mkdir()
+    file1 = dir_path / "file1.txt"
+    file1.write_text("file1")
+
+    pack_directory(host_dir=dir_path, mount_dir="/", outname="packaged_dir.tar.gz", outdir=tmp_path)
+
+    # append the directory to the env
+    add_tarfile_to_env_meta(env_meta_filename=tmp_path, tarfile=tmp_path / "packaged_dir.tar.gz")
+
+    # check that there is a json with all the packages
+    env_metadata_json_path = tmp_path / "empack_env_meta.json"
+    assert env_metadata_json_path.exists()
+
+    with open(env_metadata_json_path) as f:
+        env_meta = json.load(f)
+    packages = env_meta["packages"]
+    env_meta_dict = dict()
+
+    for pkg in packages:
+        env_meta_dict[pkg["filename"]] = pkg
+
+    assert "packaged_dir.tar.gz" in env_meta_dict
 
 
 @pytest.mark.parametrize("packages", [["python=3.10", "numpy"]])
