@@ -3,7 +3,7 @@ import os
 import os.path
 import shutil
 import sys
-from pathlib import Path, PosixPath
+from pathlib import Path, PosixPath, PureWindowsPath
 from tempfile import TemporaryDirectory
 
 from appdirs import user_cache_dir
@@ -233,16 +233,28 @@ def pack_directory(
         raise RuntimeError(error)
     output_filename = Path(outdir) / outname if outdir is not None else outname
 
-    mount_dir = PosixPath(mount_dir)
-    if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
-        error_message = (
-            'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
-            f" but is: {mount_dir}"
-        )
-        raise RuntimeError(error_message)
+    if os.name != "nt":
+        mount_dir = PosixPath(mount_dir)
+        if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
+            error_message = (
+                'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
+                f" but is: {mount_dir}"
+            )
+            raise RuntimeError(error_message)
+        # remove first part from mount_dir
+        mount_dir = PosixPath(*mount_dir.parts[1:])
+    else:
+        mount_dir = PureWindowsPath(mount_dir)
+        if mount_dir.parts[0] != "\\":
+            error_message = (
+                "windows mount_dir must be an absolute path starting "
+                'with "/" eg "/usr/local" or "/foo/bar"'
+                f" but is: {mount_dir}"
+            )
+            raise RuntimeError(error_message)
+        # remove first part from mount_dir
+        mount_dir = PureWindowsPath(*mount_dir.parts[1:])
 
-    # remove first part from mount_dir
-    mount_dir = PosixPath(*mount_dir.parts[1:])
     if mount_dir.is_absolute():
         error_message = f"{mount_dir} should not be absolute"
         raise RuntimeError(error_message)
@@ -255,7 +267,7 @@ def pack_directory(
             abs_path = os.path.join(root, file)
             rel_path = os.path.relpath(abs_path, host_dir)
             filenames.append(os.path.join(root, file))
-            if mount_dir == PosixPath("."):
+            if mount_dir == Path("."):
                 arcnames.append(rel_path)
             else:
                 arcnames.append(os.path.join(mount_dir, rel_path))
