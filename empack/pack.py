@@ -245,9 +245,10 @@ def pack_directory(
         mount_dir = PosixPath(*mount_dir.parts[1:])
     else:
         mount_dir = PureWindowsPath(mount_dir)
-        if mount_dir.parts[0] != '\\':
+        if mount_dir.parts[0] != "\\":
             error_message = (
-                'windows mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
+                "windows mount_dir must be an absolute path starting "
+                'with "/" eg "/usr/local" or "/foo/bar"'
                 f" but is: {mount_dir}"
             )
             raise RuntimeError(error_message)
