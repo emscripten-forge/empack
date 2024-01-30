@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TARGET_PLATFORM: emscripten-32
-      GITHUB_OWNER: "emscripten-forge"
+      GITHUB_OWNER: 'emscripten-forge'
 
     strategy:
       fail-fast: false
