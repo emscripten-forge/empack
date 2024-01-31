@@ -313,7 +313,8 @@ def pack_file(
         mount_dir = PureWindowsPath(*mount_dir.parts[1:])
 
     if mount_dir.is_absolute():
-        raise Exception(f"{mount_dir} is an absolute path")
+        error_message = f"{mount_dir} is an absolute path"
+        raise Exception(error_message)
 
     save_as_tarfile(
         output_filename=output_filename,
