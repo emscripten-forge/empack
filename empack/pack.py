@@ -247,8 +247,7 @@ def pack_directory(
         mount_dir = PureWindowsPath(mount_dir)
         if mount_dir.parts[0] != "\\":
             error_message = (
-                "windows mount_dir must be an absolute path starting "
-                'with "/" eg "/usr/local" or "/foo/bar"'
+                'windows mount_dir must be an absolute path starting with "\\\\"'
                 f" but is: {mount_dir}"
             )
             raise RuntimeError(error_message)
@@ -294,19 +293,27 @@ def pack_file(
         error = f"File {host_file} is not a file"
         raise RuntimeError(error)
 
-    mount_dir = PosixPath(mount_dir)
-    if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
-        raise RuntimeError(
-            'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
-        )
-
     output_filename = Path(outdir) / outname if outdir is not None else outname
 
-    # remove first part from mount_dir
-    mount_dir = PosixPath(*mount_dir.parts[1:])
-    if mount_dir.is_absolute() is True:
-        error = f"{mount_dir} is an absolute path"
-        raise Exception(error)
+    if os.name != "nt":
+        mount_dir = PosixPath(mount_dir)
+        if not mount_dir.is_absolute() or mount_dir.parts[0] != "/":
+            raise RuntimeError(
+                'mount_dir must be an absolute path starting with "/" eg "/usr/local" or "/foo/bar"'
+            )
+
+        # remove first part from mount_dir
+        mount_dir = PosixPath(*mount_dir.parts[1:])
+    else:
+        mount_dir = PureWindowsPath(mount_dir)
+        if mount_dir.parts[0] != "\\":
+            raise RuntimeError('mount_dir must be an absolute path starting with "\\\\"')
+
+        # remove first part from mount_dir
+        mount_dir = PureWindowsPath(*mount_dir.parts[1:])
+
+    if mount_dir.is_absolute():
+        raise Exception(f"{mount_dir} is an absolute path")
 
     save_as_tarfile(
         output_filename=output_filename,
