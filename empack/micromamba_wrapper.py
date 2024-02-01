@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 
@@ -59,6 +60,6 @@ def create_environment(
         return
 
     extra_kwargs = {}
-    if supress_stdout:
+    if supress_stdout and not "EMPACK_DEBUG" in os.env:
         extra_kwargs["stdout"] = subprocess.DEVNULL
     subprocess.run(micromamba_command, check=True, **extra_kwargs)  # noqa:  #  noqa: S603

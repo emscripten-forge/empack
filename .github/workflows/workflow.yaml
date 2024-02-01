@@ -65,7 +65,9 @@ jobs:
 
       - name: Run pytest
         run: |
-          pytest -v -s tests/
+          pytest -vvv -s tests/
+        env:
+          EMPACK_DEBUG: "true"
 
       - name: Run cli from terminal
         run: |
