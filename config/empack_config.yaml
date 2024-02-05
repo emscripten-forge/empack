@@ -145,6 +145,14 @@ packages:
       - pattern: 'html/**'
       - pattern: 'external/**'
       - pattern: '**/*.dist-info/METADATA'
+  urllib3:
+    include_patterns:
+      - pattern: '*.py'
+      - pattern: '**/contrib/emscripten/emscripten_fetch_worker.js'
+  certifi:
+    include_patterns:
+      - pattern: '*.py'
+      - pattern: '*.pem'
 default:
   include_patterns:
     - pattern: '*.so'
