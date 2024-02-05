@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 3.3.2
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.1...d742539ef5f7fdf4afb94561d4026a7976ebc629))
+
+### Enhancements made
+
+- Update config for urllib and certifi [#94](https://github.com/emscripten-forge/empack/pull/94) ([@martinRenou](https://github.com/martinRenou))
+
+### Other merged PRs
+
+- Update CI script [#93](https://github.com/emscripten-forge/empack/pull/93) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-01-29&to=2024-02-05&type=c))
+
+[@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-01-29..2024-02-05&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Atrungleduc+updated%3A2024-01-29..2024-02-05&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 3.3.1
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.0...d8d48c6779696aac0a695fe162fd7c38f698073e))
@@ -15,8 +35,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-01-03&to=2024-01-29&type=c))
 
 [@pjaggi1](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Apjaggi1+updated%3A2024-01-03..2024-01-29&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 3.3.0
 
