@@ -158,7 +158,6 @@ def add_tarfile_to_env_meta(env_meta_filename, tarfile):
     # dir of env_meta_filename
     env_meta_dir = Path(env_meta_filename).parent
     # copy tarfile to env_meta_dir if not already there
-
     if Path(tarfile).parent.resolve() != env_meta_dir.resolve():
         shutil.copy(tarfile, env_meta_dir)
 
