@@ -96,7 +96,7 @@ def pack_pkg(
             micromamba_exe=micromamba_exe,
             channels=channels,
             no_deps=True,
-            platform="emscripten-32",
+            platform="emscripten-wasm32",
         )
 
         # filter the env
