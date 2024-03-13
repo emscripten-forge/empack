@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 
@@ -58,11 +59,7 @@ def create_environment(
         print(" ".join(micromamba_command))
         return
 
-    try:
-        extra_kwargs = {}
-        if supress_stdout:
-            extra_kwargs["stdout"] = subprocess.DEVNULL
-        subprocess.run(micromamba_command, check=True, **extra_kwargs)  # noqa:  #  noqa: S603
-    except subprocess.CalledProcessError as e:
-        error_message = f"Error: Micromamba command failed with return code {e.returncode}"
-        raise Exception(error_message) from e
+    extra_kwargs = {}
+    if supress_stdout and "EMPACK_DEBUG" not in os.environ:
+        extra_kwargs["stdout"] = subprocess.DEVNULL
+    subprocess.run(micromamba_command, check=True, **extra_kwargs)  # noqa:  #  noqa: S603
