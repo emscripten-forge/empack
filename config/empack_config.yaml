@@ -153,6 +153,10 @@ packages:
     include_patterns:
       - pattern: '*.py'
       - pattern: '*.pem'
+  pyvis:
+    include_patterns:
+      - pattern: '*.py'
+      - pattern: '*.html'
 default:
   include_patterns:
     - pattern: '*.so'
