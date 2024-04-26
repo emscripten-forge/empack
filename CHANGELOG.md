@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 3.3.3
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.2...d6ae4fc42fe79aa7a60f4b70fa72245e1e7566a3))
+
+### Enhancements made
+
+- use abspath when comparing dirs [#95](https://github.com/emscripten-forge/empack/pull/95) ([@DerThorsten](https://github.com/DerThorsten))
+
+### Bugs fixed
+
+- Fix rules for pyvis [#96](https://github.com/emscripten-forge/empack/pull/96) ([@martinRenou](https://github.com/martinRenou))
+- use abspath when comparing dirs [#95](https://github.com/emscripten-forge/empack/pull/95) ([@DerThorsten](https://github.com/DerThorsten))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-02-05&to=2024-04-26&type=c))
+
+[@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2024-02-05..2024-04-26&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-02-05..2024-04-26&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 3.3.2
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.1...d742539ef5f7fdf4afb94561d4026a7976ebc629))
@@ -19,8 +40,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-01-29&to=2024-02-05&type=c))
 
 [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-01-29..2024-02-05&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Atrungleduc+updated%3A2024-01-29..2024-02-05&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 3.3.1
 
