@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 3.3.4
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.3...784118763a5fd903569df7b1ef686a9c54eaa1e4))
+
+### Enhancements made
+
+- Add Include/Exclude Patterns for `pint` Package to `empack_config` (#2) [#97](https://github.com/emscripten-forge/empack/pull/97) ([@michaelweinold](https://github.com/michaelweinold))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-04-26&to=2024-05-21&type=c))
+
+[@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-04-26..2024-05-21&type=Issues) | [@michaelweinold](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Amichaelweinold+updated%3A2024-04-26..2024-05-21&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 3.3.3
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.2...d6ae4fc42fe79aa7a60f4b70fa72245e1e7566a3))
@@ -20,8 +36,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-02-05&to=2024-04-26&type=c))
 
 [@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2024-02-05..2024-04-26&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-02-05..2024-04-26&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 3.3.2
 
