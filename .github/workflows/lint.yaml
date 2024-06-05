@@ -19,12 +19,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install mamba and dependencies
-        uses: mamba-org/provision-with-micromamba@main
+      - uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: ci_env.yml
-          environment-name: ci-env
-          micromamba-version: '1.4.1'
+          cache-environment: true
+
 
       - name: Lint check
         shell: bash -l {0}
