@@ -22,7 +22,7 @@ def test_integration(tmp_path, tmp_path_module, free_port, backend_type):
         packages=packages,
         channels=CHANNELS,
         relocate_prefix="/",
-        platform="emscripten-32",
+        platform="emscripten-wasm32",
     )
 
     script_dir = tmp_path / "scripts"

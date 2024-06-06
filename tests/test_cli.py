@@ -25,7 +25,7 @@ class TestCLI:
             packages=["numpy"],
             channels=CHANNELS,
             relocate_prefix="/",
-            platform="emscripten-32",
+            platform="emscripten-wasm32",
         )
 
         use_cache_arg = "--use-cache" if use_cache else "--no-use-cache"

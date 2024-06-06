@@ -68,7 +68,7 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
     # download
     repodata_urls[
         "arch"
-    ] = "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2"
+    ] = "https://beta.mamba.pm/get/emscripten-forge/emscripten-wasm32/repodata.json.bz2"
 
     repodata_urls["noarch"] = "https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2"
     repodata_response = {k: requests.get(url, timeout=10) for k, url in repodata_urls.items()}
@@ -99,7 +99,7 @@ def download_and_shrink_repodata(repodata_urls, outdir=None):
 
 if __name__ == "__main__":
     repodata_urls = {
-        "arch": "https://beta.mamba.pm/get/emscripten-forge/emscripten-32/repodata.json.bz2",
+        "arch": "https://beta.mamba.pm/get/emscripten-forge/emscripten-wasm32/repodata.json.bz2",
         "noarch": "https://beta.mamba.pm/get/conda-forge/noarch/repodata.json.bz2",
     }
 

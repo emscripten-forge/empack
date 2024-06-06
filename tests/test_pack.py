@@ -13,7 +13,7 @@ from .conftest import CHANNELS, FILE_FILTERS
 
 # we use the python 3.10 package twice since we want
 # to test if the caching code path is working
-@pytest.mark.parametrize("pkg_spec", ["python=3.10", "numpy", "python=3.10"])
+@pytest.mark.parametrize("pkg_spec", ["python=3.11", "numpy"])
 @pytest.mark.parametrize("use_cache", [False, True])
 def test_pack_pkg(tmp_path, tmp_path_module, use_cache, pkg_spec):
     pkg_name = pkg_spec.split("=")[0]
@@ -58,10 +58,10 @@ def test_append(tmp_path):
     # create and pack env
     create_environment(
         prefix=prefix,
-        packages=["python=3.10", "numpy"],
+        packages=["python=3.11", "numpy"],
         channels=CHANNELS,
         relocate_prefix="/",
-        platform="emscripten-32",
+        platform="emscripten-wasm32",
     )
 
     pack_env(
@@ -101,7 +101,7 @@ def test_append(tmp_path):
     assert "packaged_dir.tar.gz" in env_meta_dict
 
 
-@pytest.mark.parametrize("packages", [["python=3.10", "numpy"]])
+@pytest.mark.parametrize("packages", [["python=3.11", "numpy"]])
 @pytest.mark.parametrize("relocate_prefix", ["/", "/some/dir", "/home/some_dir/"])
 def test_pack_env(tmp_path, packages, relocate_prefix):
     # create the env at the temporary location
@@ -112,7 +112,7 @@ def test_pack_env(tmp_path, packages, relocate_prefix):
         packages=packages,
         channels=CHANNELS,
         relocate_prefix=relocate_prefix,
-        platform="emscripten-32",
+        platform="emscripten-wasm32",
     )
 
     pack_env(
