@@ -10,7 +10,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     env:
-      TARGET_PLATFORM: emscripten-32
+      TARGET_PLATFORM: emscripten-wasm32
       GITHUB_OWNER: "emscripten-forge"
 
     steps:
