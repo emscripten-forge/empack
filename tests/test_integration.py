@@ -7,8 +7,7 @@ from empack.micromamba_wrapper import create_environment
 
 from .conftest import CHANNELS
 
-PYJS_VERSION = "1.0.0"
-PYJS_SPEC = f"pyjs>={PYJS_VERSION}"
+PYJS_SPEC = "pyjs==2.0.0"
 
 
 @pytest.mark.parametrize("backend_type", ["browser-main", "browser-worker"])
