@@ -7,7 +7,7 @@ from empack.micromamba_wrapper import create_environment
 
 from .conftest import CHANNELS
 
-PYJS_VERSION = "1.0.0"
+PYJS_VERSION = "2.0.1"
 PYJS_SPEC = f"pyjs>={PYJS_VERSION}"
 
 
