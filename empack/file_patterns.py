@@ -21,7 +21,7 @@ class UnixPattern:
 
 
 class FileFilter:
-    def __init__(self, exclude_patterns=None):
+    def __init__(self, include_patterns=None, exclude_patterns=None):
         def patter_from_dict(**d):
             if "pattern" in d:
                 return UnixPattern(**d)
