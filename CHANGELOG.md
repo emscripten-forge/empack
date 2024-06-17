@@ -2,6 +2,29 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 4.0.0
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.4...d3360ca7a178ab442fc68c2e59d894b34923bb55))
+
+The main highlight of this release is the new filtering logic. We used to filter out many files from the packed environment due to using very restrictive include rules. We now include **everything by default** fixing many reporting issues concerning package data. We only filter out files if there are explicit rules for filtering them.
+
+### Enhancements made
+
+- Filtering: Include everything by default [#98](https://github.com/emscripten-forge/empack/pull/98) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Fix backward compat on config files [#102](https://github.com/emscripten-forge/empack/pull/102) ([@martinRenou](https://github.com/martinRenou))
+- Update CI to using latest emscripten-forge platform and Python version [#99](https://github.com/emscripten-forge/empack/pull/99) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-05-21&to=2024-06-17&type=c))
+
+[@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2024-05-21..2024-06-17&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-05-21..2024-06-17&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 3.3.4
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.3...784118763a5fd903569df7b1ef686a9c54eaa1e4))
@@ -15,8 +38,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-04-26&to=2024-05-21&type=c))
 
 [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-04-26..2024-05-21&type=Issues) | [@michaelweinold](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Amichaelweinold+updated%3A2024-04-26..2024-05-21&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 3.3.3
 
