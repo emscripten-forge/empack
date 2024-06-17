@@ -21,7 +21,7 @@ class UnixPattern:
 
 
 class FileFilter:
-    def __init__(self, include_patterns=None, exclude_patterns=None):
+    def __init__(self, exclude_patterns=None):
         def patter_from_dict(**d):
             if "pattern" in d:
                 return UnixPattern(**d)
@@ -30,33 +30,31 @@ class FileFilter:
             else:
                 raise ValueError("pattern or regex must be provided")
 
-        if include_patterns is None:
-            include_patterns = []
         if exclude_patterns is None:
             exclude_patterns = []
-        self.include_patterns = [patter_from_dict(**p) for p in include_patterns]
         self.exclude_patterns = [patter_from_dict(**p) for p in exclude_patterns]
 
     def match(self, path):
-        include = False
-        for ip in self.include_patterns:
-            if ip.match(path):
-                include = True
-        if include:
-            for ep in self.exclude_patterns:
-                if ep.match(path):
-                    return False
-        return include
+        return all(not ep.match(path) for ep in self.exclude_patterns)
 
 
 class PkgFileFilter:
-    def __init__(self, packages, default=None):
+    def __init__(self, packages=None, default=None):
         self.packages = {}
+
+        if packages is None:
+            packages = {}
+
+        default_exclude_patterns = []
+        if default is not None and "exclude_patterns" in default:
+            default_exclude_patterns = default["exclude_patterns"]
+
         for k, v in packages.items():
             if isinstance(v, dict):
-                self.packages[k] = FileFilter(**v)
-            elif isinstance(v, list):
-                self.packages[k] = [FileFilter(**x) for x in v]
+                exclude_patterns = default_exclude_patterns
+                if "exclude_patterns" in v:
+                    exclude_patterns = exclude_patterns + v["exclude_patterns"]
+                self.packages[k] = FileFilter(exclude_patterns=exclude_patterns)
             else:
                 err = f"invalid value for package {k}: {v}"
                 raise ValueError(err)

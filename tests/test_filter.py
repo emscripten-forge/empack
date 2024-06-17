@@ -13,11 +13,6 @@ def test_unix_pattern():
 
 def test_file_filter():
     fp = FileFilter(
-        include_patterns=[
-            dict(pattern="*.py"),
-            dict(pattern="*.so"),
-            dict(pattern="*matplotlibrc"),
-        ],
         exclude_patterns=[dict(pattern="**/tests/*")],
     )
     assert fp.match(
@@ -33,23 +28,22 @@ def test_file_filter():
 
 
 def test_empty_file_filter():
-    fp = FileFilter(include_patterns=[], exclude_patterns=[])
-    assert not fp.match("/home/fu/bar.py")
-    assert not fp.match("/home/fu/bar.so")
-    assert not fp.match("/home/tests/fu/bar.py")
-    assert not fp.match("/home/tests/fu/bar.so")
-    assert not fp.match("/hometests/fu/bar.py")
-    assert not fp.match("/hometests/fu/bar.so")
+    fp = FileFilter(exclude_patterns=[])
+    assert fp.match("/home/fu/bar.py")
+    assert fp.match("/home/fu/bar.so")
+    assert fp.match("/home/tests/fu/bar.py")
+    assert fp.match("/home/tests/fu/bar.so")
+    assert fp.match("/hometests/fu/bar.py")
+    assert fp.match("/hometests/fu/bar.so")
 
 
 def test_dataset_filter():
     fp = FileFilter(
-        include_patterns=[dict(pattern="**/sklearn/datasets/**")],
         exclude_patterns=[],
     )
     assert fp.match("/home/fu/sklearn/datasets/some/folder.txt")
     assert fp.match("/home/fu/sklearn/datasets/some/folder.py")
-    assert not fp.match("/home/fu/sxklearn/datasets/some/folder.txt")
+    assert fp.match("/home/fu/sxklearn/datasets/some/folder.txt")
 
 
 def test_from_yaml():

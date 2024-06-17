@@ -1,13 +1,11 @@
 packages:
   scikit-image:
     exclude_patterns:
-      - pattern: '**'
+      - pattern: '**/bar.py'
+      - pattern: '**/bar.so'
 
-
-  scipy:
-    - include_patterns:
-      - pattern: '**/core'
-    - include_patterns:
-      - pattern: '**/sparse'
-    - include_patterns:
-      - pattern: '**'
+default:
+  exclude_patterns:
+    - pattern: '**/*.pyc'
+    - pattern: '**/tests/**/*.py'
+    - pattern: '**/tests/**/*.so'

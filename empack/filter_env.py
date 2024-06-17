@@ -92,14 +92,18 @@ def filter_pkg(env_prefix, pkg_meta, target_dir, matchers):
         for _i, matcher in enumerate(matchers):
             include = matcher.match(path=file)
             if include:
-                included.append(file)
                 path = env_path / file
                 if path.is_symlink() and not path.exists():
                     continue
 
                 dest_fpath = os.path.join(target_dir, file)
                 os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
-                shutil.copy(os.path.join(env_prefix, file), dest_fpath)
+                try:
+                    shutil.copy(os.path.join(env_prefix, file), dest_fpath)
+                    included.append(file)
+                except FileNotFoundError:
+                    # This may happen when following a symlink on a filtered out file
+                    pass
                 break
     path = write_minimal_conda_meta(pkg_meta=pkg_meta, env_prefix=target_dir)
     included.append(path.relative_to(target_dir))
