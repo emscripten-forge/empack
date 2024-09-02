@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 4.0.1
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v4.0.0...e2e881969207b2454f616e182ce68b4936f1d48b))
+
+### Bugs fixed
+
+- Change list-of-POSIX-paths to list-of-strings in yield of `iterate_pip_pkg_record()` function [#104](https://github.com/emscripten-forge/empack/pull/104) ([@michaelweinold](https://github.com/michaelweinold))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-06-17&to=2024-09-02&type=c))
+
+[@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2024-06-17..2024-09-02&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-06-17..2024-09-02&type=Issues) | [@michaelweinold](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Amichaelweinold+updated%3A2024-06-17..2024-09-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 4.0.0
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v3.3.4...d3360ca7a178ab442fc68c2e59d894b34923bb55))
@@ -22,8 +38,6 @@ The main highlight of this release is the new filtering logic. We used to filter
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-05-21&to=2024-06-17&type=c))
 
 [@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2024-05-21..2024-06-17&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-05-21..2024-06-17&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 3.3.4
 
