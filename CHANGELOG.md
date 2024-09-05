@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 4.0.2
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v4.0.1...897c502bea3fcb0eb837784a1dd679a1622cef6a))
+
+### Merged PRs
+
+- Revert "Change list-of-POSIX-paths to list-of-strings in yield of `iterate_pip_pkg_record()` function" [#106](https://github.com/emscripten-forge/empack/pull/106) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-09-02&to=2024-09-05&type=c))
+
+[@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-09-02..2024-09-05&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 4.0.1
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v4.0.0...e2e881969207b2454f616e182ce68b4936f1d48b))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-06-17&to=2024-09-02&type=c))
 
 [@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2024-06-17..2024-09-02&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-06-17..2024-09-02&type=Issues) | [@michaelweinold](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Amichaelweinold+updated%3A2024-06-17..2024-09-02&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 4.0.0
 
