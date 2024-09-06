@@ -13,7 +13,7 @@ PYJS_SPEC = f"pyjs>={PYJS_VERSION}"
 
 @pytest.mark.parametrize("backend_type", ["browser-main", "browser-worker"])
 def test_integration(tmp_path, tmp_path_module, free_port, backend_type):
-    packages = ["numpy", "scipy"]
+    packages = ["numpy<2", "scipy", "emscripten-abi==3.1.45"]
     packages += [PYJS_SPEC]
 
     prefix = tmp_path / "env"
