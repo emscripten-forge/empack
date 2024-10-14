@@ -5,8 +5,10 @@ import shutil
 import sys
 from pathlib import Path, PosixPath, PureWindowsPath
 from tempfile import TemporaryDirectory
+from typing import Optional
 
 from appdirs import user_cache_dir
+from traitlets import Callable
 
 from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta
 from .micromamba_wrapper import create_environment
@@ -171,6 +173,7 @@ def pack_env(
     compression_format=ALLOWED_FORMATS[0],
     compresslevel=9,
     outdir=None,
+    package_url_factory: Optional[Callable] = None,
 ):
     with TemporaryDirectory() as tmp_dir:
         #  filter the complete environment
@@ -196,15 +199,21 @@ def pack_env(
             )
 
             base_fname = filename_base_from_meta(pkg_meta)
-            packages_info.append(
-                dict(
-                    name=pkg_meta["name"],
-                    version=pkg_meta["version"],
-                    build=pkg_meta["build"],
-                    filename_stem=base_fname,
-                    filename=f"{base_fname}.tar.{compression_format}",
-                )
+
+            pkg_dict = dict(
+                name=pkg_meta["name"],
+                version=pkg_meta["version"],
+                build=pkg_meta["build"],
+                filename_stem=base_fname,
+                filename=f"{base_fname}.tar.{compression_format}",
             )
+
+            package_url = None
+            if package_url_factory:
+                package_url = package_url_factory(pkg_dict)
+            if package_url is not None:
+                pkg_dict["url"] = package_url
+            packages_info.append(pkg_dict)
 
         # save the list of packages
         env_meta = {
