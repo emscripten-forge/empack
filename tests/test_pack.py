@@ -163,6 +163,48 @@ def test_pack_env(tmp_path, packages, relocate_prefix):
             assert pkg_info["name"] == pkg_meta["name"]
 
 
+def test_pack_env_with_url(tmp_path):
+    # create the env at the temporary location
+    packages = ["python=3.11", "numpy"]
+    relocate_prefix = "/"
+    prefix = tmp_path / "env"
+
+    create_environment(
+        prefix=prefix,
+        packages=packages,
+        channels=CHANNELS,
+        relocate_prefix=relocate_prefix,
+        platform="emscripten-wasm32",
+    )
+
+    def url_factory(pkg):
+        return f'http://localhost:1234/{pkg["filename"]}'
+
+    pack_env(
+        env_prefix=prefix,
+        outdir=tmp_path,
+        use_cache=False,
+        compression_format="gz",
+        relocate_prefix=relocate_prefix,
+        file_filters=FILE_FILTERS,
+        compresslevel=1,
+        package_url_factory=url_factory,
+    )
+
+    # check that there is a json with all the packages
+    env_metadata_json_path = tmp_path / "empack_env_meta.json"
+    assert env_metadata_json_path.exists()
+
+    # check that json file contains all packages
+    with open(env_metadata_json_path) as f:
+        env_metadata = json.load(f)
+        packages_metadata = env_metadata["packages"]
+
+    # check that there is a tar.gz file for each package
+    for pkg_info in packages_metadata:
+        assert "http://localhost:1234" in pkg_info["url"]
+
+
 @pytest.mark.parametrize("mount_dir", ["/some", "/some/", "/some/nested", "/"])
 def test_pack_directory(tmp_path, mount_dir):
     # create a directory with some files
