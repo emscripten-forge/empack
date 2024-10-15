@@ -5,10 +5,9 @@ import shutil
 import sys
 from pathlib import Path, PosixPath, PureWindowsPath
 from tempfile import TemporaryDirectory
-from typing import Optional
+from typing import Callable, Optional
 
 from appdirs import user_cache_dir
-from traitlets import Callable
 
 from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta
 from .micromamba_wrapper import create_environment
