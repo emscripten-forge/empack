@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 4.0.3
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v4.0.2...cd6efc3636047c4e639bbebd4ce823730097672c))
+
+### Enhancements made
+
+- Add package url factory [#108](https://github.com/emscripten-forge/empack/pull/108) ([@trungleduc](https://github.com/trungleduc))
+
+### Bugs fixed
+
+- restrict package versions in integration test [#107](https://github.com/emscripten-forge/empack/pull/107) ([@DerThorsten](https://github.com/DerThorsten))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-09-05&to=2024-10-15&type=c))
+
+[@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2024-09-05..2024-10-15&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Atrungleduc+updated%3A2024-09-05..2024-10-15&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 4.0.2
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v4.0.1...897c502bea3fcb0eb837784a1dd679a1622cef6a))
@@ -15,8 +35,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-09-02&to=2024-09-05&type=c))
 
 [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2024-09-02..2024-09-05&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 4.0.1
 
