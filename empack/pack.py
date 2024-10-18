@@ -205,12 +205,11 @@ def pack_env(
                 build=pkg_meta["build"],
                 filename_stem=base_fname,
                 filename=f"{base_fname}.tar.{compression_format}",
-                source_url=pkg_meta["url"],
             )
 
             package_url = None
             if package_url_factory:
-                package_url = package_url_factory(pkg_dict)
+                package_url = package_url_factory(pkg_dict, source_url=pkg_meta["url"])
             if package_url is not None:
                 pkg_dict["url"] = package_url
             packages_info.append(pkg_dict)
