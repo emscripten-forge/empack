@@ -205,6 +205,7 @@ def pack_env(
                 build=pkg_meta["build"],
                 filename_stem=base_fname,
                 filename=f"{base_fname}.tar.{compression_format}",
+                source_url=pkg_meta["url"],
             )
 
             package_url = None
