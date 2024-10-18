@@ -177,7 +177,7 @@ def test_pack_env_with_url(tmp_path):
         platform="emscripten-wasm32",
     )
 
-    def url_factory(pkg):
+    def url_factory(pkg, *args, **kwargs):
         return f'http://localhost:1234/{pkg["filename"]}'
 
     pack_env(
