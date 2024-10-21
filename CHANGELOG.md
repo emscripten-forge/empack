@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.0
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v4.0.3...3046105d179d5db47d83fdd00fcdc2f72bfd0a53))
+
+### Enhancements made
+
+- Pass package source URL to URL factory [#109](https://github.com/emscripten-forge/empack/pull/109) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-10-15&to=2024-10-21&type=c))
+
+[@trungleduc](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Atrungleduc+updated%3A2024-10-15..2024-10-21&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 4.0.3
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v4.0.2...cd6efc3636047c4e639bbebd4ce823730097672c))
@@ -19,8 +35,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-09-05&to=2024-10-15&type=c))
 
 [@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2024-09-05..2024-10-15&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Atrungleduc+updated%3A2024-09-05..2024-10-15&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 4.0.2
 
