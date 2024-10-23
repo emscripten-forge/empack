@@ -209,7 +209,7 @@ def pack_env(
 
             package_url = None
             if package_url_factory:
-                package_url = package_url_factory(pkg_dict, source_url=pkg_meta["url"])
+                package_url = package_url_factory(pkg_dict, source_url=pkg_meta.get("url", None))
             if package_url is not None:
                 pkg_dict["url"] = package_url
             packages_info.append(pkg_dict)
