@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.1
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.0...2e15e5060a9aba274f81c12d504c4c80245e898e))
+
+### Bugs fixed
+
+- Support missing url field [#110](https://github.com/emscripten-forge/empack/pull/110) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-10-21&to=2024-10-23&type=c))
+
+[@trungleduc](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Atrungleduc+updated%3A2024-10-21..2024-10-23&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.0
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v4.0.3...3046105d179d5db47d83fdd00fcdc2f72bfd0a53))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-10-15&to=2024-10-21&type=c))
 
 [@trungleduc](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Atrungleduc+updated%3A2024-10-15..2024-10-21&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 4.0.3
 
