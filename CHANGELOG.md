@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.2
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.1...dc0a88ea7ba1e561b00fbe08757319f08cd96211))
+
+### Enhancements made
+
+- Undo removal of include dirs for allowing kernels to access headers [#111](https://github.com/emscripten-forge/empack/pull/111) ([@anutosh491](https://github.com/anutosh491))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-10-23&to=2025-01-17&type=c))
+
+[@anutosh491](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Aanutosh491+updated%3A2024-10-23..2025-01-17&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.1
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.0...2e15e5060a9aba274f81c12d504c4c80245e898e))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-10-21&to=2024-10-23&type=c))
 
 [@trungleduc](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Atrungleduc+updated%3A2024-10-21..2024-10-23&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.0.0
 
