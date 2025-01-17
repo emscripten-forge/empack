@@ -13,8 +13,6 @@ packages:
       - pattern: '**'
 default:
   exclude_patterns:
-    - pattern: 'include/**'
-    - pattern: '**/include/**'
     - pattern: 'bin/**'
     - pattern: '**/bin/**'
     - pattern: 'tests/**'
