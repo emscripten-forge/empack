@@ -16,7 +16,8 @@ from .tar_utils import ALLOWED_FORMATS, save_as_tarfile
 EMPACK_CACHE_DIR = Path(user_cache_dir("empack"))
 PACKED_PACKAGES_CACHE_DIR = EMPACK_CACHE_DIR / "packed_packages_cache"
 PACKED_PACKAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-DEFAULT_CONFIG_PATH = Path(sys.prefix) / "share" / "empack" / "empack_config.yaml"
+
+
 def _do_i_own(path: str) -> bool:
     """Verify if the current user has write access to the given path. Sourced from
     https://github.com/jupyter/jupyter_core/blob/fa513c1550bbd1ebcc14a4a79eb8c5d95e3e23c9/jupyter_core/paths.py#L75-L99
@@ -50,6 +51,43 @@ def _do_i_own(path: str) -> bool:
 
     # no ownership checks worked, check write access
     return os.access(p, os.W_OK)
+
+
+def get_config_path() -> Path:
+    # Copyright (c) Jupyter Development Team.
+    # Distributed under the terms of the Modified BSD License.
+
+    # Derived from IPython.utils.path, which is
+    # Copyright (c) IPython Development Team.
+    # Distributed under the terms of the Modified BSD License.
+
+
+    # 1. Check for config in environment's share directory. This is applicable
+    # for conda/mamba/micromamba style environments.
+    prefix = None
+    if ("CONDA_PREFIX" in os.environ and
+        sys.prefix.startswith(os.environ["CONDA_PREFIX"]) and
+        os.environ.get("CONDA_DEFAULT_ENV", "base") != "base" and
+        _do_i_own(sys.prefix)):
+        prefix = Path(os.environ["CONDA_PREFIX"])
+    else:
+        prefix = Path(sys.prefix)
+
+    config_path = prefix / "share" / "empack" / "empack_config.yaml"
+    if config_path.exists():
+        return config_path
+
+    # 2. For virtual environments via virtualenv/venv/uv, check if share/ is next
+    # to the environment base directory. This is also applicable for the case
+    # where there's no virtual environment at all (--user install).
+    if sys.prefix != sys.base_prefix and _do_i_own(sys.prefix):
+        venv_parent = Path(sys.prefix).parent
+        parent_share = venv_parent / "share" / "empack" / "empack_config.yaml"
+        if parent_share.exists():
+            return parent_share
+
+
+DEFAULT_CONFIG_PATH = get_config_path()
 
 
 def filename_base_from_meta(pkg_meta):
