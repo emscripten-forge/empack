@@ -7,7 +7,7 @@ from pathlib import Path, PosixPath, PureWindowsPath
 from tempfile import TemporaryDirectory
 from typing import Callable, Optional
 
-from platformdirs import user_cache_dir
+from platformdirs import user_cache_dir, user_config_dir
 
 from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta
 from .micromamba_wrapper import create_environment
@@ -16,7 +16,7 @@ from .tar_utils import ALLOWED_FORMATS, save_as_tarfile
 EMPACK_CACHE_DIR = Path(user_cache_dir("empack"))
 PACKED_PACKAGES_CACHE_DIR = EMPACK_CACHE_DIR / "packed_packages_cache"
 PACKED_PACKAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-DEFAULT_CONFIG_PATH = Path(sys.prefix) / "share" / "empack" / "empack_config.yaml"
+DEFAULT_CONFIG_PATH = Path(user_config_dir("empack")) / "empack_config.yaml"
 
 
 def filename_base_from_meta(pkg_meta):
