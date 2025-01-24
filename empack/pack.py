@@ -17,6 +17,39 @@ EMPACK_CACHE_DIR = Path(user_cache_dir("empack"))
 PACKED_PACKAGES_CACHE_DIR = EMPACK_CACHE_DIR / "packed_packages_cache"
 PACKED_PACKAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 DEFAULT_CONFIG_PATH = Path(sys.prefix) / "share" / "empack" / "empack_config.yaml"
+def _do_i_own(path: str) -> bool:
+    """Verify if the current user has write access to the given path. Sourced from
+    https://github.com/jupyter/jupyter_core/blob/fa513c1550bbd1ebcc14a4a79eb8c5d95e3e23c9/jupyter_core/paths.py#L75-L99
+    """
+    # Copyright (c) Jupyter Development Team.
+    # Distributed under the terms of the Modified BSD License.
+
+    # Derived from IPython.utils.path, which is
+    # Copyright (c) IPython Development Team.
+    # Distributed under the terms of the Modified BSD License.
+
+    p = Path(path).resolve()
+
+    while not p.exists() and p != p.parent:
+        p = p.parent
+
+    # simplest check: owner by name
+    # not always implemented or available
+    try:
+        return p.owner() == os.getlogin()
+    except Exception:  # noqa: S110
+        pass
+
+    if hasattr(os, "geteuid"):
+        try:
+            st = p.stat()
+            return st.st_uid == os.geteuid()
+        except (NotImplementedError, OSError):
+            # geteuid not always implemented
+            pass
+
+    # no ownership checks worked, check write access
+    return os.access(p, os.W_OK)
 
 
 def filename_base_from_meta(pkg_meta):
