@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.3
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.2...62778c0e1ef3bb56789d5caf65aa93deb4a654dd))
+
+### Bugs fixed
+
+- Undo removal of archives for allowing kernels to link at runtime [#112](https://github.com/emscripten-forge/empack/pull/112) ([@anutosh491](https://github.com/anutosh491))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-01-17&to=2025-01-24&type=c))
+
+[@anutosh491](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Aanutosh491+updated%3A2025-01-17..2025-01-24&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.2
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.1...dc0a88ea7ba1e561b00fbe08757319f08cd96211))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2024-10-23&to=2025-01-17&type=c))
 
 [@anutosh491](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Aanutosh491+updated%3A2024-10-23..2025-01-17&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.0.1
 
