@@ -18,7 +18,7 @@ PACKED_PACKAGES_CACHE_DIR = EMPACK_CACHE_DIR / "packed_packages_cache"
 PACKED_PACKAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def _do_i_own(path: str) -> bool:
+def _do_i_own(path: str | Path) -> bool:
     """Verify if the current user has write access to the given path. Sourced from
     https://github.com/jupyter/jupyter_core/blob/fa513c1550bbd1ebcc14a4a79eb8c5d95e3e23c9/jupyter_core/paths.py#L75-L99
     """
