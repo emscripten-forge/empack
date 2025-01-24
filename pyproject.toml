@@ -48,9 +48,6 @@ empack = "empack.cli.main:app"
 [project.urls]
 Homepage = "https://github.com/emscripten-forge/empack"
 
-[tool.hatch.build.targets.wheel.shared-data]
-config = "share/empack"
-
 [tool.hatch.build.targets.sdist]
 exclude = [
     ".github",

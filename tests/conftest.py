@@ -5,9 +5,9 @@ from pathlib import Path
 import pytest
 
 from empack.file_patterns import pkg_file_filter_from_yaml
+from empack.pack import DEFAULT_CONFIG_PATH
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-CONFIG_PATH = os.path.join(THIS_DIR, "..", "config", "empack_config.yaml")
+CONFIG_PATH = DEFAULT_CONFIG_PATH
 FILE_FILTERS = pkg_file_filter_from_yaml(CONFIG_PATH)
 CHANNELS = ["conda-forge", "https://repo.mamba.pm/emscripten-forge"]
 
