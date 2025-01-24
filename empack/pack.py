@@ -54,6 +54,15 @@ def _do_i_own(path: str | Path) -> bool:
 
 
 def get_config_path() -> Path:
+    """Find the empack configuration file by checking common locations.
+
+    This function checks for the config file in the following order:
+    1. Inside the environment's share directory (conda-style environments)
+    2. Inside a share/ directory next to a virtual environment
+
+    Returns:
+        Path: Location of the empack_config.yaml file
+    """
     # Copyright (c) Jupyter Development Team.
     # Distributed under the terms of the Modified BSD License.
 
