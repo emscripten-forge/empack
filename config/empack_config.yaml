@@ -19,7 +19,6 @@ default:
     - pattern: '**/tests/**'
     - pattern: '**/*.ini'
     - pattern: '**/*.exe'
-    - pattern: '**/*.a'
     - pattern: '**/*.c'
     - pattern: '**/*.pxd'
     - pattern: '**/*.pyi'
