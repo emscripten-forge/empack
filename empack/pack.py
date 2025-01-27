@@ -70,14 +70,15 @@ def get_config_path() -> Path:
     # Copyright (c) IPython Development Team.
     # Distributed under the terms of the Modified BSD License.
 
-
     # 1. Check for config in environment's share directory. This is applicable
     # for conda/mamba/micromamba style environments.
     prefix = None
-    if ("CONDA_PREFIX" in os.environ and
-        sys.prefix.startswith(os.environ["CONDA_PREFIX"]) and
-        os.environ.get("CONDA_DEFAULT_ENV", "base") != "base" and
-        _do_i_own(sys.prefix)):
+    if (
+        "CONDA_PREFIX" in os.environ
+        and sys.prefix.startswith(os.environ["CONDA_PREFIX"])
+        and os.environ.get("CONDA_DEFAULT_ENV", "base") != "base"
+        and _do_i_own(sys.prefix)
+    ):
         prefix = Path(os.environ["CONDA_PREFIX"])
     else:
         prefix = Path(sys.prefix)
