@@ -48,6 +48,12 @@ jobs:
         run: |
           python -m pip install git+https://github.com/emscripten-forge/pyjs-code-runner --no-deps --ignore-installed
 
+      # Remove after https://github.com/emscripten-forge/pyjs-code-runner/pull/15 is merged.
+      - name: Install appdirs
+        shell: bash -l {0}
+        run: |
+          python -m pip install appdirs
+
       - name: Run pytest
         shell: bash -l {0}
         run: |
