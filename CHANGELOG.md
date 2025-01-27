@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.4
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.3...e447e2334ed0f721277923cda623bb755abfc210))
+
+### Bugs fixed
+
+- Replace deprecated `appdirs` with `platformdirs`, fix config path lookup with non `conda`-based environments [#113](https://github.com/emscripten-forge/empack/pull/113) ([@agriyakhetarpal](https://github.com/agriyakhetarpal))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-01-24&to=2025-01-27&type=c))
+
+[@agriyakhetarpal](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Aagriyakhetarpal+updated%3A2025-01-24..2025-01-27&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2025-01-24..2025-01-27&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.3
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.2...62778c0e1ef3bb56789d5caf65aa93deb4a654dd))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-01-17&to=2025-01-24&type=c))
 
 [@anutosh491](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Aanutosh491+updated%3A2025-01-17..2025-01-24&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.0.2
 
