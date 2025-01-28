@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os
 import os.path
@@ -5,7 +7,7 @@ import shutil
 import sys
 from pathlib import Path, PosixPath, PureWindowsPath
 from tempfile import TemporaryDirectory
-from typing import Callable, Optional
+from typing import Callable
 
 from platformdirs import user_cache_dir
 
@@ -253,7 +255,7 @@ def pack_env(
     compression_format=ALLOWED_FORMATS[0],
     compresslevel=9,
     outdir=None,
-    package_url_factory: Optional[Callable] = None,
+    package_url_factory: Callable | None = None,
 ):
     with TemporaryDirectory() as tmp_dir:
         #  filter the complete environment
