@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.5
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.4...2bb1b237d7f9b186716a1d984a262b9a36e5ca56))
+
+### Bugs fixed
+
+- Fix `TypeError` noticed in conda-forge release [#114](https://github.com/emscripten-forge/empack/pull/114) ([@agriyakhetarpal](https://github.com/agriyakhetarpal))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-01-27&to=2025-01-28&type=c))
+
+[@agriyakhetarpal](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Aagriyakhetarpal+updated%3A2025-01-27..2025-01-28&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.4
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.3...e447e2334ed0f721277923cda623bb755abfc210))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-01-24&to=2025-01-27&type=c))
 
 [@agriyakhetarpal](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Aagriyakhetarpal+updated%3A2025-01-24..2025-01-27&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2025-01-24..2025-01-27&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.0.3
 
