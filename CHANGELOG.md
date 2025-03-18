@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.6
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.5...412d475a55c851501a09d3143f1319cfbf7d56d5))
+
+### Bugs fixed
+
+- do not remove tests from numpy [#115](https://github.com/emscripten-forge/empack/pull/115) ([@DerThorsten](https://github.com/DerThorsten))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-01-28&to=2025-03-18&type=c))
+
+[@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2025-01-28..2025-03-18&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.5
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.4...2bb1b237d7f9b186716a1d984a262b9a36e5ca56))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-01-27&to=2025-01-28&type=c))
 
 [@agriyakhetarpal](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3Aagriyakhetarpal+updated%3A2025-01-27..2025-01-28&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.0.4
 
