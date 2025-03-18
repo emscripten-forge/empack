@@ -11,6 +11,12 @@ packages:
   widgetsnbextension:
     exclude_patterns:
       - pattern: '**'
+  numpy:
+    exclude_patterns:
+    - pattern: '**/*.pyx'
+    - pattern: '**/*.pyc'
+    - pattern: '**/*.typed'
+    - pattern: '**/*.egg-info'
 default:
   exclude_patterns:
     - pattern: 'bin/**'
