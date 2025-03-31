@@ -45,13 +45,10 @@ class PkgFileFilter:
         if packages is None:
             packages = {}
 
-        default_exclude_patterns = []
-        if default is not None and "exclude_patterns" in default:
-            default_exclude_patterns = default["exclude_patterns"]
-
         for k, v in packages.items():
             if isinstance(v, dict):
-                exclude_patterns = default_exclude_patterns
+                # start from empty list
+                exclude_patterns = []
                 if "exclude_patterns" in v:
                     exclude_patterns = exclude_patterns + v["exclude_patterns"]
                 self.packages[k] = FileFilter(exclude_patterns=exclude_patterns)
