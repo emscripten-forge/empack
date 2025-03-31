@@ -45,9 +45,6 @@ class PkgFileFilter:
         if packages is None:
             packages = {}
 
-        if default is not None and "exclude_patterns" in default:
-            default["exclude_patterns"]
-
         for k, v in packages.items():
             if isinstance(v, dict):
                 # start from empty list
