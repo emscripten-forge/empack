@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.7
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.6...7bc0706151abea9aac86216488d7f482c7c958e5))
+
+### Bugs fixed
+
+- Fix default handling [#116](https://github.com/emscripten-forge/empack/pull/116) ([@DerThorsten](https://github.com/DerThorsten))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-03-18&to=2025-03-31&type=c))
+
+[@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2025-03-18..2025-03-31&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.6
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.5...412d475a55c851501a09d3143f1319cfbf7d56d5))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-01-28&to=2025-03-18&type=c))
 
 [@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2025-01-28..2025-03-18&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.0.5
 
