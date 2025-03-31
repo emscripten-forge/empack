@@ -50,6 +50,7 @@ class PkgFileFilter:
 
         for k, v in packages.items():
             if isinstance(v, dict):
+                # start from empty list
                 exclude_patterns = []
                 if "exclude_patterns" in v:
                     exclude_patterns = exclude_patterns + v["exclude_patterns"]
