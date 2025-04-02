@@ -39,12 +39,7 @@ def iterate_pip_pkg_record(env_prefix):
         with open(dist_info / "RECORD") as record:
             files = csv.reader(record)
             all_files = [_file[0] for _file in files]
-            all_files_paths = [
-                relative_site_packages / _file
-                for _file in all_files
-                # Excluding .dist-info files
-                if ".dist-info" not in _file
-            ]
+            all_files_paths = [relative_site_packages / _file for _file in all_files]
 
         yield dict(
             name=package_name,
