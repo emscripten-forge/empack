@@ -42,8 +42,6 @@ def iterate_pip_pkg_record(env_prefix):
             all_files_paths = [
                 relative_site_packages / _file
                 for _file in all_files
-                # Excluding .dist-info files
-                if ".dist-info" not in _file
             ]
 
         yield dict(
