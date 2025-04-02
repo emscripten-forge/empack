@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.0.9
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.8...66b7db9a9d4db52286b05d116d1e4c751fed1845))
+
+### Bugs fixed
+
+- convert to str [#118](https://github.com/emscripten-forge/empack/pull/118) ([@DerThorsten](https://github.com/DerThorsten))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-04-02&to=2025-04-02&type=c))
+
+[@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2025-04-02..2025-04-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.8
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.7...5862c9816e6fd55885ff6b7e81972e906df25638))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-03-31&to=2025-04-02&type=c))
 
 [@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2025-03-31..2025-04-02&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.0.7
 
