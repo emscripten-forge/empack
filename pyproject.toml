@@ -29,6 +29,7 @@ dependencies = [
     "pyyaml",
     "requests",
     "typer",
+    "click<8.2"
 ]
 dynamic = ["version"]
 
