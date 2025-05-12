@@ -288,6 +288,7 @@ def pack_env(
                 build=pkg_meta["build"],
                 filename_stem=base_fname,
                 filename=f"{base_fname}.tar.{compression_format}",
+                channel=pkg_meta["channel"],
             )
 
             package_url = None
