@@ -49,6 +49,7 @@ def iterate_pip_pkg_record(env_prefix):
             fn=f"{package_name}-{package_version}",
             build="pip",
             build_number=0,
+            channel="PyPi",
             depends=[],
         )
 
