@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.1.0
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.9...41726aaf1ad9c1f9d471e3eb50954ca2e4d7ead8))
+
+### Enhancements made
+
+- Add a channel to each package on empack_env_meta.json [#120](https://github.com/emscripten-forge/empack/pull/120) ([@AnastasiaSliusar](https://github.com/AnastasiaSliusar))
+
+### Bugs fixed
+
+- Pin click, excluding breaking changes [#121](https://github.com/emscripten-forge/empack/pull/121) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-04-02&to=2025-05-13&type=c))
+
+[@AnastasiaSliusar](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AAnastasiaSliusar+updated%3A2025-04-02..2025-05-13&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2025-04-02..2025-05-13&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.0.9
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.0.8...66b7db9a9d4db52286b05d116d1e4c751fed1845))
@@ -15,8 +35,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-04-02&to=2025-04-02&type=c))
 
 [@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2025-04-02..2025-04-02&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.0.8
 
