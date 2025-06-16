@@ -257,6 +257,7 @@ def pack_env(
     outdir=None,
     package_url_factory: Callable | None = None,
 ):
+
     with TemporaryDirectory() as tmp_dir:
         #  filter the complete environment
         filtered_prefix = Path(tmp_dir) / "filtered_env"
@@ -289,6 +290,7 @@ def pack_env(
                 filename_stem=base_fname,
                 filename=f"{base_fname}.tar.{compression_format}",
                 channel=pkg_meta["channel"],
+                depends=pkg_meta["depends"]
             )
 
             package_url = None
