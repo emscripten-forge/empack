@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 5.1.2
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.1.1...95bd944e873700226f9afd259a1854875dc7e8ae))
+
+### Enhancements made
+
+- Add "depends" to empack_env_meta.json [#125](https://github.com/emscripten-forge/empack/pull/125) ([@AnastasiaSliusar](https://github.com/AnastasiaSliusar))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-05-13&to=2025-06-16&type=c))
+
+[@AnastasiaSliusar](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AAnastasiaSliusar+updated%3A2025-05-13..2025-06-16&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.1.1
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.1.0...afbb527b6c0c5cdff234ab7d9a94e5fe35365369))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-05-13&to=2025-05-13&type=c))
 
 [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2025-05-13..2025-05-13&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.1.0
 
