@@ -51,6 +51,7 @@ def iterate_pip_pkg_record(env_prefix):
             build_number=0,
             channel="PyPi",
             depends=[],
+            subdir="",
         )
 
 
@@ -72,6 +73,7 @@ def write_minimal_conda_meta(pkg_meta, env_prefix):
     content = {k: pkg_meta[k] for k in ["name", "version", "build", "build_number", "channel"]}
     content["url"] = pkg_meta.get("url", None)
     content["depends"] = pkg_meta.get("depends", [])
+    content["subdir"] = pkg_meta.get("subdir", "")
     conda_meta_dir = Path(env_prefix) / "conda-meta"
     conda_meta_dir.mkdir(parents=True, exist_ok=True)
 

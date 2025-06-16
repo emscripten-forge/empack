@@ -290,7 +290,8 @@ def pack_env(
                 filename_stem=base_fname,
                 filename=f"{base_fname}.tar.{compression_format}",
                 channel=pkg_meta["channel"],
-                depends=pkg_meta["depends"]
+                depends=pkg_meta["depends"],
+                subdir=pkg_meta["subdir"],
             )
 
             package_url = None
