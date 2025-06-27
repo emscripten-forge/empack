@@ -94,9 +94,9 @@ class TestCLI:
         env_meta_dict = dict()
 
         for pkg in mount_points:
-            env_meta_dict[pkg["filename"]] = pkg
+            env_meta_dict[pkg["name"]] = pkg
         for pkg in packages:
-            env_meta_dict[pkg["filename"]] = pkg
+            env_meta_dict[pkg["name"]] = pkg
 
         assert "packaged_dir.tar.gz" in env_meta_dict
         assert "numpy" in env_meta_dict

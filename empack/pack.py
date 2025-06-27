@@ -231,11 +231,11 @@ def add_tarfile_to_env_meta(env_meta_filename, tarfile):
         env_meta["mounts"] = []
 
     # check that the mount point is not already in the list
-    for pkg in env_meta["mounts"]:
-        if pkg["filename"] == tarfile_name:
+    for mount_point in env_meta["mounts"]:
+        if mount_point["filename"] == tarfile_name:
             msg = f"mount point with filename '{tarfile_name}' already in env meta file"
             raise RuntimeError(msg)
-        if pkg["name"] == mount_point_item["name"]:
+        if mount_point["name"] == mount_point_item["name"]:
             msg = f"mount point with name '{mount_point_item['name']}' already in env meta file"
             raise RuntimeError(msg)
 
