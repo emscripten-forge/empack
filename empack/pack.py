@@ -225,17 +225,21 @@ def add_tarfile_to_env_meta(env_meta_filename, tarfile):
         )
 
     tarfile_name = Path(tarfile).name
-    package_item = {"name": tarfile_name, "filename": tarfile_name}
-    # check that the package is not already in the list
-    for pkg in env_meta["packages"]:
-        if pkg["filename"] == tarfile_name:
-            msg = f"package with filename '{tarfile_name}' already in env meta file"
+    mount_point_item = {"name": tarfile_name, "filename": tarfile_name}
+
+    if "mounts" not in env_meta:
+        env_meta["mounts"] = []
+
+    # check that the mount point is not already in the list
+    for mount_point in env_meta["mounts"]:
+        if mount_point["filename"] == tarfile_name:
+            msg = f"mount point with filename '{tarfile_name}' already in env meta file"
             raise RuntimeError(msg)
-        if pkg["name"] == package_item["name"]:
-            msg = f"package with name '{package_item['name']}' already in env meta file"
+        if mount_point["name"] == mount_point_item["name"]:
+            msg = f"mount point with name '{mount_point_item['name']}' already in env meta file"
             raise RuntimeError(msg)
 
-    env_meta["packages"].append(package_item)
+    env_meta["mounts"].append(mount_point_item)
     with open(env_meta_filename, "w") as f:
         json.dump(env_meta, f, indent=4)
 
