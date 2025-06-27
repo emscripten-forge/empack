@@ -227,7 +227,7 @@ def add_tarfile_to_env_meta(env_meta_filename, tarfile):
     tarfile_name = Path(tarfile).name
     mount_point_item = {"name": tarfile_name, "filename": tarfile_name}
 
-    if not env_meta["mounts"]:
+    if "mounts" not in env_meta:
         env_meta["mounts"] = []
 
     # check that the mount point is not already in the list
