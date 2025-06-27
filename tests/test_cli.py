@@ -82,17 +82,21 @@ class TestCLI:
         print(result.stdout)
         assert result.exit_code == 0
 
-        # check that there is a json with all the packages
+        # check that there is a json in the output
         env_metadata_json_path = tmp_path / "empack_env_meta.json"
         assert env_metadata_json_path.exists()
 
+        # check the mount point is defined in the lock file
         with open(env_metadata_json_path) as f:
             env_meta = json.load(f)
+        mount_points = env_meta["mounts"]
         packages = env_meta["packages"]
         env_meta_dict = dict()
 
+        for pkg in mount_points:
+            env_meta_dict[pkg["filename"]] = pkg
         for pkg in packages:
-            env_meta_dict[pkg["name"]] = pkg
+            env_meta_dict[pkg["filename"]] = pkg
 
         assert "packaged_dir.tar.gz" in env_meta_dict
         assert "numpy" in env_meta_dict
