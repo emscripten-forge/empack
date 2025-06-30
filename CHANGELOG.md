@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 6.0.0
+
+([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.1.2...3d96b77cfcb39db09ab39e6b622840dc55adcd3b))
+
+### Enhancements made
+
+- Fix: Do not treat mount points as packages in the empack lock [#126](https://github.com/emscripten-forge/empack/pull/126) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-06-16&to=2025-06-30&type=c))
+
+[@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2025-06-16..2025-06-30&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2025-06-16..2025-06-30&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 5.1.2
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.1.1...95bd944e873700226f9afd259a1854875dc7e8ae))
@@ -15,8 +31,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-05-13&to=2025-06-16&type=c))
 
 [@AnastasiaSliusar](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AAnastasiaSliusar+updated%3A2025-05-13..2025-06-16&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.1.1
 
