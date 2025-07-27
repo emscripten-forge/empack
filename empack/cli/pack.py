@@ -45,6 +45,16 @@ def pack_env_cli(
         "-c",
         help="path to a .yaml file with the empack config",
     ),
+    package_squashfs: Optional[bool] = typer.Option(  # noqa: B008
+        False,
+        "--package-squashfs/--no-package-squashfs",
+        help="package each package into squashfs",
+    ),
+    environment_squashfs: Optional[bool] = typer.Option(  # noqa: B008
+        False,
+        "--environment-squashfs/--no-environment-squashfs",
+        help="package the whole environment into one squashfs",
+    ),
     use_cache: Optional[bool] = typer.Option(  # noqa: B008
         True,
         "--use-cache/--no-use-cache",
@@ -66,11 +76,12 @@ def pack_env_cli(
     ),
 ):
     file_filters = pkg_file_filter_from_yaml(*config)
-
     pack_env(
         env_prefix=env_prefix,
         relocate_prefix=relocate_prefix,
         file_filters=file_filters,
+        package_squashfs=package_squashfs,
+        environment_squashfs=environment_squashf,
         outdir=outdir,
         cache_dir=cache_dir,
         use_cache=use_cache,
