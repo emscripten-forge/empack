@@ -23,7 +23,7 @@ app.add_typer(pack_app, name="pack")
     name="env",
     help="""Pack an environment into a multiple tarballs:
 This will pack and exisiting enviroment into multiple tarballs
-and a json file with a list of package filenmmes.
+and a json file with a list of package filenames.
 """,
 )
 def pack_env_cli(
@@ -37,7 +37,7 @@ def pack_env_cli(
         "/",
         "--relocate-prefix",
         "-r",
-        help="path of the env in the the virtual filesystem",
+        help="path of the env in the virtual filesystem",
     ),
     config: list[Path] = typer.Option(  # noqa: B008
         [DEFAULT_CONFIG_PATH],
@@ -91,7 +91,7 @@ def pack_dir_cli(
         ...,
         "--mount-dir",
         "-m",
-        help="path of the directory in the the virtual filesystem",
+        help="path of the directory in the virtual filesystem",
     ),
     outname: Path = typer.Option(  # noqa: B008
         ...,
@@ -127,7 +127,7 @@ def pack_file_cli(
         ...,
         "--mount-dir",
         "-m",
-        help="path of the directory in the the virtual filesystem",
+        help="path of the directory in the virtual filesystem",
     ),
     outname: Path = typer.Option(  # noqa: B008
         ...,
