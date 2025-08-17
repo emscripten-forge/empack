@@ -14,6 +14,7 @@ from platformdirs import user_cache_dir
 from .filter_env import filter_env, filter_pkg, iterate_env_pkg_meta
 from .micromamba_wrapper import create_environment
 from .tar_utils import ALLOWED_FORMATS, save_as_tarfile
+from .sqshfs_utils import save_as_squashfs
 
 EMPACK_CACHE_DIR = Path(user_cache_dir("empack"))
 PACKED_PACKAGES_CACHE_DIR = EMPACK_CACHE_DIR / "packed_packages_cache"
@@ -117,13 +118,22 @@ def pack_pkg_impl(
     pkg_meta,
     compression_format,
     use_cache,
+    package_squashfs,
+    environment_squashfs,
     compresslevel,
     cache_dir=None,
     outdir=None,
 ):
     if cache_dir is None:
         cache_dir = PACKED_PACKAGES_CACHE_DIR
-    fname_core = f"{filename_base_from_meta(pkg_meta)}.tar.{compression_format}"
+    if (package_squashfs or environment_squashfs) and relocate_prefix!="/":
+        raise ValueError("Other relocate prefixes than '/' are not supported")
+    if package_squashfs:
+        fname_core = f"{filename_base_from_meta(pkg_meta)}.sqshfs"
+    elif environment_squashfs:
+        fname_core = f"environment.sqshfs"
+    else:
+        fname_core = f"{filename_base_from_meta(pkg_meta)}.tar.{compression_format}"
     cache_file = cache_dir / fname_core
 
     fname = os.path.join(outdir, fname_core) if outdir is not None else fname_core
@@ -132,28 +142,38 @@ def pack_pkg_impl(
         if outdir is not None:
             shutil.copy(cache_file, fname)
         return fname_core, True
-
     conda_meta_filename = f"{filename_base_from_meta(pkg_meta)}.json"
     with open(filtered_prefix / "conda-meta" / conda_meta_filename, "w") as f:
         json.dump(pkg_meta, f)
 
-    # make included files absolute
-    filenames = [os.path.join(filtered_prefix, f) for f in included_files]
-    arcnames = [os.path.join(relocate_prefix, f) for f in included_files]
 
-    # arcnames relative to relocate_prefix
-    arcnames = [os.path.relpath(a, relocate_prefix) for a in arcnames]
+    if not environment_squashfs:
+        if not package_squashfs:
+            # make included files absolute
+            filenames = [os.path.join(filtered_prefix, f) for f in included_files] 
+            arcnames = [os.path.join(relocate_prefix, f) for f in included_files]
 
-    # compress the filtered environment
-    save_as_tarfile(
-        output_filename=fname,
-        filenames=filenames,
-        arcnames=arcnames,
-        compression_format=compression_format,
-        compresslevel=compresslevel,
-    )
-    # copy to cache
-    shutil.copy(fname, cache_file)
+            # arcnames relative to relocate_prefix
+            arcnames = [os.path.relpath(a, relocate_prefix) for a in arcnames]
+
+            # compress the filtered environment
+            save_as_tarfile(
+                output_filename=fname,
+                filenames=filenames,
+                arcnames=arcnames,
+                compression_format=compression_format,
+                compresslevel=compresslevel,
+            )
+        else:
+            filenames = list(included_files)
+            save_as_squashfs(
+                output_filename=fname,
+                filtered_prefix=filtered_prefix,
+                filenames=filenames,
+                compresslevel=compresslevel
+            )
+        # copy to cache
+        shutil.copy(fname, cache_file)
 
     return fname_core, False
 
@@ -256,6 +276,8 @@ def pack_env(
     file_filters,
     use_cache,
     cache_dir=None,
+    package_squashfs=False,
+    environment_squashfs=True,
     compression_format=ALLOWED_FORMATS[0],
     compresslevel=9,
     outdir=None,
@@ -269,8 +291,14 @@ def pack_env(
             target_dir=filtered_prefix,
             pkg_file_filter=file_filters,
         )
+        if package_squashfs and environment_squashfs:
+            raise ValueError(
+            "You can not pack the whole environment in one squash file"
+            " and compress the packages to individual squashfs files at the same time.")
+ 
 
         packages_info = []
+        environment_files = []
         for pkg_meta in iterate_env_pkg_meta(filtered_prefix):
             pack_pkg_impl(
                 included_files=included_files[pkg_meta["name"]],
@@ -280,9 +308,14 @@ def pack_env(
                 use_cache=use_cache,
                 outdir=outdir,
                 cache_dir=cache_dir,
+                package_squashfs=package_squashfs,
+                environment_squashfs=environment_squashfs,
                 compression_format=compression_format,
-                compresslevel=compresslevel,
+                compresslevel=compresslevel
             )
+            if environment_squashfs: 
+                environment_files.extend(included_files[pkg_meta["name"]])
+
 
             base_fname = filename_base_from_meta(pkg_meta)
 
@@ -291,7 +324,15 @@ def pack_env(
                 version=pkg_meta["version"],
                 build=pkg_meta["build"],
                 filename_stem=base_fname,
-                filename=f"{base_fname}.tar.{compression_format}",
+                filename=(
+                    f"{base_fname}.tar.{compression_format}"
+                    if not package_squashfs and not environment_squashfs
+                    else (
+                        f"{base_fname}.sqshfs"
+                        if not environment_squashfs
+                        else f"environment.sqshfs"
+                    )
+                ),
                 channel=pkg_meta["channel"],
                 depends=pkg_meta["depends"],
                 subdir=pkg_meta["subdir"],
@@ -303,6 +344,21 @@ def pack_env(
             if package_url is not None:
                 pkg_dict["url"] = package_url
             packages_info.append(pkg_dict)
+        
+        if environment_squashfs:
+            env_file_core = f"environment.sqshfs"
+            env_file = os.path.join(outdir, env_file_core) if outdir is not None else env_file_core
+            save_as_squashfs(
+                output_filename=env_file,
+                filtered_prefix=filtered_prefix,
+                filenames=environment_files,
+                compresslevel=compresslevel
+            )
+            if cache_dir is None:
+                cache_dir = PACKED_PACKAGES_CACHE_DIR
+            cache_file = cache_dir / env_file_core
+            # copy to cache
+            shutil.copy(env_file, cache_file)
 
         # save the list of packages
         env_meta = {
