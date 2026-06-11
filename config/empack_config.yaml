@@ -17,25 +17,6 @@ packages:
     - pattern: '**/*.pyc'
     - pattern: '**/*.typed'
     - pattern: '**/*.egg-info'
-  scikit-image:
-    exclude_patterns:
-    - pattern: 'bin/**'
-    - pattern: '**/bin/**'
-    - pattern: 'tests/**'
-    - pattern: '**/tests/**'
-    - pattern: '**/*.ini'
-    - pattern: '**/*.exe'
-    - pattern: '**/*.c'
-    - pattern: '**/*.pxd'
-    # - pattern: '**/*.pyi' #<= we need this
-    - pattern: '**/*.pyx'
-    - pattern: '**/*.pyc'
-    - pattern: '**/*.typed'
-    - pattern: '**/*.egg-info'
-    - pattern: '**/site-packages/pip/_vendor/**'
-    - pattern: '**/idlelib/**'
-    - pattern: '**/ensurepip/**'
-    - pattern: 'Scripts/*'
 default:
   exclude_patterns:
     - pattern: 'bin/**'
@@ -46,7 +27,6 @@ default:
     - pattern: '**/*.exe'
     - pattern: '**/*.c'
     - pattern: '**/*.pxd'
-    - pattern: '**/*.pyi'
     - pattern: '**/*.pyx'
     - pattern: '**/*.pyc'
     - pattern: '**/*.typed'
