@@ -2,6 +2,19 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 6.0.1
+
+### What's Changed
+* Fix typos by @davidbrochart in https://github.com/emscripten-forge/empack/pull/128
+* allow pyi files by @DerThorsten in https://github.com/emscripten-forge/empack/pull/129
+
+### New Contributors
+* @davidbrochart made their first contribution in https://github.com/emscripten-forge/empack/pull/128
+
+**Full Changelog**: https://github.com/emscripten-forge/empack/compare/v6.0.0...v6.0.1
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 6.0.0
 
 ([Full Changelog](https://github.com/emscripten-forge/empack/compare/v5.1.2...3d96b77cfcb39db09ab39e6b622840dc55adcd3b))
@@ -15,8 +28,6 @@
 ([GitHub contributors page for this release](https://github.com/emscripten-forge/empack/graphs/contributors?from=2025-06-16&to=2025-06-30&type=c))
 
 [@DerThorsten](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3ADerThorsten+updated%3A2025-06-16..2025-06-30&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Aemscripten-forge%2Fempack+involves%3AmartinRenou+updated%3A2025-06-16..2025-06-30&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 5.1.2
 
