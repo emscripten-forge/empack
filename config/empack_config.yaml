@@ -27,7 +27,6 @@ default:
     - pattern: '**/*.exe'
     - pattern: '**/*.c'
     - pattern: '**/*.pxd'
-    - pattern: '**/*.pyi'
     - pattern: '**/*.pyx'
     - pattern: '**/*.pyc'
     - pattern: '**/*.typed'
