@@ -1,5 +1,15 @@
 from empack.file_patterns import FileFilter, UnixPattern, pkg_file_filter_from_yaml
 
+from .conftest import FILE_FILTERS
+
+
+def test_default_filter_keeps_setuptools():
+    file_filter = FILE_FILTERS.get_filter_for_pkg("setuptools")
+    site_packages = "lib/python3.14/site-packages"
+    assert file_filter.match(f"{site_packages}/setuptools/__init__.py")
+    assert file_filter.match(f"{site_packages}/_distutils_hack/__init__.py")
+    assert file_filter.match(f"{site_packages}/distutils-precedence.pth")
+
 
 def test_unix_pattern():
     fp = UnixPattern(pattern="*.py")
