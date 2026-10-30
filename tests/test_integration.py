@@ -5,15 +5,14 @@ from pyjs_code_runner.run import run
 
 from empack.micromamba_wrapper import create_environment
 
-from .conftest import CHANNELS
-
-PYJS_VERSION = "2.1.0"
-PYJS_SPEC = f"pyjs>={PYJS_VERSION}"
+CHANNELS = ["conda-forge", "https://repo.prefix.dev/emscripten-forge-bot/emscripten-forge-6x"]
+PYJS_VERSION = "4.0.6"
+PYJS_SPEC = f"pyjs-dev>={PYJS_VERSION}"
 
 
 @pytest.mark.parametrize("backend_type", ["browser-main", "browser-worker"])
 def test_integration(tmp_path, tmp_path_module, free_port, backend_type):
-    packages = ["numpy<2", "scipy", "emscripten-abi==3.1.45"]
+    packages = ["numpy", "scipy", "emscripten-abi>=6,<7"]
     packages += [PYJS_SPEC]
 
     prefix = tmp_path / "env"
